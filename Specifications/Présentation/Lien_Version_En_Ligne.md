@@ -4,9 +4,7 @@
 
 <div align="center">
 
-### [Voir la Présentation sur Canva](https://www.canva.com/design/DAGhC7H6_ws/4ACVHIbgLk_GIHxK0lCXsw/edit?utm_content=DAGhC7H6_ws&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
-
-![Canva Logo](../../public/images/Canva-Logo.png)
+### 👉 [Voir la Présentation sur Canva](https://www.canva.com/design/DAGhC7H6_ws/4ACVHIbgLk_GIHxK0lCXsw/edit?utm_content=DAGhC7H6_ws&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) 👈
 
 </div>
 
