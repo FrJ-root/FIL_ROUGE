@@ -1,15 +1,4 @@
 services:
-  php:
-    image: php:8.2-apache 
-    container_name: FIL_php
-    restart: always
-    volumes:
-      - .:/var/www/html
-    ports:
-      - "8000:80"
-    environment:
-      APACHE_DOCUMENT_ROOT: /var/www/html/public
-
 
   mysql:
     image: mysql:latest
@@ -18,12 +7,23 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: FIL_ROUGE
-      MYSQL_USER: FrJroot
-      MYSQL_PASSWORD: FrJroot
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      
+  php:
+    image: php:8.2-apache
+    container_name: FIL_php
+    restart: always
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8000:80"
+    environment:
+      APACHE_DOCUMENT_ROOT: /var/www/html/public
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
