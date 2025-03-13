@@ -24,6 +24,7 @@ services:
       - "8000:80"
     environment:
       APACHE_DOCUMENT_ROOT: /var/www/html/public
+    command: ["/bin/bash", "-c", "sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf && apachectl -D FOREGROUND"]
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
