@@ -1,24 +1,23 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
-use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use App\Models\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Support\Facades\Hash;
+use App\Repositories\Eloquent\UserRepository;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+
 
 class RegisterController extends Controller
 {
-    use RegistersUsers;
+    protected $redirectTo = '/login';
+    protected $userRepository;
 
-    protected $redirectTo = '/home';
-
-    public function __construct()
+    public function __construct(UserRepository $userRepository)
     {
         $this->middleware('guest');
+        $this->userRepository = $userRepository;
     }
 
     public function showRegistrationForm()
@@ -26,41 +25,33 @@ class RegisterController extends Controller
         return view('auth.register');
     }
 
-    protected function validator(array $data)
+    public function register(Request $request)
     {
-        return Validator::make($data, [
+        $this->validateRequest($request);
+        $user = $this->createUser($request);
+        // Auth::login($user);
+        return redirect($this->redirectTo);
+    }
+
+    protected function validateRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'terms' => ['required'],
         ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
     }
 
-    protected function create(array $data)
+    protected function createUser(Request $request)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+        $user = $this->userRepository->create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
         ]);
-    }
-
-    // Add this method to ensure proper registration handling
-    public function register(Request $request)
-    {
-        $this->validator($request->all())->validate();
-
-        $user = $this->create($request->all());
-
-        $this->guard()->login($user);
-
-        return $this->registered($request, $user)
-            ?: redirect($this->redirectTo);
-    }
-
-    protected function registered(Request $request, $user)
-    {
-        // Optional hook for after registration
-        return redirect($this->redirectTo);
+        return $user;
     }
 }
