@@ -19,4 +19,9 @@ class Trip extends Model
     {
         return $this->hasMany(Traveller::class);
     }
+
+    public function itinerary()
+    {
+        return $this->hasOne(Itinerary::class);
+    }
 }

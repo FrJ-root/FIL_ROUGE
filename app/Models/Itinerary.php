@@ -18,4 +18,9 @@ class Itinerary extends Model
     {
         return $this->hasMany(Traveller::class);
     }
+
+    public function trip()
+    {
+        return $this->belongsTo(Trip::class);
+    }
 }
