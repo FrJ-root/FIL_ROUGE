@@ -17,6 +17,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     protected $hidden = [
@@ -28,9 +29,29 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // Add a mutator to hash passwords before saving
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);
     }
+
+    public function transportCompany()
+    {
+        return $this->hasOne(TransportCompany::class, 'user_id');
+    }
+
+    public function traveller()
+    {
+        return $this->hasOne(Traveller::class, 'user_id');
+    }
+
+    public function hotel()
+    {
+        return $this->hasOne(Hotel::class);
+    }
+
+    public function guide()
+    {
+        return $this->hasOne(Guide::class, 'user_id');
+    }
+
 }
