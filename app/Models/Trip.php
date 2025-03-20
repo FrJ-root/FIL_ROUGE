@@ -24,4 +24,9 @@ class Trip extends Model
     {
         return $this->hasOne(Itinerary::class);
     }
+
+    public function activities()
+    {
+        return $this->hasMany(Activity::class);
+    }
 }
