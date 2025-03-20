@@ -49,6 +49,7 @@ class RegisterController extends Controller
     {
         $user = $this->userRepository->create([
             'name' => $request->input('name'),
+            'role' => $request->input('role'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
         ]);
