@@ -29,7 +29,7 @@ class RegisterController extends Controller
     {
         $this->validateRequest($request);
         $user = $this->createUser($request);
-        // Auth::login($user);
+        Auth::login($user);
         return redirect($this->redirectTo);
     }
 
@@ -37,6 +37,7 @@ class RegisterController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
+            'role' => ['required', 'in:transport company,traveller,admin,hotel,guide'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
@@ -47,6 +48,7 @@ class RegisterController extends Controller
 
     protected function createUser(Request $request)
     {
+        dd($request->input('password'));
         $user = $this->userRepository->create([
             'name' => $request->input('name'),
             'role' => $request->input('role'),

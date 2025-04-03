@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
 <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
     <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md mx-auto relative overflow-hidden border border-gray-100">
 
@@ -181,6 +182,14 @@
                     </button>
                 </div>
 
+                <a href="{{ url('login/google') }}" class="w-full bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-xl flex items-center justify-center">
+                    <span>Login with Google</span>
+                </a>
+
+                <a href="{{ url('login/facebook') }}" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-xl flex items-center justify-center">
+                    <span>Login with Facebook</span>
+                </a>
+
             </div>
 
             <div class="text-center mt-8 text-sm text-gray-500">
@@ -191,7 +200,6 @@
 
     </div>
 </div>
-
 
 <script>
 
