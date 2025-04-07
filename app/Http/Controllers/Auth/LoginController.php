@@ -44,8 +44,7 @@ class LoginController extends Controller
         return response()->json(['error' => 'check data that you enter'], 401);
     }
 
-    public function logout(Request $request)
-    {
+    public function logout(Request $request){
         Auth::logout();
-    }
+    }    
 }
