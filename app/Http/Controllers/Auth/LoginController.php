@@ -25,10 +25,12 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            
             $user = Auth::user();
             switch ($user->role) {
                 case 'admin':
-                    return redirect()->route('admin.dashboard');
+                    return redirect()->route('admin.home');
                 case 'guide':
                     return redirect()->route('guide.dashboard');
                 case 'hotel':
@@ -41,10 +43,15 @@ class LoginController extends Controller
             }
         }
 
-        return response()->json(['error' => 'check data that you enter'], 401);
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->withInput($request->only('email'));
     }
 
     public function logout(Request $request){
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
     }    
 }

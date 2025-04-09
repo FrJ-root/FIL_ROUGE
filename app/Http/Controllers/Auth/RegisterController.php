@@ -7,6 +7,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Models\Traveller;
+use App\Models\Guide;
+use App\Models\Hotel;
+use App\Models\TransportCompany;
 
 
 class RegisterController extends Controller
@@ -28,9 +32,8 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $this->validateRequest($request);
-        $user = $this->createUser($request);
-        Auth::login($user);
-        return redirect($this->redirectTo);
+        $this->createUser($request);
+        return redirect($this->redirectTo)->with('success');
     }
 
     protected function validateRequest(Request $request)
@@ -46,15 +49,39 @@ class RegisterController extends Controller
         }
     }
 
-    protected function createUser(Request $request)
-    {
-        dd($request->input('password'));
+    protected function createUser(Request $request){
         $user = $this->userRepository->create([
             'name' => $request->input('name'),
             'role' => $request->input('role'),
             'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password')),
+            'password' => $request->input('password'),
         ]);
+
+        switch ($user->role) {
+            case 'traveller':
+                Traveller::create([
+                    'user_id' => $user->id,
+                ]);
+                break;
+
+            case 'guide':
+                Guide::create([
+                    'user_id' => $user->id,
+                ]);
+                break;
+
+            case 'hotel':
+                Hotel::create([
+                    'user_id' => $user->id,
+                ]);
+                break;
+
+            case 'transport company':
+                TransportCompany::create([
+                    'user_id' => $user->id,
+                ]);
+                break;
+        }
         return $user;
     }
 }

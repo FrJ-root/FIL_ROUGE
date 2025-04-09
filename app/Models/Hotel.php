@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,14 +10,31 @@ class Hotel extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 
-        'name', 
-        'location', 
-        'phone_number'
+        'name',
+        'description',
+        'address',
+        'city',
+        'country',
+        'star_rating',
+        'price_per_night',
+        'image',
+        'amenities',
+        'latitude',
+        'longitude'
     ];
 
-    public function user()
+    protected $casts = [
+        'amenities' => 'array',
+        'star_rating' => 'float'
+    ];
+
+    public function rooms()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(Room::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 }
