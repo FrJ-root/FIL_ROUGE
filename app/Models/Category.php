@@ -31,4 +31,12 @@ class Category extends Model
     {
         return $this->hasMany(TravelGuide::class);
     }
+
+    /**
+     * Get the trips in this category.
+     */
+    public function trips()
+    {
+        return $this->belongsToMany(Trip::class, 'trip_category');
+    }
 }

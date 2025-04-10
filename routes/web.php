@@ -2,10 +2,12 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MapController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DestinationController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SocialAuthController;
@@ -108,14 +110,47 @@ Route::prefix('traveller')->name('traveller.')->middleware(['auth'])->group(func
         return view('traveller.pages.trips');
     })->name('trips');
 
-    // Route::get('/profile', function () {
-    //     return view('traveller.pages.profile');
-    // })->name('profile');
-
     Route::get('/profile', [TravellerDashboardController::class, 'profile'])
     ->name('pages.profile');
+    
+    Route::get('/profile/edit', [TravellerDashboardController::class, 'editProfile'])
+    ->name('profile.edit');
+    
+    Route::post('/profile/update', [TravellerDashboardController::class, 'updateProfile'])
+    ->name('profile.update');
 
 });
+
+// Trip routes - Public and Protected
+Route::get('/trips', [TripController::class, 'index'])->name('trips.index');
+
+Route::middleware(['auth'])->group(function() {
+    Route::get('/trips/create', [TripController::class, 'create'])->name('trips.create');
+    Route::post('/trips', [TripController::class, 'store'])->name('trips.store');
+});
+
+// Then define wildcard/parameter routes
+Route::get('/trips/{trip}', [TripController::class, 'show'])->name('trips.show');
+
+// Protected Trip management routes (require authentication)
+Route::middleware(['auth'])->group(function() {
+    Route::get('/trips/{trip}/edit', [TripController::class, 'edit'])->name('trips.edit');
+    Route::delete('/trips/{trip}/activities/{activity}', [TripController::class, 'removeActivity'])->name('trips.activities.remove');
+    
+    // Trip itinerary management
+    Route::post('/trips/{trip}/itinerary', [TripController::class, 'updateItinerary'])->name('trips.itinerary.update');
+    
+    // Trip travellers management
+    Route::post('/trips/{trip}/travellers', [TripController::class, 'addTraveller'])->name('trips.travellers.add');
+    Route::delete('/trips/{trip}/travellers/{traveller}', [TripController::class, 'removeTraveller'])->name('trips.travellers.remove');
+});
+
+// Map routes - Fix the map route
+Route::get('/maps', [MapController::class, 'index'])->name('maps.index');
+
+// Destination routes
+Route::get('/destinations', [DestinationController::class, 'index'])->name('destinations.index');
+Route::get('/destinations/{slug}', [DestinationController::class, 'show'])->name('destinations.show');
 
 // User Profile & Settings
 Route::middleware(['auth'])->group(function () {

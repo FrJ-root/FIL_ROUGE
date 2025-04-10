@@ -9,8 +9,64 @@
 
             <div class="hidden md:flex space-x-8">
                 <a href="{{ url('/') }}" class="text-gray-800 font-bold hover:text-green-500 transition-colors duration-300 border-b-2 border-transparent hover:border-green-500 pb-1">Home</a>
-                <a href="{{ route('travel-guides') }}" class="text-gray-800 font-bold hover:text-green-500 transition-colors duration-300 border-b-2 border-transparent hover:border-green-500 pb-1">Travel Guides</a>
-                <a href="{{ route('hotels') }}" class="text-gray-800 font-bold hover:text-green-500 transition-colors duration-300 border-b-2 border-transparent hover:border-green-500 pb-1">Hotels</a>
+                <a href="{{ route('destinations.index') }}" class="text-gray-800 font-bold hover:text-green-500 transition-colors duration-300 border-b-2 border-transparent hover:border-green-500 pb-1">Destination</a>
+                <a href="{{ route('maps.index') }}" class="text-gray-800 font-bold hover:text-green-500 transition-colors duration-300 border-b-2 border-transparent hover:border-green-500 pb-1">Map</a>
+                <a href="{{ route('trips.index') }}" class="text-gray-800 font-bold hover:text-green-500 transition-colors duration-300 border-b-2 border-transparent hover:border-green-500 pb-1">Custom Trip</a>
+                <a href="#" class="text-gray-800 font-bold hover:text-green-500 transition-colors duration-300 border-b-2 border-transparent hover:border-green-500 pb-1">
+                    <i class="fas fa-mobile-alt mr-1"></i> App
+                </a>
+                <div x-data="{ open: false, currentCurrency: 'USD' }" class="relative inline-block">
+                    <button @click="open = !open" @click.away="open = false" class="text-gray-800 font-bold hover:text-green-500 transition-colors duration-300 border-b-2 border-transparent hover:border-green-500 pb-1 flex items-center">
+                        <i class="fas fa-dollar-sign mr-1"></i>
+                        <span x-text="currentCurrency"></span>
+                        <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </button>
+                    <div x-show="open" 
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="transform opacity-0 scale-95"
+                         x-transition:enter-end="transform opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="transform opacity-100 scale-100"
+                         x-transition:leave-end="transform opacity-0 scale-95"
+                         class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 max-h-96 overflow-y-auto">
+                        <a href="#" @click.prevent="currentCurrency = 'MAD'; open = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                            <img src="https://flagcdn.com/w20/ma.png" alt="Morocco" class="w-5 h-auto mr-2">
+                            MAD - Moroccan Dirham
+                        </a>
+                        <a href="#" @click.prevent="currentCurrency = 'USD'; open = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                            <img src="https://flagcdn.com/w20/us.png" alt="USA" class="w-5 h-auto mr-2">
+                            USD - US Dollar
+                        </a>
+                        <a href="#" @click.prevent="currentCurrency = 'EUR'; open = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                            <img src="https://flagcdn.com/w20/eu.png" alt="EU" class="w-5 h-auto mr-2">
+                            EUR - Euro
+                        </a>
+                        <a href="#" @click.prevent="currentCurrency = 'GBP'; open = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                            <img src="https://flagcdn.com/w20/gb.png" alt="UK" class="w-5 h-auto mr-2">
+                            GBP - British Pound
+                        </a>
+                        <a href="#" @click.prevent="currentCurrency = 'JPY'; open = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                            <img src="https://flagcdn.com/w20/jp.png" alt="Japan" class="w-5 h-auto mr-2">
+                            JPY - Japanese Yen
+                        </a>
+                        <a href="#" @click.prevent="currentCurrency = 'CAD'; open = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                            <img src="https://flagcdn.com/w20/ca.png" alt="Canada" class="w-5 h-auto mr-2">
+                            CAD - Canadian Dollar
+                        </a>
+                        <a href="#" @click.prevent="currentCurrency = 'AUD'; open = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                            <img src="https://flagcdn.com/w20/au.png" alt="Australia" class="w-5 h-auto mr-2">
+                            AUD - Australian Dollar
+                        </a>
+                        <a href="#" @click.prevent="currentCurrency = 'CHF'; open = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                            <img src="https://flagcdn.com/w20/ch.png" alt="Switzerland" class="w-5 h-auto mr-2">
+                            CHF - Swiss Franc
+                        </a>
+                        <a href="#" @click.prevent="currentCurrency = 'CNY'; open = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                            <img src="https://flagcdn.com/w20/cn.png" alt="China" class="w-5 h-auto mr-2">
+                            CNY - Chinese Yuan
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
         

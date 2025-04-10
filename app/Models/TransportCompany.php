@@ -23,4 +23,8 @@ class TransportCompany extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function trips()
+    {
+        return $this->belongsToMany(Trip::class, 'trip_transport_company');
+    }
 }

@@ -29,4 +29,12 @@ class Tag extends Model
     {
         return $this->belongsToMany(TravelGuide::class, 'travel_guide_tag');
     }
+
+    /**
+     * The trips that belong to this tag.
+     */
+    public function trips()
+    {
+        return $this->belongsToMany(Trip::class, 'trip_tag');
+    }
 }

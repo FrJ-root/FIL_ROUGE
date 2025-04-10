@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
             'destination' => 'Marrakech',
             'start_date' => now(),
             'end_date' => now()->addDays(5),
+            'cover_picture' => 'marrakech-initial.jpg', // Add cover picture
         ]);
 
         $itinerary = Itinerary::create([
@@ -31,7 +32,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@admin.com',
         ], [
             'name' => 'admin',
-            'password' => 'admin123',  // Plain text password
+            'password' => 'admin123',
             'role' => 'admin',
             'picture' => 'storage/pictures/admin.jpg',
         ]);
@@ -40,7 +41,7 @@ class UserSeeder extends Seeder
             'email' => 'traveller@traveller.com',
         ], [
             'name' => 'traveller',
-            'password' => 'traveller123',  // Plain text password
+            'password' => 'traveller123',
             'role' => 'traveller',
             'picture' => 'storage/pictures/traveller.jpg',
         ]);
@@ -58,7 +59,7 @@ class UserSeeder extends Seeder
             'email' => 'guide@guide.com',
         ], [
             'name' => 'guide',
-            'password' => 'guide123',  // Plain text password
+            'password' => 'guide123',
             'role' => 'guide',
             'picture' => 'storage/pictures/guide.jpg',
         ]);
@@ -73,25 +74,27 @@ class UserSeeder extends Seeder
             'email' => 'company@company.com',
         ], [
             'name' => 'travel company',
-            'password' => 'company123',  // Plain text password
+            'password' => 'company123',
             'role' => 'transport company',
             'picture' => 'storage/pictures/transportcompany.jpg',
         ]);
 
-        TransportCompany::create([
-            'user_id' => $company->id,
-            'company_name' => 'Best Travel Co.',
-            'transport_type' => 'Bus',
-            'license_number' => 'T123456',
-            'address' => '123 Travel St., City Center',
-            'phone' => '0600000000',
-        ]);
+        if (!TransportCompany::where('user_id', $company->id)->exists()) {
+            TransportCompany::create([
+                'user_id' => $company->id,
+                'company_name' => 'Best Travel Co.',
+                'transport_type' => 'Bus',
+                'license_number' => 'USER-123456', // Changed license number format to avoid conflicts
+                'address' => '123 Travel St., City Center',
+                'phone' => '0600000000',
+            ]);
+        }
 
         $hotel = User::firstOrCreate([
             'email' => 'hotel@hotel.com',
         ], [
             'name' => 'hotel',
-            'password' => 'hotel123',  // Plain text password
+            'password' => 'hotel123',
             'role' => 'hotel',
             'picture' => 'storage/pictures/hotel.jpg',
         ]);

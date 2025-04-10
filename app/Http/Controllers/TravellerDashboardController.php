@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Trip;
+use App\Models\User;
 use App\Models\Traveller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class TravellerDashboardController extends Controller
 {
@@ -60,9 +64,72 @@ class TravellerDashboardController extends Controller
         $traveller = Traveller::where('user_id', Auth::id())->first();
         $user = Auth::user();
         
-        return view('traveller.profile', [
+        return view('traveller.pages.profile', [
             'traveller' => $traveller,
             'user' => $user
         ]);
+    }
+    
+    public function editProfile()
+    {
+        $traveller = Traveller::where('user_id', Auth::id())->first();
+        $user = Auth::user();
+        
+        return view('traveller.pages.edit_profile', [
+            'traveller' => $traveller,
+            'user' => $user
+        ]);
+    }
+    
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+        
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
+            'nationality' => 'nullable|string|max:100',
+            'passport_number' => 'nullable|string|max:50',
+            'prefered_destination' => 'nullable|string|max:100',
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+        
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+        
+        $user->name = $request->name;
+        $user->email = $request->email;
+        
+        // Handle profile picture upload
+        if ($request->hasFile('picture')) {
+            // Delete old picture if exists
+            if ($user->picture) {
+                Storage::disk('public')->delete($user->picture);
+            }
+            
+            // Store the new picture
+            $path = $request->file('picture')->store('profile-pictures', 'public');
+            $user->picture = $path;
+        }
+        
+        $user->save();
+        
+        $traveller = Traveller::where('user_id', $user->id)->first();
+        
+        if (!$traveller) {
+            $traveller = new Traveller();
+            $traveller->user_id = $user->id;
+        }
+        
+        $traveller->nationality = $request->nationality;
+        $traveller->passport_number = $request->passport_number;
+        $traveller->prefered_destination = $request->prefered_destination;
+        $traveller->save();
+        
+        return redirect()->route('traveller.pages.profile')
+            ->with('success', 'Profile updated successfully');
     }
 }

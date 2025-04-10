@@ -28,4 +28,6 @@
             @yield('profile_content')
         </div>
     </div>
+    
+    @stack('scripts')
 @endsection
