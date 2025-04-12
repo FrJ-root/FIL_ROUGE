@@ -43,6 +43,18 @@ $app->singleton(
 
 /*
 |--------------------------------------------------------------------------
+| Include Helper Functions
+|--------------------------------------------------------------------------
+|
+| Here we include the helper functions file to make the custom helpers
+| available throughout the application.
+|
+*/
+
+require_once __DIR__ . '/../app/Helpers/helpers.php';
+
+/*
+|--------------------------------------------------------------------------
 | Return The Application
 |--------------------------------------------------------------------------
 |

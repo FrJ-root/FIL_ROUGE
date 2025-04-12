@@ -9,19 +9,16 @@
         class="transition-all duration-300" 
         id="main-content"
     >
-        <!-- Hero Section with Cover Image -->
         @php
-            // Get cover image URL with fallback options
             $coverImageUrl = null;
             if ($trip->cover_picture) {
-                $coverImageUrl = asset('storage/images/trips/' . $trip->cover_picture);
+                $coverImageUrl = asset('storage/images/trip/' . $trip->cover_picture);
             } else {
                 // Fallback to destination image if cover_picture is not set
                 $destinationName = explode(',', $trip->destination)[0] ?? '';
                 $destination = App\Models\Destination::where('name', $destinationName)->first();
-                $coverImageUrl = $destination && $destination->image 
-                    ? asset('storage/images/destinations/' . $destination->image) 
-                    : asset('images/default-trip.jpg');
+                $coverImageUrl = $destination ? getDestinationImageUrl($destination->name, $destination->location) 
+                         : 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80';
             }
         @endphp
         <div class="relative w-full h-96 md:h-[500px] overflow-hidden mb-8">
@@ -200,7 +197,10 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             @foreach($trip->activities->sortBy('scheduled_at') as $activity)
                             <div class="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] bg-white">
-                                <div class="h-32 bg-gray-200 relative" style="background-image: url('{{ asset('images/activities/' . strtolower(str_replace(' ', '-', $activity->name)) . '.jpg') }}'); background-size: cover; background-position: center;">
+                                @php
+                                    $activityImageUrl = asset('images/activities/' . strtolower(str_replace(' ', '-', $activity->name)) . '.jpg');
+                                @endphp
+                                <div class="h-32 bg-gray-200 relative" style="background-image: url('{{ $activityImageUrl }}'); background-size: cover; background-position: center;">
                                     <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent text-white">
                                         <span class="font-bold">{{ date('M d, Y - g:i A', strtotime($activity->scheduled_at)) }}</span>
                                     </div>
@@ -310,7 +310,7 @@
                                 @foreach($displayTravellers as $traveller)
                                 <div class="flex justify-between items-center p-3 hover:bg-gray-50 rounded-lg border border-gray-100">
                                     <div class="flex items-center">
-                                        <img src="{{ $traveller->user->profile_photo_url ?? asset('assets/images/default-avatar.png') }}" 
+                                        <img src="{{ $traveller->user->profile_photo_url ?? asset('storage/images/default-avatar.png') }}" 
                                             alt="Avatar" class="w-10 h-10 rounded-full mr-3 object-cover border border-gray-200">
                                         <div>
                                             <div class="font-medium">{{ $traveller->user->name }}</div>
@@ -397,57 +397,88 @@
                 </div>
             </div>
         </div>
-    </div>
-@endsection
 
+        <!-- Related Trips Section -->
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Related Trips</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($relatedTrips as $trip)
+                <div class="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                    <div class="h-36 bg-gray-200 relative">
+                        @php
+                            $imageUrl = null;
+                            if ($trip->cover_picture) {
+                                $imageUrl = asset('storage/trips/' . $trip->cover_picture);
+                            } else {
+                                // Fallback to destination image if cover_picture is not set
+                                $destinationName = explode(',', $trip->destination)[0] ?? '';
+                                $destination = App\Models\Destination::where('name', $destinationName)->first();
+                                $imageUrl = $destination ? getDestinationImageUrl($destination->name, $destination->location) 
+                                       : 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80';
+                            }
+                        @endphp
+                        <img src="{{ $imageUrl }}" alt="{{ $trip->destination }}" class="w-full h-full object-cover">
+                        <img src="{{ $imageUrl }}" alt="{{ $trip->destination }}" class="w-full h-full object-cover">
+                    </div>lass="p-4">
+                    <div class="p-4">xt-lg font-bold text-gray-800">{{ $trip->destination }}</h3>
+                        <h3 class="text-lg font-bold text-gray-800">{{ $trip->destination }}</h3>_date)) }} - {{ date('M d, Y', strtotime($trip->end_date)) }}</p>
+                        <p class="text-sm text-gray-600">{{ date('M d, Y', strtotime($trip->start_date)) }} - {{ date('M d, Y', strtotime($trip->end_date)) }}</p>
+                        <a href="{{ route('trips.show', $trip->id) }}" class="text-blue-500 hover:text-blue-700 mt-2 inline-block">View Trip</a>
+                    </div>
+                </div>reach
+                @endforeach
+            </div>
+        </div>
+    </div>n
+@endsection
 @push('styles')
-<style>
+@push('styles')
+<style>Parallax-like effect for the hero image */
     /* Parallax-like effect for the hero image */
-    .bg-cover {
-        background-size: cover;
+    .bg-cover {und-size: cover;
+        background-size: cover;.5s ease;
         transition: transform 0.5s ease;
     }
-    
+    /* Subtle zoom effect on hover */
     /* Subtle zoom effect on hover */
     .relative:hover .bg-cover {
         transform: scale(1.05);
     }
-    
     /* Add some motion to the page when content scrolls */
-    .relative {
+    /* Add some motion to the page when content scrolls */
+    .relative {tive: 1000px;
         perspective: 1000px;
     }
-    
     /* Enhance shadow effect on cards */
-    .shadow-md:hover {
+    /* Enhance shadow effect on cards */
+    .shadow-md:hover {10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    }
+    }le>
 </style>
 @endpush
-
 @push('scripts')
-<script>
-    function safeToggle(elementId) {
+@push('scripts')
+<script>tion safeToggle(elementId) {
+    function safeToggle(elementId) {ElementById(elementId);
         const element = document.getElementById(elementId);
-        if (element) {
+        if (element) {assList.toggle('hidden');
             element.classList.toggle('hidden');
             return true;
-        }
+        }eturn false;
         return false;
     }
-
     function toggleItineraryForm() {
-        if (safeToggle('itinerary-form')) {
+    function toggleItineraryForm() {rm')) {
+        if (safeToggle('itinerary-form')) {;
             safeToggle('itinerary-display');
         }
     }
-
     function toggleActivityForm() {
+    function toggleActivityForm() {;
         safeToggle('activity-form');
     }
-
     function toggleTravellerForm() {
+    function toggleTravellerForm() {;
         safeToggle('traveller-form');
-    }
-</script>
-@endpush
+    }ipt>
+</script>@endpush

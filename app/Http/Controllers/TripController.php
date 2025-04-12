@@ -139,7 +139,19 @@ class TripController extends Controller
             $canEdit = $isTraveller || $isAdmin;
         }
         
-        return view('trips.show', compact('trip', 'canEdit'));
+        // Get related trips based on the same destination
+        $relatedTrips = Trip::where('id', '!=', $trip->id)
+                            ->where('destination', 'like', '%' . explode(',', $trip->destination)[0] . '%')
+                            ->orWhere(function($query) use ($trip) {
+                                $destinationParts = explode(',', $trip->destination);
+                                foreach($destinationParts as $part) {
+                                    $query->orWhere('destination', 'like', '%' . trim($part) . '%');
+                                }
+                            })
+                            ->take(3)
+                            ->get();
+        
+        return view('trips.show', compact('trip', 'canEdit', 'relatedTrips'));
     }
 
     /**

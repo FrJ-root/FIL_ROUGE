@@ -12,8 +12,7 @@
         <!-- Hero Header -->
         <div class="relative h-[500px] overflow-hidden">
             <div class="absolute inset-0 bg-cover bg-center" 
-                style="background-image: url('{{ asset('storage/images/destinations/' . $destination->image) }}');"
-                onerror="this.style.backgroundImage='url({{ asset('images/default-destination.jpg') }})'">
+                style="background-image: url('{{ getDestinationImageUrl($destination->name, $destination->location) }}');">
             </div>
             <div class="absolute inset-0 bg-gradient-to-b from-black/50 to-black/70"></div>
             <div class="absolute inset-0 flex flex-col justify-end p-8">
@@ -111,7 +110,7 @@
                                     @php
                                         $imageUrl = $trip->cover_picture 
                                             ? asset('storage/images/trips/' . $trip->cover_picture)
-                                            : asset('images/default-trip.jpg');
+                                            : asset('storage/images/default-trip.jpg');
                                     @endphp
                                     <img src="{{ $imageUrl }}" alt="{{ $trip->destination }}" class="w-full h-full object-cover">
                                     <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent text-white">

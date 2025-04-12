@@ -29,74 +29,6 @@
             </div>
             @endif
 
-            <!-- Featured Trips Section -->
-            <section class="mb-12">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Featured Trips</h2>
-                
-                @if(isset($featuredTrips) && count($featuredTrips) > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($featuredTrips as $trip)
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow trip-card">
-                        <div class="trip-card-image">
-                            @php
-                                // Use the trip's cover picture or fall back to destination image
-                                $imageUrl = null;
-                                if ($trip->cover_picture) {
-                                    $imageUrl = asset('storage/images/trips/' . $trip->cover_picture);
-                                } else {
-                                    // Fallback to destination image if cover_picture is not set
-                                    $destinationName = explode(',', $trip->destination)[0] ?? '';
-                                    $destination = App\Models\Destination::where('name', $destinationName)->first();
-                                    $imageUrl = $destination && $destination->image 
-                                        ? asset('storage/images/destinations/' . $destination->image) 
-                                        : asset('images/default-trip.jpg');
-                                }
-                            @endphp
-                            <img src="{{ $imageUrl }}" class="w-full h-full object-cover" alt="{{ $trip->destination }}">
-                            <div class="trip-dates">
-                                {{ date('M d', strtotime($trip->start_date)) }} - {{ date('M d, Y', strtotime($trip->end_date)) }}
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="text-xl font-semibold mb-2">{{ $trip->destination }}</h3>
-                            <div class="mb-3">
-                                <p class="text-gray-600"><i class="far fa-calendar-alt mr-2"></i> {{ \Carbon\Carbon::parse($trip->start_date)->diffInDays($trip->end_date) + 1 }} days</p>
-                                <p class="text-gray-700 mt-2">
-                                    <span class="font-medium">Activities:</span> {{ $trip->activities->count() }}
-                                </p>
-                                <p class="text-gray-700">
-                                    <span class="font-medium">Travellers:</span> {{ $trip->travellers->count() }}
-                                </p>
-                            </div>
-                            
-                            <!-- Displaying tags if available -->
-                            @if($trip->tags && $trip->tags->count() > 0)
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                @foreach($trip->tags->take(3) as $tag)
-                                <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded">{{ $tag->name }}</span>
-                                @endforeach
-                                @if($trip->tags->count() > 3)
-                                <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded">+{{ $trip->tags->count() - 3 }}</span>
-                                @endif
-                            </div>
-                            @endif
-                            
-                            <div class="flex justify-center mt-4">
-                                <a href="{{ route('trips.show', $trip->id) }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
-                                    <i class="fas fa-eye mr-1"></i> View Details
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-                @else
-                <div class="bg-white rounded-lg shadow-md p-6 text-center">
-                    <p class="text-gray-600">No featured trips available at the moment.</p>
-                </div>
-                @endif
-            </section>
-
             <!-- All Trips Section -->
             <section class="mb-12">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Browse All Trips</h2>
@@ -109,14 +41,12 @@
                             @php
                                 $imageUrl = null;
                                 if ($trip->cover_picture) {
-                                    $imageUrl = asset('storage/images/trips/' . $trip->cover_picture);
+                                    $imageUrl = asset('storage/images/trip/' . $trip->cover_picture);
                                 } else {
-                                    // Fallback to destination image if cover_picture is not set
                                     $destinationName = explode(',', $trip->destination)[0] ?? '';
                                     $destination = App\Models\Destination::where('name', $destinationName)->first();
-                                    $imageUrl = $destination && $destination->image 
-                                        ? asset('storage/images/destinations/' . $destination->image) 
-                                        : asset('images/default-trip.jpg');
+                                    $imageUrl = $destination ? getDestinationImageUrl($destination->name, $destination->location) 
+                                        : 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80';
                                 }
                             @endphp
                             <img src="{{ $imageUrl }}" class="w-full h-full object-cover" alt="{{ $trip->destination }}">
@@ -177,17 +107,14 @@
                     <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow trip-card">
                         <div class="trip-card-image">
                             @php
-                                // Use the trip's cover picture or fall back to destination image
                                 $imageUrl = null;
                                 if ($trip->cover_picture) {
                                     $imageUrl = asset('storage/images/trips/' . $trip->cover_picture);
                                 } else {
-                                    // Fallback to destination image if cover_picture is not set
                                     $destinationName = explode(',', $trip->destination)[0] ?? '';
                                     $destination = App\Models\Destination::where('name', $destinationName)->first();
-                                    $imageUrl = $destination && $destination->image 
-                                        ? asset('storage/images/destinations/' . $destination->image) 
-                                        : asset('images/default-trip.jpg');
+                                    $imageUrl = $destination ? getDestinationImageUrl($destination->name, $destination->location) 
+                                        : 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80';
                                 }
                             @endphp
                             <img src="{{ $imageUrl }}" class="w-full h-full object-cover" alt="{{ $trip->destination }}">

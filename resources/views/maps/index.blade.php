@@ -130,7 +130,7 @@
                             <div class="flex-shrink-0 w-32 cursor-pointer hover:opacity-90 transition-opacity destination-card" 
                                  data-name="{{ $destination->name }}, {{ $destination->location }}">
                                 <div class="h-20 rounded-lg bg-cover bg-center relative" 
-                                     style="background-image: url('{{ asset('storage/images/destinations/' . $destination->image) }}')">
+                                     style="background-image: url('{{ getDestinationImageUrl($destination->name, $destination->location) }}')">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-lg"></div>
                                     <div class="absolute bottom-0 p-1 text-white font-medium text-xs">
                                         {{ $destination->name }}
@@ -438,7 +438,7 @@
                         name: destination.name,
                         location: destination.location,
                         description: destination.description || `Explore the beautiful destination of ${destination.name} located in ${destination.location}.`,
-                        image: destination.image ? `{{ asset('storage/images/destinations') }}/${destination.image}` : `{{ asset('images/default-destination.jpg') }}`,
+                        image: `https://source.unsplash.com/800x600/?${destination.name},${destination.location}`,
                         type: 'destination',
                         details: {
                             // Additional details to display
@@ -531,21 +531,21 @@
                 location: "Paris, France",
                 description: "Iconic iron tower in Paris, a symbol of France and one of the world's most recognizable landmarks.",
                 coordinates: [48.8584, 2.2945],
-                image: "{{ asset('images/attractions/eiffel-tower.jpg') }}"
+                image: "{{ asset('storage/images/attractions/eiffel-tower.jpg') }}"
             },
             {
                 name: "Colosseum",
                 location: "Rome, Italy",
                 description: "Ancient amphitheater in the center of Rome, a masterpiece of Roman engineering and architecture.",
                 coordinates: [41.8902, 12.4922],
-                image: "{{ asset('images/attractions/colosseum.jpg') }}"
+                image: "{{ asset('storage/images/attractions/colosseum.jpg') }}"
             },
             {
                 name: "Statue of Liberty",
                 location: "New York, USA",
                 description: "Colossal statue on Liberty Island, a symbol of freedom and the United States.",
                 coordinates: [40.6892, -74.0445],
-                image: "{{ asset('images/attractions/statue-of-liberty.jpg') }}"
+                image: "{{ asset('storage/images/attractions/statue-of-liberty.jpg') }}"
             }
         ];
         

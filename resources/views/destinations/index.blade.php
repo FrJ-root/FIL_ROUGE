@@ -11,7 +11,7 @@
     >
         <!-- Hero Section -->
         <div class="relative h-[500px] overflow-hidden">
-            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{ asset('images/destinations/hero.jpg') }}');"></div>
+            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');"></div>
             <div class="absolute inset-0 bg-gradient-to-b from-black/50 to-black/70"></div>
             <div class="absolute inset-0 flex items-center justify-center">
                 <div class="text-center text-white px-4 max-w-4xl">
@@ -44,10 +44,9 @@
                     <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow group">
                         <a href="{{ route('destinations.show', $destination->slug) }}" class="block relative h-64 overflow-hidden">
                             <img 
-                                src="{{ asset('storage/images/destinations/' . $destination->image) }}" 
+                                src="{{ getDestinationImageUrl($destination->name, $destination->location) }}" 
                                 alt="{{ $destination->name }}" 
                                 class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                                onerror="this.src='{{ asset('images/default-destination.jpg') }}'"
                             >
                             <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                             <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
@@ -79,10 +78,9 @@
                             <a href="{{ route('destinations.show', $destination->slug) }}" class="group">
                                 <div class="relative h-48 rounded-lg overflow-hidden">
                                     <img 
-                                        src="{{ asset('storage/images/destinations/' . $destination->image) }}" 
+                                        src="{{ getDestinationImageUrl($destination->name, $destination->location) }}" 
                                         alt="{{ $destination->name }}" 
                                         class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                                        onerror="this.src='{{ asset('images/default-destination.jpg') }}'"
                                     >
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                                     <div class="absolute bottom-0 left-0 right-0 p-3 text-white">
@@ -109,7 +107,7 @@
                                 src="{{ asset('storage/images/categories/' . $category->image) }}" 
                                 alt="{{ $category->name }}" 
                                 class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                                onerror="this.src='{{ asset('images/default-category.jpg') }}'"
+                                onerror="this.src='{{ asset('storage/images/default-category.jpg') }}'"
                             >
                             <div class="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors"></div>
                             <div class="absolute inset-0 flex items-center justify-center text-white">
@@ -157,10 +155,10 @@
                         </div>
                         <div class="relative h-64 md:h-auto rounded-lg overflow-hidden">
                             <img 
-                                src="{{ asset('images/travel-planning.jpg') }}" 
+                                src="{{ asset('storage/images/travel-planning.jpg') }}" 
                                 alt="Travel Planning" 
                                 class="w-full h-full object-cover"
-                                onerror="this.src='{{ asset('images/default-travel-tip.jpg') }}'"
+                                onerror="this.src='{{ asset('storage/images/default-travel-tip.jpg') }}'"
                             >
                         </div>
                     </div>

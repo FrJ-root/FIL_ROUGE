@@ -11,7 +11,7 @@
             <!-- Logo & About -->
             <div class="space-y-4">
                 <div class="flex items-center">
-                    <img src="{{ asset('assets/images/TripyDB.png') }}" alt="TripyDB Logo" class="h-12 w-auto mr-3">
+                    <img src="{{ asset('storage/images/logo/TripyDB.png') }}" alt="TripyDB Logo" class="h-12 w-auto mr-3">
                 </div>
                 <p class="text-gray-400 text-sm leading-relaxed">Explore the world with TripyDB - your ultimate travel companion. We help you discover amazing destinations, plan unforgettable trips, and create lifelong memories.</p>
                 <div class="flex space-x-4">

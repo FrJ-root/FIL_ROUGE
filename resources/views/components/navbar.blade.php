@@ -4,7 +4,7 @@
     <div class="container mx-auto flex justify-between items-center">
         <div class="flex items-center space-x-12">
             <div class="text-2xl font-bold text-red-500 flex items-center">
-                <img src="{{ asset('assets/images/TripyDB.png') }}" alt="TripyDB Logo" class="h-8 md:h-9 lg:h-10 w-auto transform hover:scale-105 transition-transform duration-300">
+                <img src="{{ asset('storage/images/logo/TripyDB.png') }}" alt="TripyDB Logo" class="h-8 md:h-9 lg:h-10 w-auto transform hover:scale-105 transition-transform duration-300">
             </div>
 
             <div class="hidden md:flex space-x-8">
@@ -119,7 +119,7 @@
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" @click.away="open = false" class="flex items-center text-gray-800 font-bold hover:text-green-500">
                         <span>{{ Auth::user()->name }}</span>
-                        <img src="{{ Auth::user()->profile_photo_url ?? asset('assets/images/default-avatar.png') }}" 
+                        <img src="{{ Auth::user()->profile_photo_url ?? asset('storage/images/default-avatar.png') }}" 
                              alt="{{ Auth::user()->name }}" 
                              class="h-8 w-8 rounded-full object-cover ml-2 border border-gray-200">
                         <i class="fas fa-chevron-down text-xs ml-2"></i>
