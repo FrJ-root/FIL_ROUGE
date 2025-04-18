@@ -13,6 +13,13 @@ class Guide extends Model
         'user_id', 
         'license_number', 
         'specialization',
+        'availability', 
+        'preferred_locations', 
+        'selected_dates',
+    ];
+
+    protected $casts = [
+        'availability' => 'string',
     ];
 
     public function user()
@@ -23,5 +30,10 @@ class Guide extends Model
     public function trips()
     {
         return $this->belongsToMany(Trip::class, 'trip_guide');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 }

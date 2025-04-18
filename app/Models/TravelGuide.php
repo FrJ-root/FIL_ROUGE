@@ -37,9 +37,6 @@ class TravelGuide extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
-    /**
-     * The tags that belong to this travel guide.
-     */
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'travel_guide_tag');

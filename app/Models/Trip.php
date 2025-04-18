@@ -31,7 +31,6 @@ class Trip extends Model
         return $this->hasMany(Activity::class);
     }
     
-    // New relationships for trip filtering
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'trip_category');
@@ -42,9 +41,9 @@ class Trip extends Model
         return $this->belongsToMany(Tag::class, 'trip_tag');
     }
     
-    public function transportCompanies()
+    public function transport()
     {
-        return $this->belongsToMany(TransportCompany::class, 'trip_transport_company');
+        return $this->belongsToMany(Transport::class, 'trip_transport');
     }
     
     public function guides()

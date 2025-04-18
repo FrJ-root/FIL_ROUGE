@@ -8,8 +8,7 @@ use Illuminate\Support\Str;
 
 class DestinationSeeder extends Seeder
 {
-    public function run()
-    {
+    public function run(){
         $destinations = [
             [
                 'name' => 'Paris',
@@ -70,7 +69,6 @@ class DestinationSeeder extends Seeder
         ];
         
         foreach ($destinations as $destination) {
-            // Use firstOrCreate to prevent duplicate entries
             Destination::firstOrCreate(
                 ['slug' => Str::slug($destination['name'])],
                 [
@@ -79,8 +77,8 @@ class DestinationSeeder extends Seeder
                     'image' => $destination['image'],
                     'location' => $destination['location'],
                     'is_featured' => $destination['is_featured'],
-                    'meta_title' => 'Visit ' . $destination['name'],
-                    'meta_description' => 'Plan your trip to ' . $destination['name'] . ', ' . $destination['location'],
+                    'meta_title' => 'Visit '.$destination['name'],
+                    'meta_description' => 'Plan your trip to '.$destination['name'].', '.$destination['location'],
                 ]
             );
         }

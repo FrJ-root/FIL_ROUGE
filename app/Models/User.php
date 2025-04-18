@@ -31,6 +31,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'role' => 'string',
     ];
 
     public function setPasswordAttribute($value)
@@ -38,9 +39,9 @@ class User extends Authenticatable
         $this->attributes['password'] = Hash::make($value);
     }
 
-    public function transportCompany()
+    public function transport()
     {
-        return $this->hasOne(TransportCompany::class, 'user_id');
+        return $this->hasOne(Transport::class, 'user_id');
     }
 
     public function traveller()
@@ -58,33 +59,17 @@ class User extends Authenticatable
         return $this->hasOne(Guide::class, 'user_id');
     }
 
-    /**
-     * Check if the user has a specific role using our service
-     * Renamed to avoid conflict with Spatie's hasRole method
-     *
-     * @param string $roleName
-     * @return bool
-     */
     public function checkCustomRole(string $roleName): bool
     {
         return RoleService::hasRole($this, $roleName);
     }
     
-    /**
-     * Assign a role to the user using our service
-     * This is safe to keep as it doesn't conflict with Spatie methods
-     *
-     * @param string $roleName
-     * @return bool
-     */
     public function assignRole(string $roleName): bool
     {
-        // First try using Spatie's method
         try {
             parent::assignRole($roleName);
             return true;
         } catch (\Exception $e) {
-            // Fallback to our custom service
             return RoleService::assignRole($this, $roleName);
         }
     }

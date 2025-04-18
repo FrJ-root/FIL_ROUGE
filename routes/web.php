@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MapController;
 use App\Http\Controllers\TripController;
+use App\Http\Controllers\GuideController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\LoginController;
@@ -13,7 +14,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\TravellerDashboardController;
 use App\Http\Controllers\Admin\AccountValidationController;
-
+use App\Http\Controllers\Transport\TransportCompanyController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -78,7 +79,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // TravelCompany
-Route::middleware(['auth', 'role:travel_company'])->prefix('company')->group(function () {
+Route::middleware(['auth', 'role:transport company'])->prefix('transport')->group(function () {
     Route::get('/dashboard', function () {
         return view('company.dashboard');
     })->name('company.dashboard');
@@ -92,10 +93,49 @@ Route::middleware(['auth', 'role:hotel'])->prefix('hotel')->group(function () {
 });
 
 // Guide
-Route::middleware(['auth', 'role:guide'])->prefix('guide')->group(function () {
+Route::prefix('guide')->name('guide.')->middleware(['auth'])->group(function () {
+
     Route::get('/dashboard', function () {
         return view('guide.dashboard');
-    })->name('guide.dashboard');
+    })->name('dashboard');
+
+    Route::get('/trips', function () {
+        return view('guide.pages.trips');
+    })->name('trips');
+
+    Route::get('/availability', function () {
+        return view('guide.pages.availability');
+    })->name('availability');
+
+    Route::post('/update-availability', [GuideController::class, 'updateAvailability'])
+    ->name('updateAvailability');
+
+    Route::get('/profile', [GuideController::class, 'showProfile'])
+    ->name('profile');
+
+    Route::get('/profile/edit', [GuideController::class, 'editProfile'])
+    ->name('profile.edit');
+
+    Route::post('/profile/update', [GuideController::class, 'updateProfile'])
+    ->name('profile.update');
+
+    Route::get('/travellers', [GuideController::class, 'showTravellers'])
+    ->name('travellers');
+
+    Route::post('/travellers/message', [GuideController::class, 'sendMessageToTraveller'])
+    ->name('travellers.message');
+
+    Route::get('/messages', [GuideController::class, 'showMessages'])
+    ->name('messages');
+
+    Route::get('/reviews', [GuideController::class, 'showReviews'])
+    ->name('reviews');
+
+    Route::get('/guide/availability', [GuideController::class, 'showAvailability'])
+    ->name('guide.availability');
+    
+    Route::post('/reviews', [GuideController::class, 'storeReview'])
+    ->name('reviews.store');
 });
 
 // Traveller
@@ -197,4 +237,29 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::get('/help', function () {
         return view('admin.pages.help');
     })->name('help');
+});
+
+Route::prefix('user')->name('user.')->middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('user.dashboard');
+    })->name('dashboard');
+
+    Route::get('/profile', [\App\Http\Controllers\UserController::class, 'showProfile'])->name('profile');
+    Route::get('/profile/edit', [\App\Http\Controllers\UserController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/profile/update', [\App\Http\Controllers\UserController::class, 'updateProfile'])->name('profile.update');
+
+    Route::get('/availability', [\App\Http\Controllers\UserController::class, 'showAvailability'])->name('availability');
+    Route::post('/availability/update', [\App\Http\Controllers\UserController::class, 'updateAvailability'])->name('availability.update');
+
+    Route::get('/travellers', [\App\Http\Controllers\UserController::class, 'showTravellers'])->name('travellers');
+    Route::get('/messages', [\App\Http\Controllers\UserController::class, 'showMessages'])->name('messages');
+});
+
+Route::prefix('transport')->name('transport.')->middleware(['auth', 'role:transport company'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('transport.dashboard');
+    })->name('dashboard');
+
+    Route::get('/profile', [TransportCompanyController::class, 'showProfile'])->name('profile');
+    Route::get('/trips', [TransportCompanyController::class, 'showTrips'])->name('trips');
 });

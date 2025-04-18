@@ -28,6 +28,11 @@ class LoginController extends Controller
             $request->session()->regenerate();
             
             $user = Auth::user();
+            if (!$user->role) {
+                Auth::logout();
+                return back()->withErrors(['role' => 'User does not have the right roles.']);
+            }
+
             switch ($user->role) {
                 case 'admin':
                     return redirect()->route('admin.home');
@@ -35,11 +40,13 @@ class LoginController extends Controller
                     return redirect()->route('guide.dashboard');
                 case 'hotel':
                     return redirect()->route('hotel.dashboard');
-                case 'transport company':
+                case 'transport company': // Ensure "transport company" is used here
                     return redirect()->route('transport.dashboard');
                 case 'traveller':
-                default:
                     return redirect()->route('traveller.dashboard');
+                default:
+                    Auth::logout();
+                    return back()->withErrors(['role' => 'User does not have the right roles.']);
             }
         }
 

@@ -6,20 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    
     public function up()
     {
-        Schema::create('itineraries', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('description')->nullable();
-            $table->foreignId('trip_id')->unique()->constrained('trips')->onDelete('cascade');
+            $table->foreignId('sender_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('receiver_id')->constrained('users')->onDelete('cascade');
+            $table->text('message');
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('itineraries');
+        Schema::dropIfExists('messages');
     }
 };

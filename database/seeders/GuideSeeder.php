@@ -2,28 +2,20 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Seeder;
 use App\Models\Guide;
 use App\Models\User;
-use Illuminate\Database\Seeder;
 
 class GuideSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        // Get guide users
+    public function run(){
         $guideUsers = User::where('role', 'guide')->get();
         
         if ($guideUsers->isEmpty()) {
-            // If no guide users, create at least one
             $user = User::create([
                 'name' => 'Tour Guide',
-                'email' => 'guide@example.com', 
-                'password' => 'password',
+                'email' => 'guide@guide.com', 
+                'password' => 'guide123',
                 'role' => 'guide'
             ]);
             $guideUsers = collect([$user]);
@@ -45,9 +37,7 @@ class GuideSeeder extends Seeder
         ];
         
         foreach ($guides as $index => $guide) {
-            // Assign guide to a guide user (if available), otherwise use the first guide user
             $userId = isset($guideUsers[$index]) ? $guideUsers[$index]->id : $guideUsers->first()->id;
-            
             Guide::create([
                 'user_id' => $userId,
                 'license_number' => $guide['license_number'],

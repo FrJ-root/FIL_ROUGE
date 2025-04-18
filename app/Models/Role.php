@@ -9,21 +9,12 @@ class Role extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'name',
         'description',
     ];
 
-    /**
-     * The users that belong to the role.
-     */
-    public function users()
-    {
+    public function users(){
         return $this->belongsToMany(User::class, 'role_user')
             ->withTimestamps();
     }

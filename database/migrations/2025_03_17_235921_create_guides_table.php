@@ -11,9 +11,12 @@ return new class extends Migration
     {
         Schema::create('guides', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('license_number')->nullable();
             $table->string('specialization')->nullable();
+            $table->text('preferred_locations')->nullable();
+            $table->text('selected_dates')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->enum('availability', ['available', 'not available'])->default('not available');
             $table->timestamps();
         });
     }

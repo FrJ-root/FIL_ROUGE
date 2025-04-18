@@ -8,44 +8,38 @@ use Illuminate\Support\Str;
 
 class TagSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
         $tags = [
             'Family Friendly',
+            'Food & Cuisine',
             'Solo Traveler',
-            'Couples',
-            'Luxury',
-            'Budget',
+            'Art & Museums',
             'Eco-Friendly',
             'Photography',
-            'Food & Cuisine',
-            'History',
-            'Art & Museums',
-            'Hiking',
-            'Swimming',
             'Snorkeling',
-            'Surfing',
-            'Skiing',
             'Relaxation',
-            'Wellness',
-            'Nightlife',
-            'Shopping',
             'Road Trip',
+            'Nightlife',
+            'Wellness',
+            'Shopping',
+            'Swimming',
+            'Couples',
+            'Surfing',
+            'History',
+            'Luxury',
+            'Budget',
+            'Hiking',
+            'Skiing',
         ];
         
         foreach ($tags as $tagName) {
-            // Use firstOrCreate to prevent duplicate entries
             Tag::firstOrCreate(
                 ['slug' => Str::slug($tagName)],
                 [
                     'name' => $tagName,
-                    'description' => 'Trips related to ' . strtolower($tagName),
                     'meta_title' => $tagName . ' Trips',
+                    'description' => 'Trips related to ' . strtolower($tagName),
                     'meta_description' => 'Find the best trips for ' . strtolower($tagName),
                 ]
             );

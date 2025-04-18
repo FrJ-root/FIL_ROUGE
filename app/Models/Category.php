@@ -9,11 +9,6 @@ class Category extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'name',
         'slug',
@@ -24,19 +19,11 @@ class Category extends Model
         'meta_description'
     ];
 
-    /**
-     * Get the travel guides in this category.
-     */
-    public function travelGuides()
-    {
+    public function travelGuides(){
         return $this->hasMany(TravelGuide::class);
     }
 
-    /**
-     * Get the trips in this category.
-     */
-    public function trips()
-    {
+    public function trips(){
         return $this->belongsToMany(Trip::class, 'trip_category');
     }
 }

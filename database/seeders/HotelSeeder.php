@@ -2,28 +2,20 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Seeder;
 use App\Models\Hotel;
 use App\Models\User;
-use Illuminate\Database\Seeder;
 
 class HotelSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        // Get hotel users
+    public function run(){
         $hotelUsers = User::where('role', 'hotel')->get();
         
         if ($hotelUsers->isEmpty()) {
-            // If no hotel users, create at least one
             $user = User::create([
                 'name' => 'Hotel Manager',
-                'email' => 'hotel@example.com', 
-                'password' => 'password',
+                'email' => 'hotel@hotel.com', 
+                'password' => 'hotel123',
                 'role' => 'hotel'
             ]);
             $hotelUsers = collect([$user]);
@@ -72,7 +64,6 @@ class HotelSeeder extends Seeder
         ];
         
         foreach ($hotels as $index => $hotel) {
-            // Assign hotel to a hotel user (if available), otherwise use the first hotel user
             $userId = isset($hotelUsers[$index]) ? $hotelUsers[$index]->id : $hotelUsers->first()->id;
             
             Hotel::create([

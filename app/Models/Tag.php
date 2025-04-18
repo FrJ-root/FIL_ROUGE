@@ -9,11 +9,6 @@ class Tag extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'name',
         'slug',
@@ -22,19 +17,11 @@ class Tag extends Model
         'meta_description'
     ];
 
-    /**
-     * The travel guides that belong to this tag.
-     */
-    public function travelGuides()
-    {
+    public function travelGuides(){
         return $this->belongsToMany(TravelGuide::class, 'travel_guide_tag');
     }
 
-    /**
-     * The trips that belong to this tag.
-     */
-    public function trips()
-    {
+    public function trips(){
         return $this->belongsToMany(Trip::class, 'trip_tag');
     }
 }

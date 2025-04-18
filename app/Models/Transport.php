@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TransportCompany extends Model
+class Transport extends Model
 {
     use HasFactory;
 
@@ -25,6 +25,6 @@ class TransportCompany extends Model
 
     public function trips()
     {
-        return $this->belongsToMany(Trip::class, 'trip_transport_company');
+        return $this->belongsToMany(Trip::class, 'trip_transport');
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\TransportCompany;
 use Illuminate\Database\Seeder;
+use App\Models\Transport;
 use App\Models\Traveller;
 use App\Models\Itinerary;
 use App\Models\Guide;
@@ -16,51 +16,48 @@ class UserSeeder extends Seeder
     public function run()
     {
         $trip = Trip::create([
-            'destination' => 'Marrakech',
             'start_date' => now(),
+            'destination' => 'Marrakech',
             'end_date' => now()->addDays(5),
-            'cover_picture' => 'marrakech-initial.jpg', // Add cover picture
+            'cover_picture' => 'marrakech-initial.jpg',
         ]);
 
         $itinerary = Itinerary::create([
-            'title' => 'Marrakech Adventure',
             'description' => 'Explore the city and desert.',
+            'title' => 'Marrakech Adventure',
             'trip_id' => $trip->id,
         ]);
 
         $admin = User::firstOrCreate([
-            'email' => 'admin@admin.com',
-        ], [
             'name' => 'admin',
-            'password' => 'admin123',
             'role' => 'admin',
+            'password' => 'admin123',
+            'email' => 'admin@admin.com',
             'picture' => 'storage/pictures/admin.jpg',
         ]);
 
         $traveller = User::firstOrCreate([
-            'email' => 'traveller@traveller.com',
-        ], [
             'name' => 'traveller',
-            'password' => 'traveller123',
             'role' => 'traveller',
+            'password' => 'traveller123',
+            'email' => 'traveller@traveller.com',
             'picture' => 'storage/pictures/traveller.jpg',
         ]);
 
         Traveller::create([
-            'user_id' => $traveller->id,
             'trip_id' => $trip->id,
-            'itinerary_id' => $itinerary->id,
             'nationality' => 'Moroccan',
+            'user_id' => $traveller->id,
             'passport_number' => 'A1234567',
+            'itinerary_id' => $itinerary->id,
             'prefered_destination' => 'Marrakech',
         ]);
 
         $guide = User::firstOrCreate([
-            'email' => 'guide@guide.com',
-        ], [
             'name' => 'guide',
-            'password' => 'guide123',
             'role' => 'guide',
+            'password' => 'guide123',
+            'email' => 'guide@guide.com',
             'picture' => 'storage/pictures/guide.jpg',
         ]);
 
@@ -71,47 +68,45 @@ class UserSeeder extends Seeder
         ]);
 
         $company = User::firstOrCreate([
-            'email' => 'company@company.com',
-        ], [
-            'name' => 'travel company',
-            'password' => 'company123',
+            'name' => 'transport',
+            'password' => 'transport123',
             'role' => 'transport company',
+            'email' => 'transport@transport.com',
             'picture' => 'storage/pictures/transportcompany.jpg',
         ]);
 
-        if (!TransportCompany::where('user_id', $company->id)->exists()) {
-            TransportCompany::create([
-                'user_id' => $company->id,
-                'company_name' => 'Best Travel Co.',
-                'transport_type' => 'Bus',
-                'license_number' => 'USER-123456', // Changed license number format to avoid conflicts
+        if (!Transport::where('user_id', $company->id)->exists()) {
+            Transport::create([
                 'address' => '123 Travel St., City Center',
+                'company_name' => 'Best Travel Co.',
+                'license_number' => 'USER-123456',
+                'user_id' => $company->id,
+                'transport_type' => 'Bus',
                 'phone' => '0600000000',
             ]);
         }
 
         $hotel = User::firstOrCreate([
-            'email' => 'hotel@hotel.com',
-        ], [
             'name' => 'hotel',
-            'password' => 'hotel123',
             'role' => 'hotel',
+            'password' => 'hotel123',
+            'email' => 'hotel@hotel.com',
             'picture' => 'storage/pictures/hotel.jpg',
         ]);
 
         Hotel::create([
-            'user_id' => $hotel->id,
-            'name' => 'Luxury Hotel',
             'description' => 'A 5-star hotel in the heart of the city.',
-            'address' => '456 Luxury Rd., City Center',
-            'city' => 'Marrakech',
-            'country' => 'Morocco',
-            'star_rating' => 5,
-            'price_per_night' => 200.00,
-            'image' => 'hotel_image.jpg',
             'amenities' => json_encode(['Wi-Fi', 'Pool', 'Gym']),
-            'latitude' => 31.645,
+            'address' => '456 Luxury Rd., City Center',
+            'image' => 'hotel_image.jpg',
+            'price_per_night' => 200.00,
+            'name' => 'Luxury Hotel',
+            'user_id' => $hotel->id,
+            'country' => 'Morocco',
+            'city' => 'Marrakech',
             'longitude' => -8.005,
+            'latitude' => 31.645,
+            'star_rating' => 5,
         ]);
     }
 }

@@ -8,14 +8,7 @@ use Illuminate\Database\Seeder;
 
 class ItinerarySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        // Get trips that don't already have an itinerary
+    public function run(){
         $trips = Trip::whereNotIn('id', function($query) {
             $query->select('trip_id')->from('itineraries');
         })->get();

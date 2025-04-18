@@ -8,11 +8,6 @@ use Illuminate\Database\Seeder;
 
 class ActivitySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
         $trips = Trip::all();
@@ -22,7 +17,6 @@ class ActivitySeeder extends Seeder
         }
         
         $activityTemplates = [
-            // Paris activities
             [
                 [
                     'name' => 'Eiffel Tower Visit',
@@ -43,7 +37,6 @@ class ActivitySeeder extends Seeder
                     'day_offset' => 3,
                 ],
             ],
-            // Marrakech activities
             [
                 [
                     'name' => 'Medina Exploration',
@@ -64,7 +57,6 @@ class ActivitySeeder extends Seeder
                     'day_offset' => 3,
                 ],
             ],
-            // Bali activities
             [
                 [
                     'name' => 'Ubud Sacred Monkey Forest',
@@ -102,7 +94,7 @@ class ActivitySeeder extends Seeder
                     'name' => $activity['name'],
                     'location' => $activity['location'],
                     'description' => $activity['description'],
-                    'scheduled_at' => $activityDate->format('Y-m-d 10:00:00'), // Set a default time of 10 AM
+                    'scheduled_at' => $activityDate->format('Y-m-d 10:00:00'),
                 ]);
             }
         }

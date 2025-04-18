@@ -8,11 +8,6 @@ use Illuminate\Support\Str;
 
 class CategorySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
         $categories = [
@@ -55,7 +50,6 @@ class CategorySeeder extends Seeder
         ];
         
         foreach ($categories as $category) {
-            // Use firstOrCreate to prevent duplicate entries
             Category::firstOrCreate(
                 ['slug' => Str::slug($category['name'])],
                 [
