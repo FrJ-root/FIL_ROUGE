@@ -1,4 +1,4 @@
-<!-- @include('admin.components.welcome-popup') -->
+@include('admin.components.welcome-popup')
 
 @extends('admin.layouts.admin-layout')
 

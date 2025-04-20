@@ -281,9 +281,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
         return view('admin.home');
     })->name('home'); 
     
-    Route::get('/dashboard', function () {
-        return view('admin.pages.dashboard');
-    })->name('dashboard');   
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');   
+    
+    // Add admin profile routes
+    Route::get('/profile', [UserController::class, 'showAdminProfile'])->name('profile');
+    Route::get('/profile/edit', [UserController::class, 'editAdminProfile'])->name('profile.edit');
+    Route::post('/profile/update', [UserController::class, 'updateAdminProfile'])->name('profile.update');
     
     Route::get('/categories', function () {
         return view('admin.pages.categories');
@@ -293,10 +296,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
         return view('admin.pages.tags');
     })->name('tags');
     
-    Route::get('/courses', function () {
-        return view('admin.pages.courses');
-    })->name('courses');
-
+    Route::get('/trips', [App\Http\Controllers\Admin\DashboardController::class, 'trips'])->name('trips');
+    Route::post('/trips/{id}/assign', [App\Http\Controllers\Admin\DashboardController::class, 'assignTrip'])->name('trips.assign');
+    Route::post('/trips/{id}/status', [App\Http\Controllers\Admin\DashboardController::class, 'updateTripStatus'])->name('trips.status');
+    Route::delete('/trips/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'destroyTrip'])->name('trips.destroy');
+    
     Route::get('/account-validation', [AccountValidationController::class, 'index'])
     ->name('account-validation');
 
@@ -336,6 +340,10 @@ Route::prefix('manager')->name('manager.')->middleware(['auth'])->group(function
     Route::get('/profile', [ManagerController::class, 'profile'])->name('profile');
     Route::get('/profile/edit', [ManagerController::class, 'editProfile'])->name('profile.edit');
     Route::post('/profile/update', [ManagerController::class, 'updateProfile'])->name('profile.update');
+    
+    // Add password edit route
+    Route::get('/profile/password', [ManagerController::class, 'editPassword'])->name('profile.password');
+    Route::post('/profile/password/update', [ManagerController::class, 'updatePassword'])->name('profile.password.update');
     
     // Add collaborators route
     Route::get('/collaborators', [ManagerController::class, 'collaborators'])->name('collaborators');

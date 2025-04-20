@@ -15,12 +15,24 @@
         </div>
         
         @if ($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                <ul class="list-disc pl-5">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+            <div class="@if(session('status_type') === 'block') bg-red-100 border border-red-400 text-red-700 @elseif(session('status_type') === 'suspend') bg-yellow-100 border border-yellow-400 text-yellow-700 @else bg-red-100 border border-red-400 text-red-700 @endif px-4 py-3 rounded mb-4">
+                @if($errors->has('status'))
+                    <div class="flex items-center mb-2">
+                        <i class="@if(session('status_type') === 'block') fas fa-ban text-red-500 @elseif(session('status_type') === 'suspend') fas fa-pause-circle text-yellow-500 @else fas fa-exclamation-circle @endif mr-2"></i>
+                        <p class="font-bold">Account Status Alert</p>
+                    </div>
+                    <p>{{ $errors->first('status') }}</p>
+                    <div class="mt-2 text-sm">
+                        <p>If you believe this is an error, please contact customer support:</p>
+                        <p class="mt-1"><i class="fas fa-envelope mr-1"></i> support@tripydb.com</p>
+                    </div>
+                @else
+                    <ul class="list-disc pl-5">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                @endif
             </div>
         @endif
 

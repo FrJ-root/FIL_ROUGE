@@ -6,7 +6,7 @@
     <div id="Statistic" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div class="bg-gray-800 rounded-lg p-6 border border-purple-500/10 hover:border-purple-500/30 transition-all">
             <div class="flex items-center justify-between">
-                <div class="text-sm text-gray-400">Total Courses</div>
+                <div class="text-sm text-gray-400">Total Trips</div>
                 <div class="bg-purple-500/10 rounded-full p-2">
                     <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -15,11 +15,11 @@
                 </div>
             </div>
             <div class="mt-4">
-                <span class="text-2xl font-bold text-white">{{ $totalCourses ?? 0 }}</span>
+                <span class="text-2xl font-bold text-white">{{ $totalTrips ?? 0 }}</span>
                 <span class="text-green-400 text-sm ml-2">+12%</span>
             </div>
         </div>
-    
+
         <div class="bg-gray-800 rounded-lg p-6 border border-purple-500/10 hover:border-purple-500/30 transition-all">
             <div class="flex items-center justify-between">
                 <div class="text-sm text-gray-400">Categories</div>
@@ -149,6 +149,31 @@
                 </div>
                 <div class="mt-4">
                     <span class="text-2xl font-bold text-white">{{ $deletedHotels ?? 0 }}</span>
+                    <span class="text-red-400 text-sm ml-2">Blc</span>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-800 rounded-lg p-6 border border-purple-500/10 hover:border-purple-500/30 transition-all">
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-400">Managers</div>
+                <div class="bg-purple-500/10 rounded-full p-2">
+                    <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="flex justify-between">
+                <div class="mt-4">
+                    <span class="text-2xl font-bold text-white">{{ $activeManagers ?? 0 }}</span>
+                    <span class="text-green-400 text-sm ml-2">Act</span>
+                </div>
+                <div class="mt-4">
+                    <span class="text-2xl font-bold text-white">{{ $suspendedManagers ?? 0 }}</span>
+                    <span class="text-yellow-400 text-sm ml-2">Sus</span>
+                </div>
+                <div class="mt-4">
+                    <span class="text-2xl font-bold text-white">{{ $deletedManagers ?? 0 }}</span>
                     <span class="text-red-400 text-sm ml-2">Blc</span>
                 </div>
             </div>

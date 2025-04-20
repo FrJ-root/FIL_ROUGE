@@ -14,6 +14,8 @@ class Trip extends Model
         'start_date',
         'end_date',
         'cover_picture',
+        'manager_id',
+        'status',
     ];
 
     public function travellers()
@@ -54,5 +56,10 @@ class Trip extends Model
     public function hotels()
     {
         return $this->belongsToMany(Hotel::class, 'trip_hotel');
+    }
+    
+    public function manager()
+    {
+        return $this->belongsTo(User::class, 'manager_id');
     }
 }

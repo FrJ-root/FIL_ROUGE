@@ -118,10 +118,18 @@
             @else
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" @click.away="open = false" class="flex items-center text-gray-800 font-bold hover:text-green-500">
-                        <span>{{ Auth::user()->name }}</span>
-                        <img src="{{ Auth::user()->picture ? asset('storage/' . Auth::user()->picture) : asset('images/default-profile.png') }}" 
-                             alt="{{ Auth::user()->name }}" 
-                             class="h-8 w-8 rounded-full object-cover ml-2 border border-gray-200">
+                        <span class="mr-2">{{ Auth::user()->name }}</span>
+                        <div class="h-8 w-8 rounded-full overflow-hidden border border-gray-200 shadow-sm">
+                            @if(Auth::user()->picture)
+                                <img src="{{ asset('storage/' . Auth::user()->picture) }}" 
+                                     alt="{{ Auth::user()->name }}" 
+                                     class="h-full w-full object-cover">
+                            @else
+                                <div class="h-full w-full flex items-center justify-center bg-gray-100 text-gray-500">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            @endif
+                        </div>
                         <i class="fas fa-chevron-down text-xs ml-2"></i>
                     </button>
                     <div x-show="open"

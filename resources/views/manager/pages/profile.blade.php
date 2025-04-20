@@ -116,9 +116,14 @@
             </div>
             
             <div class="mt-8 pt-8 border-t border-gray-200">
-                <a href="{{ route('manager.profile.edit') }}" class="text-manager-primary hover:text-purple-700 flex items-center text-sm font-medium">
-                    <i class="fas fa-edit mr-2"></i> Edit your profile information
-                </a>
+                <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                    <a href="{{ route('manager.profile.edit') }}" class="text-manager-primary hover:text-purple-700 flex items-center text-sm font-medium">
+                        <i class="fas fa-edit mr-2"></i> Edit your profile information
+                    </a>
+                    <a href="{{ route('manager.profile.password') }}" class="text-manager-primary hover:text-purple-700 flex items-center text-sm font-medium">
+                        <i class="fas fa-key mr-2"></i> Change your password
+                    </a>
+                </div>
             </div>
         </div>
     </div>

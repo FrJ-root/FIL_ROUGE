@@ -18,25 +18,17 @@ use App\Models\User;
 class ManagerController extends Controller
 {
     /**
-     * Display a listing of trips
+     * Display a listing of all trips.
+     *
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $trips = Trip::with(['hotels', 'guides', 'transports', 'travellers'])
+        $trips = Trip::with(['travellers', 'guides', 'hotels', 'transports'])
             ->latest()
-            ->paginate(9);
-            
-        // If user is authenticated, get their trips too
-        $userTrips = auth()->check() 
-            ? Trip::whereHas('travellers', function($query) {
-                $query->where('user_id', auth()->id());
-            })->latest()->paginate(9)
-            : null;
+            ->paginate(12);
         
-        // Pass a flag to show if the user can create trips (only managers)
-        $canCreateTrips = auth()->check() && auth()->user()->role === 'manager';
-            
-        return view('trips.index', compact('trips', 'userTrips', 'canCreateTrips'));
+        return view('trips.index', compact('trips'));
     }
 
     /**
@@ -317,11 +309,12 @@ class ManagerController extends Controller
     }
 
     /**
-     * Display trips for manager dashboard
+     * Display the trip management page for managers
      */
     public function trips()
     {
-        $trips = Trip::with(['hotels', 'guides', 'transports', 'travellers', 'activities', 'itinerary'])
+        $user = Auth::user();
+        $trips = Trip::with(['travellers', 'guides', 'hotels', 'transports'])
             ->latest()
             ->paginate(10);
         
@@ -373,5 +366,81 @@ class ManagerController extends Controller
         $transports = Transport::with('user')->get();
         
         return view('manager.pages.collaborators', compact('hotels', 'guides', 'transports'));
+    }
+
+    /**
+     * Display the manager's profile
+     */
+    public function profile()
+    {
+        $user = Auth::user();
+        
+        return view('manager.pages.profile', compact('user'));
+    }
+
+    /**
+     * Show the form for editing the manager's profile
+     */
+    public function editProfile()
+    {
+        $user = Auth::user();
+        
+        return view('manager.pages.edit-profile', compact('user'));
+    }
+
+    /**
+     * Update the manager's profile
+     */
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . Auth::id(),
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+        
+        $user = Auth::user();
+        
+        $user->name = $request->name;
+        $user->email = $request->email;
+        
+        if ($request->hasFile('picture')) {
+            // Delete old picture if it exists
+            if ($user->picture) {
+                Storage::disk('public')->delete($user->picture);
+            }
+            
+            $path = $request->file('picture')->store('profile_pictures', 'public');
+            $user->picture = $path;
+        }
+        
+        $user->save();
+        
+        return redirect()->route('manager.profile')->with('success', 'Profile updated successfully!');
+    }
+
+    /**
+     * Show the form for editing the manager's password
+     */
+    public function editPassword()
+    {
+        return view('manager.pages.edit-password');
+    }
+
+    /**
+     * Update the manager's password
+     */
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|password',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+        
+        $user = Auth::user();
+        $user->password = $request->password; // The password will be automatically hashed
+        $user->save();
+        
+        return redirect()->route('manager.profile')->with('success', 'Password updated successfully!');
     }
 }

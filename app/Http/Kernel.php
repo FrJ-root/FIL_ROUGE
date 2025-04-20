@@ -36,6 +36,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\CheckUserStatus::class,
         ],
 
         'api' => [
@@ -67,5 +68,14 @@ class Kernel extends HttpKernel
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         'role.hotel' => \App\Http\Middleware\CheckHotelRole::class,
+    ];
+
+    /**
+     * The application's middleware aliases.
+     *
+     * @var array<string, class-string|string>
+     */
+    protected $middlewareAliases = [
+        'user.status' => \App\Http\Middleware\CheckUserStatus::class,
     ];
 }

@@ -44,7 +44,7 @@ class User extends Authenticatable
         return $this->hasOne(Transport::class, 'user_id');
     }
 
-    public function travellers()
+    public function traveller()
     {
         return $this->hasOne(Traveller::class, 'user_id');
     }

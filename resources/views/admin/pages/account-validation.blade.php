@@ -22,8 +22,8 @@
         </script>
     @endif
 
-    @foreach (['travellers', 'transportCompanies', 'hotels', 'guides'] as $role)
-        <div id="{{ ucfirst($role) }}Accounts" class="bg-gray-800 p-6 rounded-lg">
+    @foreach (['travellers', 'transports', 'hotels', 'guides', 'managers', 'admins'] as $role)
+        <div id="{{ ucfirst($role) }}Accounts" class="bg-gray-800 p-6 rounded-lg mb-6">
             <h3 class="text-white font-semibold mb-4">{{ ucfirst($role) }} Accounts</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-gray-900">
@@ -31,9 +31,9 @@
                         <tr>
                             <th class="px-4 py-2 text-left text-gray-400">Id</th>
                             <th class="px-4 py-2 text-left text-gray-400">Name</th>
+                            <th class="px-4 py-2 text-left text-gray-400">Email</th>
                             <th class="px-4 py-2 text-left text-gray-400">Status</th>
                             <th class="px-4 py-2 text-left text-gray-400">Created</th>
-                            <th class="px-4 py-2 text-left text-gray-400">Updated</th>
                             <th class="px-4 py-2 text-left text-gray-400">Actions</th>
                         </tr>
                     </thead>
@@ -41,7 +41,8 @@
                         @forelse ($$role as $user)
                             <tr>
                                 <td class="px-4 py-2 text-white">{{ $user->id }}</td>
-                                <td class="px-4 py-2 text-white">{{ $user->name ?? $user->company_name ?? ($user->email ?? '-') }}</td>
+                                <td class="px-4 py-2 text-white">{{ $user->name }}</td>
+                                <td class="px-4 py-2 text-white">{{ $user->email }}</td>
                                 <td class="px-4 py-2">
                                     <span class="px-2 py-1 rounded text-xs font-semibold
                                         @if($user->status === 'valide') bg-green-600 text-white
@@ -52,16 +53,19 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-2 text-white">{{ $user->created_at->format('Y-m-d') }}</td>
-                                <td class="px-4 py-2 text-white">{{ $user->updated_at->format('Y-m-d') }}</td>
                                 <td class="px-4 py-2 text-white">
-                                <form action="{{ route('admin.account-validation.update', $user->id) }}" method="POST">
-                                    @csrf
-                                    <select name="status" onchange="this.form.submit()" class="bg-gray-700 text-white rounded px-2 py-1">
-                                        <option value="valide" {{ $user->status === 'valide' ? 'selected' : '' }}>Valide</option>
-                                        <option value="suspend" {{ $user->status === 'suspend' ? 'selected' : '' }}>Suspend</option>
-                                        <option value="block" {{ $user->status === 'block' ? 'selected' : '' }}>Block</option>
-                                    </select>
-                                </form>
+                                @if($role !== 'admins' || (Auth::user()->id !== $user->id))
+                                    <form action="{{ route('admin.account-validation.update', $user->id) }}" method="POST">
+                                        @csrf
+                                        <select name="status" onchange="this.form.submit()" class="bg-gray-700 text-white rounded px-2 py-1">
+                                            <option value="valide" {{ $user->status === 'valide' ? 'selected' : '' }}>Valide</option>
+                                            <option value="suspend" {{ $user->status === 'suspend' ? 'selected' : '' }}>Suspend</option>
+                                            <option value="block" {{ $user->status === 'block' ? 'selected' : '' }}>Block</option>
+                                        </select>
+                                    </form>
+                                @else
+                                    <span class="text-gray-500">N/A (Current Admin)</span>
+                                @endif
                                 </td>
                             </tr>
                         @empty
