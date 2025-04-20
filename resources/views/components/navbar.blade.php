@@ -119,7 +119,7 @@
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" @click.away="open = false" class="flex items-center text-gray-800 font-bold hover:text-green-500">
                         <span>{{ Auth::user()->name }}</span>
-                        <img src="{{ Auth::user()->profile_photo_url ?? asset('storage/images/default-avatar.png') }}" 
+                        <img src="{{ Auth::user()->picture ? asset('storage/' . Auth::user()->picture) : asset('images/default-profile.png') }}" 
                              alt="{{ Auth::user()->name }}" 
                              class="h-8 w-8 rounded-full object-cover ml-2 border border-gray-200">
                         <i class="fas fa-chevron-down text-xs ml-2"></i>
@@ -134,17 +134,27 @@
                          class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                         @php
                             $dashboardRoute = 'traveller.dashboard'; // Default
+                            $profileRoute = 'traveller.pages.profile'; // Default
+                            
                             if(Auth::user()->role === 'admin') {
                                 $dashboardRoute = 'admin.dashboard';
-                            } elseif(Auth::user()->role === 'travel_company') {
-                                $dashboardRoute = 'company.dashboard';
+                                $profileRoute = 'admin.profile';
+                            } elseif(Auth::user()->role === 'transport') {
+                                $dashboardRoute = 'transport.dashboard';
+                                $profileRoute = 'transport.profile';
                             } elseif(Auth::user()->role === 'hotel') {
                                 $dashboardRoute = 'hotel.dashboard';
+                                $profileRoute = 'hotel.profile';
                             } elseif(Auth::user()->role === 'guide') {
                                 $dashboardRoute = 'guide.dashboard';
+                                $profileRoute = 'guide.profile';
+                            } elseif(Auth::user()->role === 'manager') {
+                                $dashboardRoute = 'manager.dashboard';
+                                $profileRoute = 'manager.profile';
                             }
                         @endphp
-                        <a href="{{ route($dashboardRoute) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                        <a href="{{ route($dashboardRoute) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
+                        <a href="{{ route($profileRoute) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Profile</a>
                         <a href="{{ route('user.settings') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
                         <hr class="my-1">
                         <form method="POST" action="{{ route('logout') }}">

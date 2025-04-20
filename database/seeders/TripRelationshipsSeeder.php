@@ -24,10 +24,10 @@ class TripRelationshipsSeeder extends Seeder
         $guides = Guide::all();
         $hotels = Hotel::all();
         $categories = Category::all();
-        $transportCompanies = Transport::all();
+        $transports = Transport::all();
         
         if ($categories->isEmpty() || $tags->isEmpty() || $guides->isEmpty() || 
-            $hotels->isEmpty() || $transportCompanies->isEmpty()) {
+            $hotels->isEmpty() || $transports->isEmpty()) {
             return;
         }
         
@@ -47,8 +47,8 @@ class TripRelationshipsSeeder extends Seeder
             $tripHotel = $hotels->random(min(1, $hotels->count()));
             $trip->hotels()->attach($tripHotel->pluck('id')->toArray());
             
-            $tripTransport = $transportCompanies->random(min(1, $transportCompanies->count()));
-            $trip->transportCompanies()->attach($tripTransport->pluck('id')->toArray());
+            $tripTransport = $transports->random(min(1, $transports->count()));
+            $trip->transports()->attach($tripTransport->pluck('id')->toArray());
         }
     }
 }

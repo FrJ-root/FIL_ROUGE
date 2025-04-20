@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Traveller;
 
 use App\Models\Trip;
 use App\Models\User;
 use App\Models\Traveller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
-class TravellerDashboardController extends Controller
+class TravellerController extends Controller
 {
     public function __construct()
     {
@@ -103,14 +104,11 @@ class TravellerDashboardController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         
-        // Handle profile picture upload
         if ($request->hasFile('picture')) {
-            // Delete old picture if exists
             if ($user->picture) {
                 Storage::disk('public')->delete($user->picture);
             }
             
-            // Store the new picture
             $path = $request->file('picture')->store('profile-pictures', 'public');
             $user->picture = $path;
         }

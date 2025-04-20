@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Tag;
-use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use Illuminate\Database\Seeder;
 
 class TagSeeder extends Seeder
 {

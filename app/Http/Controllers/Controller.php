@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
-
-
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 
 
@@ -19,14 +17,6 @@ class Controller extends BaseController
 
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    /**
-     * Return success response with data
-     *
-     * @param mixed $data
-     * @param string $message
-     * @param int $code
-     * @return JsonResponse
-     */
     protected function successResponse($data, string $message = 'Success', int $code = Response::HTTP_OK): JsonResponse
     {
         return response()->json([
@@ -36,13 +26,6 @@ class Controller extends BaseController
         ], $code);
     }
 
-    /**
-     * Return error response
-     *
-     * @param string $message
-     * @param int $code
-     * @return JsonResponse
-     */
     protected function errorResponse(string $message = 'Error', int $code = Response::HTTP_BAD_REQUEST): JsonResponse
     {
         return response()->json([
@@ -51,14 +34,6 @@ class Controller extends BaseController
         ], $code);
     }
 
-    /**
-     * Validate request data
-     *
-     * @param array $data
-     * @param array $rules
-     * @param array $messages
-     * @return array
-     */
     protected function validateData(array $data, array $rules, array $messages = []): array
     {
         $validator = Validator::make($data, $rules, $messages);

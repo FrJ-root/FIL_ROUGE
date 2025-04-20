@@ -70,7 +70,6 @@
                         ['Transport', 'Company providing travel services'],
                         ['Traveller', 'Explorer seeking new experiences'],
                         ['Guide', 'Expert sharing local knowledge'],
-                        ['Admin', 'System administrator']
                     ] as [$role, $description])
                         <label class="role-option cursor-pointer flex flex-col p-4 border-2 border-gray-200 rounded-xl text-gray-700 hover:border-indigo-500 hover:bg-indigo-50 transition-all duration-200 group">
                             <input type="radio" name="role" value="{{ strtolower(explode(' ', $role)[0]) }}" class="hidden role-radio" required>

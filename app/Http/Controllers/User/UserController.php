@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+
 
 class UserController extends Controller
 {
@@ -58,7 +60,6 @@ class UserController extends Controller
 
     public function showMessages()
     {
-        // Assuming a Message model exists
         $messages = Auth::user()->messages()->latest()->get();
         return view('user.messages', compact('messages'));
     }

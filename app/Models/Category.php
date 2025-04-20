@@ -12,11 +12,11 @@ class Category extends Model
     protected $fillable = [
         'name',
         'slug',
-        'description',
         'image',
-        'is_featured',
         'meta_title',
-        'meta_description'
+        'description',
+        'is_featured',
+        'meta_description',
     ];
 
     public function travelGuides(){

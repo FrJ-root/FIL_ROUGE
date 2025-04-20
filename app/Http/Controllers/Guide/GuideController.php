@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Guide;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Review;
@@ -44,10 +45,7 @@ class GuideController extends Controller
     public function showAvailability()
     {
         $guide = Auth::user()->guide;
-
-        // Convert preferred_locations to an array if it's not null
         $guide->preferred_locations = $guide->preferred_locations ? explode(',', $guide->preferred_locations) : [];
-
         return view('guide.pages.availability', compact('guide'));
     }
 
@@ -55,12 +53,10 @@ class GuideController extends Controller
     {
         $request->validate([
             'availability' => 'required|string|in:available,not available',
-            'selected_dates' => 'nullable|string', // Only required if availability is "available"
+            'selected_dates' => 'nullable|string',
         ]);
 
         $guide = Auth::user()->guide;
-
-        // If availability is "not available", clear selected dates
         $guide->fill([
             'availability' => $request->availability,
             'selected_dates' => $request->availability === 'available' ? $request->selected_dates : null,
@@ -72,10 +68,8 @@ class GuideController extends Controller
     public function showTravellers()
     {
         $guide = Auth::user()->guide;
-
-        // Ensure the guide's trips and their travellers are retrieved
         $travellers = $guide->trips()
-            ->with('travellers.user') // Load travellers and their associated users
+            ->with('travellers.user')
             ->get()
             ->pluck('travellers')
             ->flatten();

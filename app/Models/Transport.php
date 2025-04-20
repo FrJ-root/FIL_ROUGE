@@ -10,12 +10,12 @@ class Transport extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'company_name',
-        'transport_type',
-        'license_number',
-        'address',
         'phone',
+        'user_id',
+        'address',
+        'company_name',
+        'license_number',
+        'transport_type',
     ];
 
     public function user()

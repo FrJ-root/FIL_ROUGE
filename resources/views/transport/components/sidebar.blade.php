@@ -4,20 +4,32 @@
              alt="Profile Picture" 
              class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-white shadow-md hover:scale-105 transition-transform duration-300">
         <h2 class="text-xl font-bold">{{ Auth::user()->name }}</h2>
-        <p class="text-sm text-blue-200 mt-1">{{ Auth::user()->transportCompany->company_name ?? 'Transport Company' }}</p>
+        <p class="text-sm text-blue-200 mt-1">{{ $transport->company_name ?? 'Transport Company' }}</p>
     </div>
     <nav class="mt-6">
-        <a href="{{ route('transport.dashboard') }}" class="flex items-center py-3 px-6 hover:bg-blue-700 transition-colors duration-300">
+        <a href="{{ route('transport.dashboard') }}" class="flex items-center py-3 px-6 hover:bg-blue-700 transition-colors duration-300 {{ Route::is('transport.dashboard') ? 'bg-blue-700' : '' }}">
             <i class="fas fa-tachometer-alt mr-3"></i>
             Dashboard
         </a>
-        <a href="{{ route('transport.profile') }}" class="flex items-center py-3 px-6 hover:bg-blue-700 transition-colors duration-300">
+        <a href="{{ route('transport.profile') }}" class="flex items-center py-3 px-6 hover:bg-blue-700 transition-colors duration-300 {{ Route::is('transport.profile') ? 'bg-blue-700' : '' }}">
             <i class="fas fa-user-circle mr-3"></i>
             Profile
         </a>
-        <a href="{{ route('transport.trips') }}" class="flex items-center py-3 px-6 hover:bg-blue-700 transition-colors duration-300">
+        <a href="{{ route('transport.trips') }}" class="flex items-center py-3 px-6 hover:bg-blue-700 transition-colors duration-300 {{ Route::is('transport.trips') ? 'bg-blue-700' : '' }}">
             <i class="fas fa-route mr-3"></i>
-            Trips
+            My Trips
+        </a>
+        <a href="{{ route('transport.available-trips') }}" class="flex items-center py-3 px-6 hover:bg-blue-700 transition-colors duration-300 {{ Route::is('transport.available-trips') ? 'bg-blue-700' : '' }}">
+            <i class="fas fa-search mr-3"></i>
+            Find Trips
+        </a>
+        <a href="{{ route('transport.availability') }}" class="flex items-center py-3 px-6 hover:bg-blue-700 transition-colors duration-300 {{ Route::is('transport.availability') ? 'bg-blue-700' : '' }}">
+            <i class="fas fa-calendar-check mr-3"></i>
+            Availability
+        </a>
+        <a href="#" class="flex items-center py-3 px-6 hover:bg-blue-700 transition-colors duration-300">
+            <i class="fas fa-cog mr-3"></i>
+            Settings
         </a>
     </nav>
     <div class="absolute bottom-0 w-full p-4 border-t border-blue-400">

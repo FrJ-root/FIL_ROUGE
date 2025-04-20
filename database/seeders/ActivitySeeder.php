@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Seeder;
 use App\Models\Activity;
 use App\Models\Trip;
-use Illuminate\Database\Seeder;
 
 class ActivitySeeder extends Seeder
 {

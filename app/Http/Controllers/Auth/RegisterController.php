@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Traveller;
+use App\Models\Transport;
 use App\Models\Guide;
 use App\Models\Hotel;
-use App\Models\TransportCompany;
 
 
 class RegisterController extends Controller
@@ -40,7 +40,7 @@ class RegisterController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'in:transport company,traveller,admin,hotel,guide'],
+            'role' => ['required', 'in:transport,traveller,admin,hotel,guide,manager'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
@@ -76,11 +76,13 @@ class RegisterController extends Controller
                 ]);
                 break;
 
-            case 'transport company':
-                TransportCompany::create([
+            case 'transport':
+                Transport::create([
                     'user_id' => $user->id,
                 ]);
                 break;
+                
+            // Manager doesn't need a separate model, as it uses only the User model with 'manager' role
         }
         return $user;
     }

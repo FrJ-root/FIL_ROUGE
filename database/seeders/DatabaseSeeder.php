@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             TransportSeeder::class,
             TravellerSeeder::class,
             DestinationSeeder::class,
-            TripRelationshipsSeeder::class
+            TripRelationshipsSeeder::class,
+            RoomTypeSeeder::class
         ]);
     }
 }

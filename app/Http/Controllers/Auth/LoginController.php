@@ -40,10 +40,12 @@ class LoginController extends Controller
                     return redirect()->route('guide.dashboard');
                 case 'hotel':
                     return redirect()->route('hotel.dashboard');
-                case 'transport company': // Ensure "transport company" is used here
+                case 'transport':
                     return redirect()->route('transport.dashboard');
                 case 'traveller':
                     return redirect()->route('traveller.dashboard');
+                case 'manager':
+                    return redirect()->route('manager.dashboard');
                 default:
                     Auth::logout();
                     return back()->withErrors(['role' => 'User does not have the right roles.']);

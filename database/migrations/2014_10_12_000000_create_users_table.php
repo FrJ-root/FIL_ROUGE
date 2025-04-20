@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('picture')->nullable();
             $table->enum('status', ['valide', 'suspend', 'block'])->default('suspend');
-            $table->enum('role', ['transport', 'traveller', 'admin', 'hotel', 'guide'])->default('traveller');
+            $table->enum('role', ['transport', 'traveller', 'admin', 'hotel', 'guide', 'manager'])->default('traveller');
             $table->rememberToken();
             $table->timestamps();
         });

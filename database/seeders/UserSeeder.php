@@ -3,110 +3,116 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Transport;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Traveller;
-use App\Models\Itinerary;
+use App\Models\Transport;
 use App\Models\Guide;
 use App\Models\Hotel;
 use App\Models\User;
 use App\Models\Trip;
+use App\Models\Itinerary;
 
 class UserSeeder extends Seeder
 {
     public function run()
     {
-        $trip = Trip::create([
-            'start_date' => now(),
-            'destination' => 'Marrakech',
-            'end_date' => now()->addDays(5),
-            'cover_picture' => 'marrakech-initial.jpg',
-        ]);
-
-        $itinerary = Itinerary::create([
-            'description' => 'Explore the city and desert.',
-            'title' => 'Marrakech Adventure',
-            'trip_id' => $trip->id,
-        ]);
-
-        $admin = User::firstOrCreate([
-            'name' => 'admin',
-            'role' => 'admin',
-            'password' => 'admin123',
+        User::create([
+            'name' => 'Admin User',
             'email' => 'admin@admin.com',
-            'picture' => 'storage/pictures/admin.jpg',
+            'password' => 'admin123',
+            'role' => 'admin',
+            'status' => 'valide',
         ]);
 
-        $traveller = User::firstOrCreate([
-            'name' => 'traveller',
-            'role' => 'traveller',
-            'password' => 'traveller123',
+        User::create([
+            'name' => 'Trip Manager',
+            'email' => 'manager@manager.com',
+            'password' => 'manager123',
+            'role' => 'manager',
+            'status' => 'valide',
+        ]);
+
+        $trip = Trip::create([
+            'destination' => 'Morocco Explorer',
+            'start_date' => now()->addMonth(),
+            'end_date' => now()->addMonth()->addDays(10),
+        ]);
+        
+        $itinerary = Itinerary::create([
+            'trip_id' => $trip->id,
+            'title' => 'Morocco Adventure',
+            'description' => 'Explore the beautiful landscapes of Morocco'
+        ]);
+
+        $traveller = User::create([
+            'name' => 'Traveller User',
             'email' => 'traveller@traveller.com',
-            'picture' => 'storage/pictures/traveller.jpg',
+            'password' => 'traveller123',
+            'role' => 'traveller',
+            'status' => 'valide',
         ]);
 
         Traveller::create([
-            'trip_id' => $trip->id,
-            'nationality' => 'Moroccan',
             'user_id' => $traveller->id,
-            'passport_number' => 'A1234567',
+            'trip_id' => $trip->id,
             'itinerary_id' => $itinerary->id,
-            'prefered_destination' => 'Marrakech',
+            'prefered_destination' => 'Morocco',
+            'nationality' => 'United States',
         ]);
 
-        $guide = User::firstOrCreate([
-            'name' => 'guide',
-            'role' => 'guide',
-            'password' => 'guide123',
+        $guide = User::create([
+            'name' => 'Guide User',
             'email' => 'guide@guide.com',
-            'picture' => 'storage/pictures/guide.jpg',
+            'password' => 'guide123',
+            'role' => 'guide',
+            'status' => 'valide',
         ]);
 
         Guide::create([
             'user_id' => $guide->id,
-            'license_number' => 'G1234567',
-            'specialization' => 'Cultural Guide',
+            'license_number' => 'G12345',
+            'specialization' => 'Desert Tours',
+            'preferred_locations' => 'Marrakech, Fes, Sahara',
         ]);
 
-        $company = User::firstOrCreate([
-            'name' => 'transport',
-            'password' => 'transport123',
-            'role' => 'transport company',
-            'email' => 'transport@transport.com',
-            'picture' => 'storage/pictures/transportcompany.jpg',
-        ]);
-
-        if (!Transport::where('user_id', $company->id)->exists()) {
-            Transport::create([
-                'address' => '123 Travel St., City Center',
-                'company_name' => 'Best Travel Co.',
-                'license_number' => 'USER-123456',
-                'user_id' => $company->id,
-                'transport_type' => 'Bus',
-                'phone' => '0600000000',
-            ]);
-        }
-
-        $hotel = User::firstOrCreate([
-            'name' => 'hotel',
-            'role' => 'hotel',
-            'password' => 'hotel123',
+        $hotel = User::create([
+            'name' => 'Hotel User',
             'email' => 'hotel@hotel.com',
-            'picture' => 'storage/pictures/hotel.jpg',
+            'password' => 'hotel123',
+            'role' => 'hotel',
+            'status' => 'valide',
         ]);
 
         Hotel::create([
-            'description' => 'A 5-star hotel in the heart of the city.',
-            'amenities' => json_encode(['Wi-Fi', 'Pool', 'Gym']),
-            'address' => '456 Luxury Rd., City Center',
-            'image' => 'hotel_image.jpg',
-            'price_per_night' => 200.00,
-            'name' => 'Luxury Hotel',
             'user_id' => $hotel->id,
+            'name' => 'Royal Mirage Resort',
+            'description' => 'Luxury hotel with stunning views',
+            'address' => '123 Beach Avenue',
+            'city' => 'Agadir',
             'country' => 'Morocco',
-            'city' => 'Marrakech',
-            'longitude' => -8.005,
-            'latitude' => 31.645,
             'star_rating' => 5,
+            'price_per_night' => 200.00,
+            'image' => 'hotels/royal-mirage.jpg',
+            'amenities' => json_encode(['wifi', 'pool', 'spa', 'restaurant']),
+            'latitude' => 30.4278,
+            'longitude' => -9.5981,
+        ]);
+
+        $transport = User::create([
+            'name' => 'Transport User',
+            'email' => 'transport@transport.com',
+            'password' => 'transport123',
+            'role' => 'transport',
+            'status' => 'valide',
+        ]);
+
+        Transport::create([
+            'user_id' => $transport->id,
+            'company_name' => 'Morocco Express',
+            'license_number' => 'T54321',
+            'transport_type' => 'Tourist vehicle',
+            'address' => '456 Main Street, Casablanca',
+            'phone' => '+212 555-1234',
         ]);
     }
 }

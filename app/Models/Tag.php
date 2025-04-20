@@ -12,9 +12,9 @@ class Tag extends Model
     protected $fillable = [
         'name',
         'slug',
-        'description',
         'meta_title',
-        'meta_description'
+        'description',
+        'meta_description',
     ];
 
     public function travelGuides(){

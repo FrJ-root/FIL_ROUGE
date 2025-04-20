@@ -12,17 +12,23 @@ class Review extends Model
     protected $fillable = [
         'traveller_id',
         'guide_id',
+        'hotel_id',
         'rating',
         'comment',
     ];
 
-    public function traveller()
+    public function travellers()
     {
         return $this->belongsTo(Traveller::class);
     }
 
-    public function guide()
+    public function guides()
     {
         return $this->belongsTo(Guide::class);
+    }
+    
+    public function hotel()
+    {
+        return $this->belongsTo(Hotel::class);
     }
 }

@@ -22,7 +22,7 @@ class TravelGuide extends Model
         'views'
     ];
 
-    public function category()
+    public function categorys()
     {
         return $this->belongsTo(Category::class);
     }
@@ -32,7 +32,7 @@ class TravelGuide extends Model
         return $this->belongsTo(Destination::class);
     }
 
-    public function author()
+    public function authors()
     {
         return $this->belongsTo(User::class, 'author_id');
     }

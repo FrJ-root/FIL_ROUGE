@@ -68,37 +68,22 @@
                 </li>
                 <li>
                     <a href="#" class="flex items-center p-2 text-gray-800 rounded-lg hover:bg-gray-100 group relative">
-                        <i class="fas fa-ship w-6 text-red-500"></i>
-                        <span class="ml-3 whitespace-nowrap" x-show="!isCollapsed">Cruises</span>
-                        <span class="tooltip absolute left-14 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300" x-show="isCollapsed">Cruises</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('maps.index') }}" class="flex items-center p-2 text-gray-800 rounded-lg hover:bg-gray-100 group relative">
-                        <i class="fas fa-map-marked-alt w-6 text-red-500"></i>
-                        <span class="ml-3 whitespace-nowrap" x-show="!isCollapsed">Destinations Map</span>
-                        <span class="tooltip absolute left-14 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300" x-show="isCollapsed">Destinations Map</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('trips.index') }}" class="flex items-center p-2 text-gray-800 rounded-lg hover:bg-gray-100 group relative">
-                        <i class="fas fa-route w-6 text-red-500"></i>
-                        <span class="ml-3 whitespace-nowrap" x-show="!isCollapsed">Custom Trips</span>
-                        <span class="tooltip absolute left-14 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300" x-show="isCollapsed">Custom Trips</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('destinations.index') }}" class="flex items-center p-2 text-gray-800 rounded-lg hover:bg-gray-100 group relative">
-                        <i class="fas fa-award w-6 text-red-500"></i>
-                        <span class="ml-3 whitespace-nowrap" x-show="!isCollapsed">Destinations</span>
-                        <span class="tooltip absolute left-14 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300" x-show="isCollapsed">Destinations</span>
                     </a>
                 </li>
                 <li>
                     <a href="#" class="flex items-center p-2 text-gray-800 rounded-lg hover:bg-gray-100 group relative">
-                        <i class="fas fa-mobile-alt w-6 text-red-500"></i>
-                        <span class="ml-3 whitespace-nowrap" x-show="!isCollapsed">App</span>
-                        <span class="tooltip absolute left-14 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300" x-show="isCollapsed">App</span>
                     </a>
                 </li>
             </ul>

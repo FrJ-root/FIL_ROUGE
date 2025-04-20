@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Destination;
 use Illuminate\Database\Seeder;
+use App\Models\Destination;
 use Illuminate\Support\Str;
 
 class DestinationSeeder extends Seeder

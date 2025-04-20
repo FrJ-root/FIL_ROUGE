@@ -14,9 +14,9 @@ class DashboardController extends Controller
             'suspendedTravellers' => $this->countByStatus('traveller', 'suspended'),
             'deletedTravellers' => $this->countByStatus('traveller', 'deleted'),
             
-            'activeTransports' => $this->countByStatus('transport_company', 'active'),
-            'suspendedTransports' => $this->countByStatus('transport_company', 'suspended'),
-            'deletedTransports' => $this->countByStatus('transport_company', 'deleted'),
+            'activeTransports' => $this->countByStatus('transport', 'active'),
+            'suspendedTransports' => $this->countByStatus('transport', 'suspended'),
+            'deletedTransports' => $this->countByStatus('transport', 'deleted'),
             
             'activeGuides' => $this->countByStatus('guide', 'active'),
             'suspendedGuides' => $this->countByStatus('guide', 'suspended'),

@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('destination');
             $table->date('start_date');
             $table->date('end_date');
-            $table->string('cover_picture')->nullable()->after('end_date');
+            $table->string('cover_picture')->nullable();
             $table->timestamps();
         });
     }

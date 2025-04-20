@@ -12,12 +12,12 @@ class Destination extends Model
     protected $fillable = [
         'name',
         'slug',
-        'description',
         'image',
         'location',
-        'is_featured',
         'meta_title',
-        'meta_description'
+        'is_featured',
+        'description',
+        'meta_description',
     ];
 
     public function travelGuides()

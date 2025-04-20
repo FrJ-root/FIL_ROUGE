@@ -11,11 +11,11 @@ class AccountValidationController extends Controller
     public function index()
     {
         $travellers = User::whereHas('traveller')->with('traveller')->get();
-        $transportCompanies = User::whereHas('transportCompany')->with('transportCompany')->get();
+        $transports = User::whereHas('transport')->with('transport')->get();
         $hotels = User::whereHas('hotel')->with('hotel')->get();
         $guides = User::whereHas('guide')->with('guide')->get();
 
-        return view('admin.pages.account-validation', compact('travellers', 'transportCompanies', 'hotels', 'guides'));
+        return view('admin.pages.account-validation', compact('travellers', 'transports', 'hotels', 'guides'));
     }
 
     public function updateStatus(Request $request, $id){

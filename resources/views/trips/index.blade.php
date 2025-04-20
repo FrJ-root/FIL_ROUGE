@@ -13,13 +13,19 @@
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-3xl font-bold text-gray-800">Discover Trips</h1>
                 @auth
-                <a href="{{ route('trips.create') }}" class="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center">
-                    <i class="fas fa-plus mr-2"></i> Create New Trip
-                </a>
+                    @if(isset($canCreateTrips) && $canCreateTrips)
+                    <a href="{{ route('trips.create') }}" class="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center">
+                        <i class="fas fa-plus mr-2"></i> Create New Trip
+                    </a>
+                    @elseif(auth()->user()->role === 'hotel' || auth()->user()->role === 'guide' || auth()->user()->role === 'transport')
+                    <a href="{{ route(auth()->user()->role . '.available-trips') }}" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center">
+                        <i class="fas fa-handshake mr-2"></i> Find Trips to Collaborate
+                    </a>
+                    @endif
                 @else
-                <a href="{{ route('login') }}?redirect={{ route('trips.create') }}" class="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center">
-                    <i class="fas fa-sign-in-alt mr-2"></i> Login to Create Trip
-                </a>
+                    <a href="{{ route('login') }}?redirect={{ route('trips.index') }}" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center">
+                        <i class="fas fa-sign-in-alt mr-2"></i> Login to Join Trips
+                    </a>
                 @endauth
             </div>
 

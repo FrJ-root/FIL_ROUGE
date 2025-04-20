@@ -3,25 +3,27 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MapController;
-use App\Http\Controllers\TripController;
-use App\Http\Controllers\GuideController;
+use App\Http\Controllers\Guide\GuideController;
 use App\Http\Controllers\SearchController;
-use App\Http\Controllers\ProfileController;
+use \App\Http\Controllers\Hotel\HotelController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DestinationController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SocialAuthController;
-use App\Http\Controllers\TravellerDashboardController;
+use App\Http\Controllers\Manager\ManagerController;
+use App\Http\Controllers\Traveller\TravellerController;
+use App\Http\Controllers\Transport\TransportController;
 use App\Http\Controllers\Admin\AccountValidationController;
-use App\Http\Controllers\Transport\TransportCompanyController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 // Trip
-Route::get('/travel-guides', [TripController::class, 'index'])->name('travel-guides');
+Route::get('/travel-guides', [ManagerController::class, 'index'])->name('travel-guides');
 
 // Hotels
 Route::get('/hotels', function () {
@@ -60,36 +62,106 @@ Route::get('login/google/callback', [SocialAuthController::class, 'handleGoogleC
 Route::get('login/facebook', [SocialAuthController::class, 'redirectToFacebook']);
 Route::get('login/facebook/callback', [SocialAuthController::class, 'handleFacebookCallback']);
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/guide/dashboard', function () {
-        return view('guide.guidedash');
-    })->name('guide.dashboard');
+// Transport
+Route::prefix('transport')->name('transport.')->middleware(['auth'])->group(function () {
 
-    Route::get('/hotel/dashboard', function () {
-        return view('hotel.dashboard');
-    })->name('hotel.dashboard');
-
-    Route::get('/transport/dashboard', function () {
-        return view('transport.dashboard');
-    })->name('transport.dashboard');
-
-    Route::get('/traveller/dashboard', function () {
-        return view('traveller.dashboard');
-    })->name('traveller.dashboard');
-});
-
-// TravelCompany
-Route::middleware(['auth', 'role:transport company'])->prefix('transport')->group(function () {
     Route::get('/dashboard', function () {
-        return view('company.dashboard');
-    })->name('company.dashboard');
+        return view('transport.dashboard');
+    })->name('dashboard');
+
+    Route::get('/profile', [TransportController::class, 'showProfile'])
+    ->name('profile');
+    
+    Route::get('/profile/edit', [TransportController::class, 'editProfile'])
+    ->name('profile.edit');
+    
+    Route::post('/profile/update', [TransportController::class, 'updateProfile'])
+    ->name('update-profile');
+
+    Route::get('/trips', [TransportController::class, 'showTrips'])
+    ->name('trips');
+
+    Route::get('/trips/{id}', [TransportController::class, 'showTripDetails'])
+    ->name('trip.details');
+    
+    Route::get('/available-trips', [TransportController::class, 'availableTrips'])
+    ->name('available-trips');
+    
+    Route::post('/join-trip', [TransportController::class, 'joinTrip'])
+    ->name('join-trip');
+    
+    Route::post('/withdraw-trip/{id}', [TransportController::class, 'withdrawFromTrip'])
+    ->name('withdraw-trip');
+
+    Route::get('/availability', [TransportController::class, 'showAvailability'])
+    ->name('availability');
+    
+    Route::post('/availability/update', [TransportController::class, 'updateAvailability'])
+    ->name('availability.update');
+
 });
 
 // Hotel
-Route::middleware(['auth', 'role:hotel'])->prefix('hotel')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('hotel.dashboard');
-    })->name('hotel.dashboard');
+Route::middleware(['auth'])->prefix('hotel')->name('hotel.')->group(function () {
+
+    Route::get('/dashboard', [HotelController::class, 'dashboard'])->name('dashboard');
+    
+    Route::get('/profile', [HotelController::class, 'showProfile'])
+    ->name('profile');
+
+    Route::get('/profile/edit', [HotelController::class, 'editProfile'])
+    ->name('profile.edit');
+
+    Route::post('/profile/update', [HotelController::class, 'updateProfile'])
+    ->name('profile.update');
+
+    Route::get('/profile/create', [HotelController::class, 'createProfile'])
+    ->name('profile.create');
+
+    Route::post('/profile/store', [HotelController::class, 'storeProfile'])
+    ->name('profile.store');
+    
+    Route::get('/rooms', [HotelController::class, 'showRooms'])
+    ->name('rooms');
+
+    Route::get('/rooms/create', [HotelController::class, 'createRoom'])
+    ->name('rooms.create');
+
+    Route::post('/rooms', [HotelController::class, 'storeRoom'])
+    ->name('rooms.store');
+
+    Route::get('/rooms/{room}/edit', [HotelController::class, 'editRoom'])
+    ->name('rooms.edit');
+
+    Route::put('/rooms/{room}', [HotelController::class, 'updateRoom'])
+    ->name('rooms.update');
+
+    Route::delete('/rooms/{room}', [HotelController::class, 'destroyRoom'])->name('rooms.destroy');
+    
+    Route::get('/bookings', [HotelController::class, 'showBookings'])->name('bookings');
+
+    Route::get('/bookings/{booking}', [HotelController::class, 'showBookingDetails'])->name('bookings.show');
+
+    Route::post('/bookings/{booking}/confirm', [HotelController::class, 'confirmBooking'])->name('bookings.confirm');
+
+    Route::post('/bookings/{booking}/cancel', [HotelController::class, 'cancelBooking'])->name('bookings.cancel');
+    
+    Route::get('/reviews', [HotelController::class, 'showReviews'])->name('reviews');
+    
+    Route::get('/settings', [HotelController::class, 'showSettings'])->name('settings');
+    
+    Route::get('/availability', [HotelController::class, 'showAvailability'])
+    ->name('availability');
+    
+    Route::post('/availability/update', [HotelController::class, 'updateAvailability'])
+    ->name('availability.update');
+    
+    // Trip management routes
+    Route::get('/trips', [HotelController::class, 'showTrips'])->name('trips');
+    Route::get('/trips/{id}', [HotelController::class, 'showTripDetails'])->name('trip.details');
+    Route::get('/available-trips', [HotelController::class, 'availableTrips'])->name('available-trips');
+    Route::post('/join-trip', [HotelController::class, 'joinTrip'])->name('join-trip');
+    Route::post('/withdraw-trip/{id}', [HotelController::class, 'withdrawFromTrip'])->name('withdraw-trip');
 });
 
 // Guide
@@ -149,45 +221,46 @@ Route::prefix('traveller')->name('traveller.')->middleware(['auth'])->group(func
         return view('traveller.pages.trips');
     })->name('trips');
 
-    Route::get('/profile', [TravellerDashboardController::class, 'profile'])
+    Route::get('/profile', [TravellerController::class, 'profile'])
     ->name('pages.profile');
     
-    Route::get('/profile/edit', [TravellerDashboardController::class, 'editProfile'])
+    Route::get('/profile/edit', [TravellerController::class, 'editProfile'])
     ->name('profile.edit');
     
-    Route::post('/profile/update', [TravellerDashboardController::class, 'updateProfile'])
+    Route::post('/profile/update', [TravellerController::class, 'updateProfile'])
     ->name('profile.update');
 
 });
 
 // Trip routes - Public and Protected
-Route::get('/trips', [TripController::class, 'index'])->name('trips.index');
+Route::get('/trips', [ManagerController::class, 'index'])->name('trips.index');
 
-Route::middleware(['auth'])->group(function() {
-    Route::get('/trips/create', [TripController::class, 'create'])->name('trips.create');
-    Route::post('/trips', [TripController::class, 'store'])->name('trips.store');
+// Only managers can create trips
+Route::middleware(['auth', 'role:manager'])->group(function() {
+    Route::get('/trips/create', [ManagerController::class, 'create'])->name('trips.create');
+    Route::post('/trips', [ManagerController::class, 'store'])->name('trips.store');
 });
 
 // Then define wildcard/parameter routes
-Route::get('/trips/{trip}', [TripController::class, 'show'])->name('trips.show');
+Route::get('/trips/{trip}', [ManagerController::class, 'show'])->name('trips.show');
 
 // Protected Trip management routes (require authentication)
 Route::middleware(['auth'])->group(function() {
-    Route::get('/trips/{trip}/edit', [TripController::class, 'edit'])->name('trips.edit');
-    Route::delete('/trips/{trip}/activities/{activity}', [TripController::class, 'removeActivity'])->name('trips.activities.remove');
-    
-    // Trip itinerary management
-    Route::post('/trips/{trip}/itinerary', [TripController::class, 'updateItinerary'])->name('trips.itinerary.update');
-    
-    // Trip travellers management
-    Route::post('/trips/{trip}/travellers', [TripController::class, 'addTraveller'])->name('trips.travellers.add');
-    Route::delete('/trips/{trip}/travellers/{traveller}', [TripController::class, 'removeTraveller'])->name('trips.travellers.remove');
+    // Manager or original creator can edit the trip
+    Route::middleware(['can:edit,trip'])->group(function() {
+        Route::get('/trips/{trip}/edit', [ManagerController::class, 'edit'])->name('trips.edit');
+        Route::put('/trips/{trip}', [ManagerController::class, 'update'])->name('trips.update');
+        Route::delete('/trips/{trip}/activities/{activity}', [ManagerController::class, 'removeActivity'])->name('trips.activities.remove');
+        Route::post('/trips/{trip}/itinerary', [ManagerController::class, 'updateItinerary'])->name('trips.itinerary.update');
+        Route::post('/trips/{trip}/travellers', [ManagerController::class, 'addTraveller'])->name('trips.travellers.add');
+        Route::delete('/trips/{trip}/travellers/{traveller}', [ManagerController::class, 'removeTraveller'])->name('trips.travellers.remove');
+    });
 });
 
-// Map routes - Fix the map route
+// Map
 Route::get('/maps', [MapController::class, 'index'])->name('maps.index');
 
-// Destination routes
+// Destination
 Route::get('/destinations', [DestinationController::class, 'index'])->name('destinations.index');
 Route::get('/destinations/{slug}', [DestinationController::class, 'show'])->name('destinations.show');
 
@@ -244,22 +317,46 @@ Route::prefix('user')->name('user.')->middleware(['auth'])->group(function () {
         return view('user.dashboard');
     })->name('dashboard');
 
-    Route::get('/profile', [\App\Http\Controllers\UserController::class, 'showProfile'])->name('profile');
-    Route::get('/profile/edit', [\App\Http\Controllers\UserController::class, 'editProfile'])->name('profile.edit');
-    Route::post('/profile/update', [\App\Http\Controllers\UserController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/profile', [UserController::class, 'showProfile'])->name('profile');
+    Route::get('/profile/edit', [UserController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
 
-    Route::get('/availability', [\App\Http\Controllers\UserController::class, 'showAvailability'])->name('availability');
-    Route::post('/availability/update', [\App\Http\Controllers\UserController::class, 'updateAvailability'])->name('availability.update');
+    Route::get('/availability', [UserController::class, 'showAvailability'])->name('availability');
+    Route::post('/availability/update', [UserController::class, 'updateAvailability'])->name('availability.update');
 
-    Route::get('/travellers', [\App\Http\Controllers\UserController::class, 'showTravellers'])->name('travellers');
-    Route::get('/messages', [\App\Http\Controllers\UserController::class, 'showMessages'])->name('messages');
+    Route::get('/travellers', [UserController::class, 'showTravellers'])->name('travellers');
+    Route::get('/messages', [UserController::class, 'showMessages'])->name('messages');
 });
 
-Route::prefix('transport')->name('transport.')->middleware(['auth', 'role:transport company'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('transport.dashboard');
-    })->name('dashboard');
-
-    Route::get('/profile', [TransportCompanyController::class, 'showProfile'])->name('profile');
-    Route::get('/trips', [TransportCompanyController::class, 'showTrips'])->name('trips');
+// Manager Routes
+Route::prefix('manager')->name('manager.')->middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [ManagerController::class, 'dashboard'])->name('dashboard');
+    
+    // Add profile routes
+    Route::get('/profile', [ManagerController::class, 'profile'])->name('profile');
+    Route::get('/profile/edit', [ManagerController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/profile/update', [ManagerController::class, 'updateProfile'])->name('profile.update');
+    
+    // Add collaborators route
+    Route::get('/collaborators', [ManagerController::class, 'collaborators'])->name('collaborators');
+    
+    // Add travellers route
+    Route::get('/travellers', [ManagerController::class, 'travellers'])->name('travellers');
+    
+    // Trips management - complete CRUD functionality
+    Route::get('/trips', [ManagerController::class, 'trips'])->name('trips');
+    Route::get('/trips/create', [ManagerController::class, 'create'])->name('trips.create');
+    Route::post('/trips', [ManagerController::class, 'store'])->name('trips.store');
+    Route::get('/trips/{id}', [ManagerController::class, 'show'])->name('trips.show');
+    Route::get('/trips/{id}/edit', [ManagerController::class, 'edit'])->name('trips.edit');
+    Route::put('/trips/{id}', [ManagerController::class, 'update'])->name('trips.update');
+    Route::delete('/trips/{id}', [ManagerController::class, 'destroy'])->name('trips.destroy');
+    
+    // Collaborations management
+    Route::get('/trips/{id}/collaborations', [ManagerController::class, 'manageCollaborations'])->name('collaborations');
+    Route::post('/trips/{id}/collaborators', [ManagerController::class, 'addCollaborator'])->name('collaborators.add');
+    Route::delete('/trips/{id}/collaborators', [ManagerController::class, 'removeCollaborator'])->name('collaborators.remove');
+    
+    // Collaborator trips
+    Route::get('/collaborator-trips/{type}', [ManagerController::class, 'collaboratorTrips'])->name('collaborator.trips');
 });

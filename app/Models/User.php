@@ -17,11 +17,11 @@ class User extends Authenticatable
     use HasRoles;
 
     protected $fillable = [
-        'name',
-        'email',
         'password',
-        'role',
         'picture',
+        'email',
+        'name',
+        'role',
     ];
 
     protected $hidden = [
@@ -39,22 +39,22 @@ class User extends Authenticatable
         $this->attributes['password'] = Hash::make($value);
     }
 
-    public function transport()
+    public function transports()
     {
         return $this->hasOne(Transport::class, 'user_id');
     }
 
-    public function traveller()
+    public function travellers()
     {
         return $this->hasOne(Traveller::class, 'user_id');
     }
 
-    public function hotel()
+    public function hotels()
     {
         return $this->hasOne(Hotel::class);
     }
 
-    public function guide()
+    public function guides()
     {
         return $this->hasOne(Guide::class, 'user_id');
     }

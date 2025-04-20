@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Traveller;
-use App\Models\Itinerary;
 use App\Models\Trip;
 use App\Models\User;
 

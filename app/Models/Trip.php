@@ -41,7 +41,7 @@ class Trip extends Model
         return $this->belongsToMany(Tag::class, 'trip_tag');
     }
     
-    public function transport()
+    public function transports()
     {
         return $this->belongsToMany(Transport::class, 'trip_transport');
     }

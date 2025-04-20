@@ -19,7 +19,7 @@ class Itinerary extends Model
         return $this->hasMany(Traveller::class);
     }
 
-    public function trip()
+    public function trips()
     {
         return $this->belongsTo(Trip::class);
     }

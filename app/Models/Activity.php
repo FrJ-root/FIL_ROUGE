@@ -17,7 +17,7 @@ class Activity extends Model
         'scheduled_at',
     ];
 
-    public function trip()
+    public function trips()
     {
         return $this->belongsTo(Trip::class);
     }
