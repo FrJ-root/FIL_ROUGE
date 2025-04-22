@@ -3,7 +3,7 @@
 @section('content')
 <h1 class="text-2xl font-bold mb-6">Travellers</h1>
 <div class="bg-white shadow rounded-xl p-6">
-    @if ($travellers->isEmpty())
+    @if (empty($travellers))
         <p class="text-gray-600">No travellers found for your trips.</p>
     @else
         <table class="min-w-full text-left text-sm">

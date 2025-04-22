@@ -6,6 +6,68 @@
         <i class="fas fa-users text-blue-500 mr-2"></i> Travellers Management
     </h1>
 
+    <!-- Payment Status Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow p-4 flex items-center">
+            <div class="p-3 rounded-full bg-blue-100 text-blue-800 mr-4">
+                <i class="fas fa-users text-2xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Total Travellers</p>
+                <p class="text-2xl font-bold">{{ $totalTravellers }}</p>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-4 flex items-center">
+            <div class="p-3 rounded-full bg-green-100 text-green-800 mr-4">
+                <i class="fas fa-check-circle text-2xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Paid</p>
+                <p class="text-2xl font-bold">{{ $paidCount }}</p>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-4 flex items-center">
+            <div class="p-3 rounded-full bg-yellow-100 text-yellow-800 mr-4">
+                <i class="fas fa-clock text-2xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Pending Payment</p>
+                <p class="text-2xl font-bold">{{ $pendingCount }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center">
+                <span class="text-gray-700 font-medium mr-2">Filter:</span>
+                <select id="payment-filter" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="all" {{ $filter == 'all' ? 'selected' : '' }}>All Travellers</option>
+                    <option value="paid" {{ $filter == 'paid' ? 'selected' : '' }}>Paid</option>
+                    <option value="pending" {{ $filter == 'pending' ? 'selected' : '' }}>Pending Payment</option>
+                    <option value="cancelled" {{ $filter == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                </select>
+            </div>
+            <div class="relative">
+                <input type="text" id="search" placeholder="Search travellers..." 
+                       class="border border-gray-300 rounded-md pl-10 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+        </div>
+    </div>
+
+    @if(session('success'))
+    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-2"></i>
+            <p>{{ session('success') }}</p>
+        </div>
+    </div>
+    @endif
+
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
         <div class="p-6">
             <div class="overflow-x-auto">
@@ -16,7 +78,7 @@
                             <th class="py-3 px-6 text-left">Contact</th>
                             <th class="py-3 px-6 text-left">Trip</th>
                             <th class="py-3 px-6 text-left">Nationality</th>
-                            <th class="py-3 px-6 text-left">Status</th>
+                            <th class="py-3 px-6 text-left">Payment Status</th>
                             <th class="py-3 px-6 text-center">Actions</th>
                         </tr>
                     </thead>
@@ -69,15 +131,27 @@
                                 </td>
                                 <td class="py-3 px-6 text-center">
                                     <div class="flex item-center justify-center">
-                                        <a href="#" class="w-4 mr-2 transform hover:text-blue-500 hover:scale-110">
+                                        <a href="{{ route('manager.travellers.view', $traveller->id) }}" class="text-blue-500 hover:text-blue-700 mx-1" title="View Details">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="#" class="w-4 mr-2 transform hover:text-yellow-500 hover:scale-110">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="w-4 transform hover:text-red-500 hover:scale-110">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
+                                        
+                                        @if($traveller->trip && $traveller->payment_status === 'pending')
+                                            <form action="{{ route('manager.travellers.confirm-payment', $traveller->id) }}" method="POST" class="inline">
+                                                @csrf
+                                                <button type="submit" class="text-green-500 hover:text-green-700 mx-1" title="Confirm Payment">
+                                                    <i class="fas fa-check-circle"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                        
+                                        @if($traveller->trip && $traveller->payment_status !== 'cancelled')
+                                            <form action="{{ route('manager.travellers.cancel-trip', $traveller->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this traveller\'s trip?');" class="inline">
+                                                @csrf
+                                                <button type="submit" class="text-red-500 hover:text-red-700 mx-1" title="Cancel Trip">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -103,4 +177,32 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const paymentFilter = document.getElementById('payment-filter');
+        const searchInput = document.getElementById('search');
+        
+        paymentFilter.addEventListener('change', function() {
+            window.location.href = "{{ route('manager.travellers') }}?filter=" + this.value;
+        });
+        
+        searchInput.addEventListener('input', function() {
+            const rows = document.querySelectorAll('tbody tr');
+            const searchTerm = this.value.toLowerCase();
+            
+            rows.forEach(row => {
+                const name = row.querySelector('td:first-child').textContent.toLowerCase();
+                const email = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                const trip = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                
+                if (name.includes(searchTerm) || email.includes(searchTerm) || trip.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
 @endsection

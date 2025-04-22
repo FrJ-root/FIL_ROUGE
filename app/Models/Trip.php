@@ -18,6 +18,12 @@ class Trip extends Model
         'status',
     ];
 
+    // Make sure dates are properly cast
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+    ];
+
     public function travellers()
     {
         return $this->hasMany(Traveller::class);

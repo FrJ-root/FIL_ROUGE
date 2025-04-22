@@ -110,6 +110,7 @@
                             id="map-search" 
                             type="text" 
                             placeholder="Search for locations..." 
+                            value="{{ $searchTerm ?? '' }}"
                             class="w-full pl-10 pr-4 py-2 rounded-lg shadow-lg border-0 focus:ring-2 focus:ring-red-500"
                         >
                         <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -1052,6 +1053,15 @@
     document.addEventListener('DOMContentLoaded', () => {
         // Initialize map
         initMap();
+        
+        // Auto-search if searchTerm is provided
+        const searchTerm = "{{ $searchTerm ?? '' }}";
+        if (searchTerm) {
+            document.getElementById('map-search').value = searchTerm;
+            setTimeout(() => {
+                document.getElementById('search-button').click();
+            }, 1000);
+        }
         
         // Sidebar observer
         const sidebarWrapper = document.querySelector('.sidebar-wrapper');

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use App\Models\Trip;
 use App\Models\Hotel;
 use App\Models\Guide;
@@ -14,6 +15,8 @@ use App\Models\Traveller;
 use App\Models\Activity;
 use App\Models\Itinerary;
 use App\Models\User;
+use App\Models\Category;
+use App\Models\Tag;
 
 class ManagerController extends Controller
 {
@@ -36,7 +39,10 @@ class ManagerController extends Controller
      */
     public function create()
     {
-        return view('trips.create');
+        $categories = Category::all();
+        $tags = Tag::all();
+        
+        return view('trips.create', compact('categories', 'tags'));
     }
 
     /**
@@ -44,123 +50,236 @@ class ManagerController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'destination' => 'required|string|max:255',
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'cover_picture' => 'nullable|image|max:2048'
-        ]);
+        // Begin a database transaction to ensure all operations succeed or fail together
+        DB::beginTransaction();
+        
+        try {
+            // Validate the form data
+            $validated = $request->validate([
+                'destination' => 'required|string|max:255',
+                'start_date' => 'required|date|after_or_equal:today',
+                'end_date' => 'required|date|after_or_equal:start_date',
+                'cover_picture' => 'nullable|image|max:2048'
+            ]);
 
-        $trip = new Trip([
-            'destination' => $request->destination,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-        ]);
+            // Create the trip with validated data
+            $trip = new Trip();
+            $trip->destination = $validated['destination'];
+            $trip->start_date = $validated['start_date'];
+            $trip->end_date = $validated['end_date'];
+            $trip->manager_id = Auth::id();
+            $trip->status = 'active';
 
-        if ($request->hasFile('cover_picture')) {
-            $path = $request->file('cover_picture')->store('images/trip', 'public');
-            $trip->cover_picture = basename($path);
+            // Handle file upload if present
+            if ($request->hasFile('cover_picture')) {
+                $path = $request->file('cover_picture')->store('images/trip', 'public');
+                $trip->cover_picture = basename($path);
+            }
+
+            // Save the trip and throw an exception if it fails
+            if (!$trip->save()) {
+                throw new \Exception('Failed to save trip to database');
+            }
+
+            // Create the default itinerary
+            $itinerary = new Itinerary();
+            $itinerary->title = 'Trip to ' . $validated['destination'];
+            $itinerary->description = 'Default itinerary for ' . $validated['destination'];
+            $itinerary->trip_id = $trip->id;
+            
+            if (!$itinerary->save()) {
+                throw new \Exception('Failed to create itinerary');
+            }
+
+            // Add the current user as a traveller if they are a traveller or manager
+            if (Auth::user()->role === 'traveller' || Auth::user()->role === 'manager') {
+                // Check if user already has a traveller record
+                $existingTraveller = Traveller::where('user_id', Auth::id())->first();
+                
+                if ($existingTraveller) {
+                    // Update existing traveller record
+                    $existingTraveller->trip_id = $trip->id;
+                    $existingTraveller->itinerary_id = $itinerary->id;
+                    
+                    if (!$existingTraveller->save()) {
+                        throw new \Exception('Failed to update traveller with trip information');
+                    }
+                } else {
+                    // Create new traveller record with all required fields
+                    $traveller = new Traveller();
+                    $traveller->user_id = Auth::id();
+                    $traveller->trip_id = $trip->id;
+                    $traveller->itinerary_id = $itinerary->id;
+                    $traveller->passport_number = null; // Optional field
+                    
+                    if (!$traveller->save()) {
+                        throw new \Exception('Failed to create traveller record');
+                    }
+                }
+            }
+
+            // Commit the transaction as everything succeeded
+            DB::commit();
+            
+            // Get or create a destination based on the trip's destination
+            $destinationName = explode(',', $trip->destination)[0];
+            $destination = \App\Models\Destination::where('name', 'like', $destinationName . '%')->first();
+            
+            if ($destination) {
+                // Redirect to the destination show page if a matching destination exists
+                return redirect()->route('destinations.show', $destination->slug)
+                    ->with('success', 'Trip created successfully!');
+            }
+            
+            // Fallback to trip show page if no matching destination
+            return redirect()->route('trips.show', $trip->id)
+                ->with('success', 'Trip created successfully!');
+        } 
+        catch (\Exception $e) {
+            // Roll back the transaction if anything failed
+            DB::rollback();
+            
+            // Log the detailed error
+            \Log::error('Trip creation error: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+            
+            // Redirect back with input and error message
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Failed to create trip: ' . $e->getMessage());
         }
-
-        $trip->save();
-
-        // Create default itinerary
-        $itinerary = new Itinerary([
-            'title' => 'Trip to ' . $request->destination,
-            'description' => 'Default itinerary for ' . $request->destination,
-        ]);
-        
-        $trip->itinerary()->save($itinerary);
-
-        // Add the creator as a traveller
-        $traveller = Traveller::firstOrCreate(
-            ['user_id' => Auth::id()],
-            ['passport_number' => null]
-        );
-        
-        $traveller->trip_id = $trip->id;
-        $traveller->itinerary_id = $itinerary->id;
-        $traveller->save();
-
-        return redirect()->route('trips.show', $trip->id)
-            ->with('success', 'Trip created successfully!');
     }
 
     /**
      * Display the specified trip
      */
-    public function show(Trip $trip)
+    public function show($id)
     {
-        $trip->load(['hotels', 'guides', 'transports', 'travellers', 'activities', 'itinerary']);
+        $trip = Trip::with(['travellers.user', 'guides', 'hotels', 'transports', 'activities', 'itinerary', 'categories', 'tags'])
+            ->findOrFail($id);
         
-        // Get related trips
+        $canEdit = Auth::user()->role === 'manager' && 
+                  (Auth::id() === $trip->manager_id || 
+                   $trip->travellers->contains('user_id', Auth::id()));
+        
+        // Get related trips based on destination or categories
         $relatedTrips = Trip::where('id', '!=', $trip->id)
+            ->where(function($query) use ($trip) {
+                // Match by similar destination
+                $query->where('destination', 'like', '%' . explode(',', $trip->destination)[0] . '%')
+                // Or match by categories if the trip has categories
+                ->orWhereHas('categories', function($categoryQuery) use ($trip) {
+                    if ($trip->categories->count() > 0) {
+                        $categoryQuery->whereIn('categories.id', $trip->categories->pluck('id'));
+                    }
+                });
+            })
             ->take(3)
             ->get();
-            
-        $canEdit = auth()->check() && (
-            auth()->user()->role === 'admin' || 
-            auth()->user()->role === 'manager' ||
-            ($trip->travellers->contains('user_id', auth()->id()) && $trip->travellers->count() === 1)
-        );
-            
-        return view('trips.show', compact('trip', 'relatedTrips', 'canEdit'));
+        
+        return view('trips.show', compact('trip', 'canEdit', 'relatedTrips'));
     }
 
     /**
      * Show the form for editing the specified trip
      */
-    public function edit(Trip $trip)
+    public function edit($id)
     {
-        return view('trips.edit', compact('trip'));
+        try {
+            $trip = Trip::findOrFail($id);
+            
+            // Make sure to load related data
+            $categories = Category::all();
+            $tags = Tag::all();
+            
+            return view('trips.edit', compact('trip', 'categories', 'tags'));
+        } catch (\Exception $e) {
+            \Log::error('Error showing edit form: ' . $e->getMessage());
+            return redirect()->route('manager.trips')->with('error', 'Error loading trip: ' . $e->getMessage());
+        }
     }
 
     /**
      * Update the specified trip
      */
-    public function update(Request $request, Trip $trip)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'destination' => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'cover_picture' => 'nullable|image|max:2048'
-        ]);
+        try {
+            $trip = Trip::findOrFail($id);
+            
+            $validated = $request->validate([
+                'destination' => 'required|string|max:255',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date|after_or_equal:start_date',
+                'cover_picture' => 'nullable|image|max:2048',
+            ]);
 
-        $trip->destination = $request->destination;
-        $trip->start_date = $request->start_date;
-        $trip->end_date = $request->end_date;
+            $trip->destination = $validated['destination'];
+            $trip->start_date = $validated['start_date'];
+            $trip->end_date = $validated['end_date'];
 
-        if ($request->hasFile('cover_picture')) {
-            // Delete old image if exists
-            if ($trip->cover_picture) {
-                Storage::disk('public')->delete('images/trip/' . $trip->cover_picture);
+            if ($request->hasFile('cover_picture')) {
+                // Delete old image if exists
+                if ($trip->cover_picture) {
+                    $oldImagePath = 'public/images/trip/' . $trip->cover_picture;
+                    if (Storage::exists($oldImagePath)) {
+                        Storage::delete($oldImagePath);
+                    }
+                }
+                
+                // Store new image
+                $path = $request->file('cover_picture')->store('images/trip', 'public');
+                $trip->cover_picture = basename($path);
+            }
+
+            $trip->save();
+            
+            // Get or create a destination based on the trip's destination
+            $destinationName = explode(',', $trip->destination)[0];
+            $destination = \App\Models\Destination::where('name', 'like', $destinationName . '%')->first();
+            
+            if ($destination) {
+                // Redirect to the destination show page if a matching destination exists
+                return redirect()->route('destinations.show', $destination->slug)
+                    ->with('success', 'Trip updated successfully!');
             }
             
-            $path = $request->file('cover_picture')->store('images/trip', 'public');
-            $trip->cover_picture = basename($path);
+            // Fallback to trip show page if no matching destination
+            return redirect()->route('trips.show', $trip->id)
+                ->with('success', 'Trip updated successfully!');
+        } catch (\Exception $e) {
+            \Log::error('Error updating trip: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error updating trip: ' . $e->getMessage());
         }
-
-        $trip->save();
-
-        return redirect()->route('trips.show', $trip->id)
-            ->with('success', 'Trip updated successfully!');
     }
 
     /**
      * Remove the specified trip
      */
-    public function destroy(Trip $trip)
+    public function destroy($id)
     {
-        // Delete cover picture if exists
-        if ($trip->cover_picture) {
-            Storage::disk('public')->delete('images/trip/' . $trip->cover_picture);
+        try {
+            $trip = Trip::findOrFail($id);
+            
+            // Delete cover picture if exists
+            if ($trip->cover_picture) {
+                $picturePath = 'public/images/trip/' . $trip->cover_picture;
+                if (Storage::exists($picturePath)) {
+                    Storage::delete($picturePath);
+                }
+            }
+            
+            // The associated records will be deleted via the database cascade
+            $trip->delete();
+            
+            return redirect()->route('manager.trips')
+                ->with('success', 'Trip deleted successfully!');
+        } catch (\Exception $e) {
+            return redirect()->route('manager.trips')
+                ->with('error', 'Error deleting trip: ' . $e->getMessage());
         }
-
-        $trip->delete();
-
-        return redirect()->route('trips.index')
-            ->with('success', 'Trip deleted successfully!');
     }
 
     /**
@@ -180,7 +299,6 @@ class ManagerController extends Controller
             return redirect()->back()->with('error', 'User not found.');
         }
 
-        // Check if user is already a traveller on this trip
         $existingTraveller = Traveller::where('user_id', $user->id)
             ->where('trip_id', $trip->id)
             ->first();
@@ -189,7 +307,6 @@ class ManagerController extends Controller
             return redirect()->back()->with('error', 'This traveller is already on the trip.');
         }
 
-        // Create or update traveller
         $traveller = Traveller::firstOrCreate(
             ['user_id' => $user->id],
             [
@@ -198,7 +315,6 @@ class ManagerController extends Controller
             ]
         );
 
-        // Update with new values if exists
         if ($request->nationality) {
             $traveller->nationality = $request->nationality;
         }
@@ -225,7 +341,6 @@ class ManagerController extends Controller
             return redirect()->back()->with('error', 'This traveller is not on this trip.');
         }
 
-        // Reset the trip_id and itinerary_id
         $traveller->trip_id = null;
         $traveller->itinerary_id = null;
         $traveller->save();
@@ -277,38 +392,79 @@ class ManagerController extends Controller
      */
     public function dashboard()
     {
-        $user = Auth::user();
+        $user = auth()->user();
+        $today = now()->format('Y-m-d');
+        $trips = Trip::where('manager_id', $user->id)->get();
         
-        $totalTrips = Trip::count();
-        $activeTrips = Trip::where('start_date', '>', now())->count();
-        $completedTrips = Trip::where('end_date', '<', now())->count();
+        $totalTrips = $trips->count();
+        $activeTrips = $trips->where('start_date', '<=', $today)
+                             ->where('end_date', '>=', $today)
+                             ->where('status', 'active')
+                             ->count();
         
-        $hotelsCount = Hotel::count();
-        $guidesCount = Guide::count();
-        $transportsCount = Transport::count();
+        $upcomingTrips = $trips->where('start_date', '>', $today)
+                               ->where('status', 'active')
+                               ->count();
         
-        $recentTrips = Trip::latest()->take(5)->get();
+        $totalTravellers = 0;
+        $travellers = [];
         
-        $pendingCollaborations = Trip::whereDoesntHave('hotels')
-            ->orWhereDoesntHave('guides')
-            ->orWhereDoesntHave('transports')
-            ->take(5)
-            ->get();
+        foreach ($trips as $trip) {
+            $tripTravellers = $trip->travellers;
+            $totalTravellers += $tripTravellers->count();
             
-        // Add travellers data
-        $travellers = Traveller::with(['user', 'trip'])->get();
-
+            foreach ($tripTravellers as $traveller) {
+                $travellers[] = $traveller;
+            }
+        }
+        
+        $averageTravellers = $totalTrips > 0 ? $totalTravellers / $totalTrips : 0;
+        
+        $nextTrip = Trip::where('manager_id', $user->id)
+                       ->where('start_date', '>', $today)
+                       ->where('status', 'active')
+                       ->orderBy('start_date')
+                       ->first();
+        
+        $nextTripDays = $nextTrip ? now()->diffInDays($nextTrip->start_date) : null;
+        
+        $hotelCount = 0;
+        $guideCount = 0;
+        $transportCount = 0;
+        
+        foreach ($trips as $trip) {
+            $hotelCount += $trip->hotels()->count();
+            $guideCount += $trip->guides()->count();
+            $transportCount += $trip->transports()->count();
+        }
+        
+        $tripRevenue = 5000;
+        $activityRevenue = 2000;
+        $commissionRevenue = 1000;
+        $totalRevenue = $tripRevenue + $activityRevenue + $commissionRevenue;
+        
+        $tripRevenuePercent = ($totalRevenue > 0) ? ($tripRevenue / $totalRevenue * 100) : 0;
+        $activityRevenuePercent = ($totalRevenue > 0) ? ($activityRevenue / $totalRevenue * 100) : 0;
+        $commissionRevenuePercent = ($totalRevenue > 0) ? ($commissionRevenue / $totalRevenue * 100) : 0;
+        
+        $tripGrowth = 12;
+        $revenueGrowth = 8;
+        $collaborationRate = 75;
+        $pendingRequests = 5;
+        
+        $currency = '$';
+        
+        $paidTravellersCount = Traveller::where('payment_status', 'paid')->count();
+        $pendingTravellersCount = Traveller::where('payment_status', 'pending')->count();
+        
         return view('manager.dashboard', compact(
-            'user',
-            'totalTrips',
-            'activeTrips',
-            'completedTrips',
-            'hotelsCount',
-            'guidesCount',
-            'transportsCount',
-            'recentTrips',
-            'pendingCollaborations',
-            'travellers'
+            'totalTrips', 'activeTrips', 'upcomingTrips', 
+            'totalTravellers', 'averageTravellers', 'nextTripDays',
+            'travellers', 'hotelCount', 'guideCount', 'transportCount',
+            'tripRevenue', 'activityRevenue', 'commissionRevenue', 'totalRevenue',
+            'tripRevenuePercent', 'activityRevenuePercent', 'commissionRevenuePercent',
+            'tripGrowth', 'revenueGrowth', 'collaborationRate', 'pendingRequests',
+            'currency', 'paidTravellersCount', 'pendingTravellersCount'
         ));
     }
 
@@ -341,7 +497,7 @@ class ManagerController extends Controller
      */
     public function trips()
     {
-        $user = Auth::user();
+        // Load all trips instead of filtering by manager
         $trips = Trip::with(['travellers', 'guides', 'hotels', 'transports'])
             ->latest()
             ->paginate(10);
@@ -387,7 +543,6 @@ class ManagerController extends Controller
      */
     public function collaborators()
     {
-        // Fetch all hotels, guides, and transports for the collaborators page
         $hotels = Hotel::with('user')->get();
         $guides = Guide::with('user')->get();
         $transports = Transport::with('user')->get();
@@ -429,7 +584,6 @@ class ManagerController extends Controller
         $user->email = $request->email;
         
         if ($request->hasFile('picture')) {
-            // Delete old picture if it exists
             if ($user->picture) {
                 Storage::disk('public')->delete($user->picture);
             }
@@ -460,7 +614,7 @@ class ManagerController extends Controller
         ]);
         
         $user = Auth::user();
-        $user->password = $request->password; // The password will be automatically hashed
+        $user->password = $request->password;
         $user->save();
         
         return redirect()->route('manager.profile')->with('success', 'Password updated successfully!');
@@ -469,9 +623,65 @@ class ManagerController extends Controller
     /**
      * Display all travellers
      */
-    public function travellers()
+    public function travellers(Request $request)
     {
-        $travellers = Traveller::with(['user', 'trip'])->paginate(10);
-        return view('manager.pages.travellers', compact('travellers'));
+        $filter = $request->input('filter', 'all');
+        
+        $query = Traveller::with(['user', 'trip']);
+        
+        if ($filter !== 'all') {
+            $query->where('payment_status', $filter);
+        }
+        
+        $travellers = $query->paginate(10);
+        
+        $totalTravellers = Traveller::count();
+        $paidCount = Traveller::where('payment_status', 'paid')->count();
+        $pendingCount = Traveller::where('payment_status', 'pending')->count();
+        
+        return view('manager.pages.travellers', compact(
+            'travellers',
+            'filter',
+            'totalTravellers',
+            'paidCount',
+            'pendingCount'
+        ));
+    }
+
+    /**
+     * Confirm traveller payment
+     */
+    public function confirmTravellerPayment($id)
+    {
+        $traveller = Traveller::findOrFail($id);
+        
+        $traveller->payment_status = 'paid';
+        $traveller->save();
+        
+        return redirect()->route('manager.travellers')
+            ->with('success', 'Payment confirmed successfully');
+    }
+
+    /**
+     * Display a traveller's details
+     */
+    public function viewTraveller($id)
+    {
+        $traveller = Traveller::with(['user', 'trip'])->findOrFail($id);
+        return view('manager.pages.traveller-details', compact('traveller'));
+    }
+
+    /**
+     * Cancel a traveller's trip
+     */
+    public function cancelTravellerTrip($id)
+    {
+        $traveller = Traveller::findOrFail($id);
+        
+        $traveller->payment_status = 'cancelled';
+        $traveller->save();
+        
+        return redirect()->route('manager.travellers')
+            ->with('success', 'Traveller\'s trip has been cancelled successfully');
     }
 }

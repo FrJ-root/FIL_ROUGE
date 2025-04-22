@@ -242,29 +242,18 @@ Route::prefix('traveller')->name('traveller.')->middleware(['auth'])->group(func
 });
 
 // Trip routes - Public and Protected
-Route::get('/trips', [ManagerController::class, 'index'])->name('trips.index');
-Route::get('/trips/{trip}', [ManagerController::class, 'show'])->name('trips.show');
-
-// Only logged-in users can access these trip routes
 Route::middleware(['auth'])->group(function () {
+    // Note: The order matters - put specific routes before wildcard routes
     Route::get('/trips/create', [ManagerController::class, 'create'])->name('trips.create');
     Route::post('/trips', [ManagerController::class, 'store'])->name('trips.store');
     Route::get('/trips/{trip}/edit', [ManagerController::class, 'edit'])->name('trips.edit');
     Route::put('/trips/{trip}', [ManagerController::class, 'update'])->name('trips.update');
     Route::delete('/trips/{trip}', [ManagerController::class, 'destroy'])->name('trips.destroy');
-    
-    // Add activities to trips
-    Route::post('/trips/{trip}/activities', [ManagerController::class, 'addActivity'])->name('trips.activities.add');
-    Route::delete('/trips/{trip}/activities/{activity}', [ManagerController::class, 'removeActivity'])->name('trips.activities.remove');
-    
-    // Manager or original creator can edit the trip
-    Route::middleware(['can:edit,trip'])->group(function() {
-        Route::delete('/trips/{trip}/activities/{activity}', [ManagerController::class, 'removeActivity'])->name('trips.activities.remove');
-        Route::post('/trips/{trip}/itinerary', [ManagerController::class, 'updateItinerary'])->name('trips.itinerary.update');
-        Route::post('/trips/{trip}/travellers', [ManagerController::class, 'addTraveller'])->name('trips.travellers.add');
-        Route::delete('/trips/{trip}/travellers/{traveller}', [ManagerController::class, 'removeTraveller'])->name('trips.travellers.remove');
-    });
 });
+
+// These routes should be after the specific routes above to avoid conflicts
+Route::get('/trips', [ManagerController::class, 'index'])->name('trips.index');
+Route::get('/trips/{trip}', [ManagerController::class, 'show'])->name('trips.show');
 
 // Map
 Route::get('/maps', [MapController::class, 'index'])->name('maps.index');
@@ -359,6 +348,9 @@ Route::prefix('manager')->name('manager.')->middleware(['auth'])->group(function
     
     // Add travellers route
     Route::get('/travellers', [ManagerController::class, 'travellers'])->name('travellers');
+    Route::get('/travellers/{id}', [ManagerController::class, 'viewTraveller'])->name('travellers.view');
+    Route::post('/travellers/{id}/cancel-trip', [ManagerController::class, 'cancelTravellerTrip'])->name('travellers.cancel-trip');
+    Route::post('/travellers/{id}/confirm-payment', [ManagerController::class, 'confirmTravellerPayment'])->name('travellers.confirm-payment');
     
     // Trips management - complete CRUD functionality
     Route::get('/trips', [ManagerController::class, 'trips'])->name('trips');

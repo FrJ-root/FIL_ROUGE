@@ -8,21 +8,22 @@ use App\Models\Trip;
 
 class MapController extends Controller
 {
-    public function index()
+    /**
+     * Display the map page with optional search parameter
+     */
+    public function index(Request $request)
     {
-        $destinations = Destination::where('is_featured', true)
+        $destinations = \App\Models\Destination::where('is_featured', true)
+            ->orWhere('name', 'like', '%' . ($request->search ?? '') . '%')
+            ->take(12)
             ->get();
-
-        $hotels = Hotel::whereNotNull('latitude')
+        
+        $hotels = \App\Models\Hotel::whereNotNull('latitude')
             ->whereNotNull('longitude')
-            ->take(10)
             ->get();
-
-        $trips = Trip::with(['hotels', 'travellers'])
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
-
-        return view('maps.index', compact('destinations', 'hotels', 'trips'));
+        
+        $searchTerm = $request->search;
+        
+        return view('maps.index', compact('destinations', 'hotels', 'searchTerm'));
     }
 }

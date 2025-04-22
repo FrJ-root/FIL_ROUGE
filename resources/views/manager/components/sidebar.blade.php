@@ -52,7 +52,7 @@
         </a>
         <a href="{{ route('manager.travellers') }}" class="flex items-center py-3 px-6 hover:bg-purple-700 transition-colors duration-300 {{ Route::is('manager.travellers*') ? 'bg-purple-700' : '' }}">
             <i class="fas fa-hiking mr-3"></i>
-            Travellers
+            Traveller Trips
         </a>
     </nav>
     <div class="absolute bottom-0 w-full p-4 border-t border-purple-400">
