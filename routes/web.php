@@ -3,13 +3,13 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MapController;
-use App\Http\Controllers\Guide\GuideController;
 use App\Http\Controllers\SearchController;
-use \App\Http\Controllers\Hotel\HotelController;
+use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DestinationController;
 use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Guide\GuideController;
+use \App\Http\Controllers\Hotel\HotelController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SocialAuthController;
@@ -217,10 +217,8 @@ Route::prefix('traveller')->name('traveller.')->middleware(['auth'])->group(func
         return view('traveller.dashboard');
     })->name('dashboard');
 
-    Route::get('/trips', function () {
-        return view('traveller.pages.trips');
-    })->name('trips');
-
+    Route::get('/trips', [TravellerController::class, 'trips'])->name('trips');
+    
     Route::get('/profile', [TravellerController::class, 'profile'])
     ->name('pages.profile');
     
@@ -229,27 +227,38 @@ Route::prefix('traveller')->name('traveller.')->middleware(['auth'])->group(func
     
     Route::post('/profile/update', [TravellerController::class, 'updateProfile'])
     ->name('profile.update');
+    
+    Route::get('/settings', function () {
+        return view('traveller.pages.settings');
+    })->name('settings');
+    
+    Route::post('/trips/add/{trip}', [TravellerController::class, 'addTrip'])->name('trips.add');
+    Route::post('/trips/remove/{trip}', [TravellerController::class, 'removeTrip'])->name('trips.remove');
+    
+    // Payment routes
+    Route::get('/trips/{trip}/payment', [TravellerController::class, 'showPayment'])->name('trips.payment');
+    Route::post('/trips/{trip}/payment', [TravellerController::class, 'processPayment'])->name('trips.process-payment');
 
 });
 
 // Trip routes - Public and Protected
 Route::get('/trips', [ManagerController::class, 'index'])->name('trips.index');
-
-// Only managers can create trips
-Route::middleware(['auth', 'role:manager'])->group(function() {
-    Route::get('/trips/create', [ManagerController::class, 'create'])->name('trips.create');
-    Route::post('/trips', [ManagerController::class, 'store'])->name('trips.store');
-});
-
-// Then define wildcard/parameter routes
 Route::get('/trips/{trip}', [ManagerController::class, 'show'])->name('trips.show');
 
-// Protected Trip management routes (require authentication)
-Route::middleware(['auth'])->group(function() {
+// Only logged-in users can access these trip routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/trips/create', [ManagerController::class, 'create'])->name('trips.create');
+    Route::post('/trips', [ManagerController::class, 'store'])->name('trips.store');
+    Route::get('/trips/{trip}/edit', [ManagerController::class, 'edit'])->name('trips.edit');
+    Route::put('/trips/{trip}', [ManagerController::class, 'update'])->name('trips.update');
+    Route::delete('/trips/{trip}', [ManagerController::class, 'destroy'])->name('trips.destroy');
+    
+    // Add activities to trips
+    Route::post('/trips/{trip}/activities', [ManagerController::class, 'addActivity'])->name('trips.activities.add');
+    Route::delete('/trips/{trip}/activities/{activity}', [ManagerController::class, 'removeActivity'])->name('trips.activities.remove');
+    
     // Manager or original creator can edit the trip
     Route::middleware(['can:edit,trip'])->group(function() {
-        Route::get('/trips/{trip}/edit', [ManagerController::class, 'edit'])->name('trips.edit');
-        Route::put('/trips/{trip}', [ManagerController::class, 'update'])->name('trips.update');
         Route::delete('/trips/{trip}/activities/{activity}', [ManagerController::class, 'removeActivity'])->name('trips.activities.remove');
         Route::post('/trips/{trip}/itinerary', [ManagerController::class, 'updateItinerary'])->name('trips.itinerary.update');
         Route::post('/trips/{trip}/travellers', [ManagerController::class, 'addTraveller'])->name('trips.travellers.add');

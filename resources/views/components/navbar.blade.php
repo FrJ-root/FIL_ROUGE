@@ -116,60 +116,78 @@
                 <a href="{{ route('login') }}" class="text-gray-800 font-bold font-medium hover:text-green-500 transition-colors duration-300 px-3 py-2">Log In</a>
                 <a href="{{ route('register') }}" class="bg-red-500 font-bold text-white px-5 py-2 rounded-full hover:bg-red-600 transition-colors duration-300 transform hover:scale-105 font-medium shadow-sm">Sign Up</a>
             @else
-                <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open" @click.away="open = false" class="flex items-center text-gray-800 font-bold hover:text-green-500">
-                        <span class="mr-2">{{ Auth::user()->name }}</span>
-                        <div class="h-8 w-8 rounded-full overflow-hidden border border-gray-200 shadow-sm">
+                <div class="relative ml-3" x-data="{ isUserMenuOpen: false }">
+                    <div>
+                        <button type="button" 
+                                class="relative flex items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-150 ease-in-out hover:bg-gray-700 p-1" 
+                                id="user-menu-button" 
+                                aria-expanded="false" 
+                                aria-haspopup="true" 
+                                @click="isUserMenuOpen = !isUserMenuOpen">
+                            <span class="sr-only">Open user menu</span>
                             @if(Auth::user()->picture)
-                                <img src="{{ asset('storage/' . Auth::user()->picture) }}" 
-                                     alt="{{ Auth::user()->name }}" 
-                                     class="h-full w-full object-cover">
+                                <img class="h-8 w-8 rounded-full object-cover border-2 border-purple-500" 
+                                     src="{{ asset('storage/' . Auth::user()->picture) }}" 
+                                     alt="{{ Auth::user()->name }}'s profile">
                             @else
-                                <div class="h-full w-full flex items-center justify-center bg-gray-100 text-gray-500">
-                                    <i class="fas fa-user"></i>
+                                <div class="h-8 w-8 rounded-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center text-white font-semibold shadow-md">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                 </div>
                             @endif
-                        </div>
-                        <i class="fas fa-chevron-down text-xs ml-2"></i>
-                    </button>
-                    <div x-show="open"
-                         x-transition:enter="transition ease-out duration-100"
+                            <span class="ml-2 text-gray-300 font-medium hidden sm:block">{{ Auth::user()->name }}</span>
+                            <svg class="w-4 h-4 ml-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div x-show="isUserMenuOpen" 
+                         @click.away="isUserMenuOpen = false"
+                         x-transition:enter="transition ease-out duration-200"
                          x-transition:enter-start="transform opacity-0 scale-95"
                          x-transition:enter-end="transform opacity-100 scale-100"
-                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave="transition ease-in duration-150"
                          x-transition:leave-start="transform opacity-100 scale-100"
                          x-transition:leave-end="transform opacity-0 scale-95"
-                         class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                        @php
-                            $dashboardRoute = 'traveller.dashboard'; // Default
-                            $profileRoute = 'traveller.pages.profile'; // Default
-                            
-                            if(Auth::user()->role === 'admin') {
-                                $dashboardRoute = 'admin.dashboard';
-                                $profileRoute = 'admin.profile';
-                            } elseif(Auth::user()->role === 'transport') {
-                                $dashboardRoute = 'transport.dashboard';
-                                $profileRoute = 'transport.profile';
-                            } elseif(Auth::user()->role === 'hotel') {
-                                $dashboardRoute = 'hotel.dashboard';
-                                $profileRoute = 'hotel.profile';
-                            } elseif(Auth::user()->role === 'guide') {
-                                $dashboardRoute = 'guide.dashboard';
-                                $profileRoute = 'guide.profile';
-                            } elseif(Auth::user()->role === 'manager') {
-                                $dashboardRoute = 'manager.dashboard';
-                                $profileRoute = 'manager.profile';
-                            }
-                        @endphp
-                        <a href="{{ route($dashboardRoute) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
-                        <a href="{{ route($profileRoute) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Profile</a>
-                        <a href="{{ route('user.settings') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
-                        <hr class="my-1">
+                         class="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-gray-700" 
+                         role="menu" 
+                         aria-orientation="vertical" 
+                         aria-labelledby="user-menu-button" 
+                         tabindex="-1"
+                         style="backdrop-filter: blur(8px);">
+                         
+                        <!-- User role badge -->
+                        <div class="px-4 py-2 border-b border-gray-700">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-400">
+                                {{ ucfirst(Auth::user()->role) }}
+                            </span>
+                        </div>
+                        
+                        <!-- Dashboard link -->
+                        <a href="{{ route(Auth::user()->role . '.dashboard') }}" 
+                           class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-150 flex items-center" 
+                           role="menuitem">
+                            <i class="fas fa-tachometer-alt mr-2 text-purple-400"></i>
+                            Dashboard
+                        </a>
+                        
+                        <!-- Settings link -->
+                        <a href="javascript:void(0)" 
+                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            Settings
+                        </a>
+                        
+                        <!-- Divider -->
+                        <div class="border-t border-gray-700 my-1"></div>
+                        
+                        <!-- Sign out button -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <input type="hidden" name="redirect" value="{{ url('/') }}">
-                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                                Sign Out
+                            <button type="submit" 
+                                    class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 transition-colors duration-150 flex items-center" 
+                                    role="menuitem">
+                                <i class="fas fa-sign-out-alt mr-2"></i>
+                                Sign out
                             </button>
                         </form>
                     </div>

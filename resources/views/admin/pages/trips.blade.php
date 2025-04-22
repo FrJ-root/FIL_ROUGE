@@ -71,6 +71,7 @@
                     @forelse ($trips ?? [] as $trip)
                     <tr class="hover:bg-gray-800/50 transition-colors">
                         <td class="px-4 py-3 text-sm text-white">{{ $trip->id }}</td>
+                        <!-- Destination column (keeping existing code) -->
                         <td class="px-4 py-3">
                             <div class="flex items-center">
                                 <div class="h-10 w-10 flex-shrink-0 rounded-full overflow-hidden bg-gray-700">
@@ -99,55 +100,52 @@
                                 </span>
                             </div>
                         </td>
-                        <td class="px-4 py-3">
-                            @php
-                                $today = date('Y-m-d');
-                                $status = '';
-                                $statusClass = '';
-                                
-                                if ($trip->status === 'suspended') {
-                                    $status = 'Suspended';
-                                    $statusClass = 'bg-red-500/20 text-red-400';
-                                } elseif ($trip->end_date < $today) {
-                                    $status = 'Completed';
-                                    $statusClass = 'bg-gray-500/20 text-gray-300';
-                                } elseif ($trip->start_date <= $today) {
-                                    $status = 'Active';
-                                    $statusClass = 'bg-green-500/20 text-green-400';
-                                } else {
-                                    $status = 'Upcoming';
-                                    $statusClass = 'bg-blue-500/20 text-blue-400';
-                                }
-                            @endphp
-                            <span class="px-2 py-1 rounded-full text-xs font-medium {{ $statusClass }}">
-                                {{ $status }}
-                            </span>
+                        
+                        <!-- Status Column - Shows status based on admin actions -->
+                        <td class="px-4 py-3 text-sm text-white">
+                            @if($trip->status === 'active')
+                                <span class="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs flex items-center w-fit">
+                                    <i class="fas fa-check-circle mr-1"></i> Valid
+                                </span>
+                            @else
+                                <span class="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-xs flex items-center w-fit">
+                                    <i class="fas fa-pause-circle mr-1"></i> Suspended
+                                </span>
+                            @endif
+                            
+                            @if($trip->manager_id)
+                                <span class="bg-purple-500/20 text-purple-400 px-2 py-1 rounded-full text-xs flex items-center w-fit mt-1">
+                                    <i class="fas fa-user-shield mr-1"></i> Assigned to Manager
+                                </span>
+                            @endif
                         </td>
+                        
+                        <!-- Actions Column with Icon Buttons -->
                         <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-4">
-                                <a href="{{ route('trips.show', $trip->id) }}" class="text-blue-400 hover:text-blue-300 transition-colors" title="View Trip">
-                                    <i class="fas fa-eye"></i>
-                                </a>
+                            <div class="flex space-x-3">
+                                <!-- Valid Trip Button (Icon) -->
+                                <form action="{{ route('admin.trips.status', $trip->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" name="status" value="active" class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors" title="Mark Trip as Valid">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
                                 
-                                @if($trip->status === 'active')
-                                    <form action="{{ route('admin.trips.status', $trip->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" name="status" value="suspended" class="text-yellow-400 hover:text-yellow-300 transition-colors" title="Suspend Trip">
-                                            <i class="fas fa-pause-circle"></i>
-                                        </button>
-                                    </form>
-                                @else
-                                    <form action="{{ route('admin.trips.status', $trip->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" name="status" value="active" class="text-green-400 hover:text-green-300 transition-colors" title="Activate Trip">
-                                            <i class="fas fa-play-circle"></i>
-                                        </button>
-                                    </form>
-                                @endif
+                                <!-- Suspend Trip Button (Icon) -->
+                                <form action="{{ route('admin.trips.status', $trip->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" name="status" value="suspended" class="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-full transition-colors" title="Suspend Trip">
+                                        <i class="fas fa-pause"></i>
+                                    </button>
+                                </form>
                                 
-                                <button onclick="confirmDelete({{ $trip->id }})" class="text-red-400 hover:text-red-300 transition-colors" title="Delete Trip">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
+                                <!-- Declare to Manager Button (Icon) -->
+                                <form action="{{ route('admin.trips.assign', $trip->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full transition-colors" title="Declare to Manager">
+                                        <i class="fas fa-user-shield"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>

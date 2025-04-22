@@ -1,26 +1,44 @@
-<!-- Top navbar -->
-<div class="relative z-10 flex h-16 flex-shrink-0 bg-white shadow-md">
-    <button @click="sidebarOpen = true" class="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 md:hidden">
-        <span class="sr-only">Open sidebar</span>
-        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-    </button>
-    <div class="flex flex-1 justify-between items-center px-4 sm:px-6">
-        <div class="flex-1">
-            <h2 class="text-lg font-semibold text-gray-700">Welcome back, {{ Auth::user()->name }}</h2>
-        </div>
-        <div class="ml-4 flex items-center space-x-4 md:ml-6">
-            <!-- Notification bell -->
-            <button class="rounded-full p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <span class="sr-only">View notifications</span>
+<header class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center">
+            <button @click="sidebarOpen = true" class="px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 md:hidden">
+                <span class="sr-only">Open sidebar</span>
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </button>
-
-            <!-- Include profile dropdown component -->
-            @include('traveller.components.profile-dropdown')
+            <h1 class="text-2xl font-bold text-gray-800 flex items-center md:ml-0 ml-4">
+                <i class="fas fa-globe-americas text-blue-500 mr-2"></i>
+                <span>Traveller Dashboard</span>
+            </h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="relative">
+                <button class="text-gray-600 hover:text-blue-500 transition-colors">
+                    <i class="fas fa-bell text-xl"></i>
+                    <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                </button>
+            </div>
+            <div class="relative" x-data="{ open: false }">
+                @if(Auth::user()->picture)
+                    <button @click="open = !open" class="h-10 w-10 rounded-full overflow-hidden border-2 border-blue-500">
+                        <img src="{{ asset('storage/' . Auth::user()->picture) }}" alt="{{ Auth::user()->name }}" class="h-full w-full object-cover">
+                    </button>
+                @else
+                    <button @click="open = !open" class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold border-2 border-blue-500">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </button>
+                @endif
+                
+                <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10" style="display: none">
+                    <a href="{{ route('traveller.pages.profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</header>

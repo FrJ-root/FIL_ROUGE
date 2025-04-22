@@ -12,7 +12,7 @@
         <div class="container mx-auto px-4 py-8 mt-16">
             <div class="max-w-2xl mx-auto">
                 <div class="flex items-center mb-6">
-                    <a href="{{ route('trips.show', $trip->id) }}" class="text-gray-600 hover:text-red-500 mr-4">
+                    <a href="{{ route('trips.show', ['trip' => $trip->id]) }}" class="text-gray-600 hover:text-red-500 mr-4">
                         <i class="fas fa-arrow-left"></i> Back to Trip
                     </a>
                     <h1 class="text-3xl font-bold text-gray-800">Edit Trip</h1>
@@ -72,7 +72,7 @@
                     </div>
 
                     <div class="flex justify-between mt-6">
-                        <a href="{{ route('trips.show', $trip->id) }}" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors">
+                        <a href="{{ route('trips.show', ['trip' => $trip->id]) }}" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors">
                             Cancel
                         </a>
                         <button type="submit" class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-colors">

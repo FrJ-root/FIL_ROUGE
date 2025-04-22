@@ -294,6 +294,9 @@ class ManagerController extends Controller
             ->orWhereDoesntHave('transports')
             ->take(5)
             ->get();
+            
+        // Add travellers data
+        $travellers = Traveller::with(['user', 'trip'])->get();
 
         return view('manager.dashboard', compact(
             'user',
@@ -304,8 +307,33 @@ class ManagerController extends Controller
             'guidesCount',
             'transportsCount',
             'recentTrips',
-            'pendingCollaborations'
+            'pendingCollaborations',
+            'travellers'
         ));
+    }
+
+    /**
+     * Add activity to trip
+     */
+    public function addActivity(Request $request, Trip $trip)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'scheduled_at' => 'required|date',
+            'description' => 'nullable|string',
+        ]);
+
+        $activity = new Activity([
+            'name' => $request->name,
+            'location' => $request->location,
+            'scheduled_at' => $request->scheduled_at,
+            'description' => $request->description,
+        ]);
+
+        $trip->activities()->save($activity);
+
+        return redirect()->back()->with('success', 'Activity added successfully!');
     }
 
     /**
@@ -329,7 +357,7 @@ class ManagerController extends Controller
         if (!in_array($type, ['hotel', 'guide', 'transport'])) {
             return redirect()->route('manager.trips')->with('error', 'Invalid collaborator type.');
         }
-        
+
         $query = Trip::with(['hotels', 'guides', 'transports', 'travellers']);
         
         switch ($type) {
@@ -351,7 +379,6 @@ class ManagerController extends Controller
         }
         
         $trips = $query->latest()->paginate(10);
-        
         return view('manager.pages.collaborator-trips', compact('trips', 'type', 'pageTitle', 'iconClass'));
     }
 
@@ -364,7 +391,6 @@ class ManagerController extends Controller
         $hotels = Hotel::with('user')->get();
         $guides = Guide::with('user')->get();
         $transports = Transport::with('user')->get();
-        
         return view('manager.pages.collaborators', compact('hotels', 'guides', 'transports'));
     }
 
@@ -374,7 +400,6 @@ class ManagerController extends Controller
     public function profile()
     {
         $user = Auth::user();
-        
         return view('manager.pages.profile', compact('user'));
     }
 
@@ -384,7 +409,6 @@ class ManagerController extends Controller
     public function editProfile()
     {
         $user = Auth::user();
-        
         return view('manager.pages.edit-profile', compact('user'));
     }
 
@@ -409,13 +433,11 @@ class ManagerController extends Controller
             if ($user->picture) {
                 Storage::disk('public')->delete($user->picture);
             }
-            
             $path = $request->file('picture')->store('profile_pictures', 'public');
             $user->picture = $path;
         }
         
         $user->save();
-        
         return redirect()->route('manager.profile')->with('success', 'Profile updated successfully!');
     }
 
@@ -442,5 +464,14 @@ class ManagerController extends Controller
         $user->save();
         
         return redirect()->route('manager.profile')->with('success', 'Password updated successfully!');
+    }
+
+    /**
+     * Display all travellers
+     */
+    public function travellers()
+    {
+        $travellers = Traveller::with(['user', 'trip'])->paginate(10);
+        return view('manager.pages.travellers', compact('travellers'));
     }
 }

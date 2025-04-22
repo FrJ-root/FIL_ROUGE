@@ -3,24 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Category;
 use App\Models\User;
 use App\Models\Trip;
-use App\Models\Category;
 use App\Models\Tag;
-use Illuminate\Http\Request;
 
-class DashboardController extends Controller
-{
-    public function index()
-    {
-        // Get user counts by role and status
+class DashboardController extends Controller{
+    public function index(){
+
         $travellers = User::where('role', 'traveller')->get();
         $transports = User::where('role', 'transport')->get();
         $hotels = User::where('role', 'hotel')->get();
         $guides = User::where('role', 'guide')->get();
         $managers = User::where('role', 'manager')->get();
         
-        // Get counts for dashboard display
         $activeTravellers = $travellers->where('status', 'valide')->count();
         $suspendedTravellers = $travellers->where('status', 'suspend')->count();
         $deletedTravellers = $travellers->where('status', 'block')->count();
@@ -41,7 +38,6 @@ class DashboardController extends Controller
         $suspendedManagers = $managers->where('status', 'suspend')->count();
         $deletedManagers = $managers->where('status', 'block')->count();
         
-        // Get system statistics
         $totalTrips = Trip::count();
         $totalCategories = Category::count();
         $activeTags = Tag::count();
@@ -68,8 +64,7 @@ class DashboardController extends Controller
         ));
     }
 
-    public function trips()
-    {
+    public function trips(){
         $trips = Trip::with(['travellers', 'manager'])->latest()->paginate(10);
         $managers = User::where('role', 'manager')->where('status', 'valide')->get();
         
