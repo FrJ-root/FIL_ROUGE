@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Map;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Destination;
 use App\Models\Hotel;
@@ -8,9 +9,6 @@ use App\Models\Trip;
 
 class MapController extends Controller
 {
-    /**
-     * Display the map page with optional search parameter
-     */
     public function index(Request $request)
     {
         $destinations = \App\Models\Destination::where('is_featured', true)

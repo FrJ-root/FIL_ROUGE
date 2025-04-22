@@ -10,95 +10,208 @@
         id="main-content"
     >
         <div class="container mx-auto px-4 py-8 mt-16">
-            <div class="max-w-2xl mx-auto">
-                <div class="flex items-center mb-6">
-                    <a href="{{ route('trips.index') }}" class="text-gray-600 hover:text-red-500 mr-4">
-                        <i class="fas fa-arrow-left"></i> Back to Trips
+            <div class="max-w-4xl mx-auto">
+                <!-- Header with back link -->
+                <div class="flex items-center mb-8">
+                    <a href="{{ route('trips.index') }}" class="text-gray-600 hover:text-indigo-600 transition-colors mr-4 group flex items-center">
+                        <i class="fas fa-arrow-left mr-2 transform group-hover:-translate-x-1 transition-transform"></i> 
+                        <span class="border-b border-transparent group-hover:border-indigo-600">Back to Trips</span>
                     </a>
-                    <h1 class="text-3xl font-bold text-gray-800">Create New Trip</h1>
+                    <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+                        <i class="fas fa-plus-circle text-indigo-600 mr-3"></i>Create New Trip
+                    </h1>
                 </div>
 
+                <!-- Alerts and messages -->
                 @if(session('error'))
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg" role="alert">
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg shadow-md animate-fade-in" role="alert">
                     <div class="flex items-center">
-                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <i class="fas fa-exclamation-circle text-red-500 text-xl mr-3"></i>
                         <span>{{ session('error') }}</span>
                     </div>
                 </div>
                 @endif
 
                 @if ($errors->any())
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <strong class="font-bold">Oops!</strong>
-                    <span class="block sm:inline">Please fix the following errors:</span>
-                    <ul class="mt-2 list-disc list-inside">
-                        @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-5 mb-6 rounded-lg shadow-md animate-fade-in" role="alert">
+                    <div class="flex items-start">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-xl mr-3 mt-0.5"></i>
+                        <div>
+                            <h3 class="font-bold mb-2">Please fix the following errors:</h3>
+                            <ul class="list-disc list-inside space-y-1 text-sm">
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
                 </div>
                 @endif
 
-                <!-- Simplified form - no Alpine.js for submission state -->
-                <form method="POST" action="{{ route('trips.store') }}" class="bg-white rounded-lg shadow-md p-6" enctype="multipart/form-data" id="tripForm">
-                    @csrf
-                    <div class="mb-4">
-                        <label for="destination" class="block text-gray-700 font-bold mb-2">
-                            Destination <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="destination" id="destination" value="{{ old('destination') }}" 
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" 
-                            placeholder="Where are you going?" required>
+                <!-- Trip creation card -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+                    <!-- Card header -->
+                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
+                        <h2 class="text-xl font-bold text-white flex items-center">
+                            <i class="fas fa-route mr-2"></i> Trip Details
+                        </h2>
+                        <p class="text-indigo-100 text-sm">Fill in the information below to create a new trip</p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label for="start_date" class="block text-gray-700 font-bold mb-2">
-                                Start Date <span class="text-red-500">*</span>
-                            </label>
-                            <input type="date" name="start_date" id="start_date" value="{{ old('start_date') }}" 
-                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" 
-                                required min="{{ date('Y-m-d') }}">
+                    <!-- Form -->
+                    <form method="POST" action="{{ route('trips.store') }}" enctype="multipart/form-data" id="tripForm" class="p-6 space-y-8">
+                        @csrf
+                        
+                        <!-- Basic trip information section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-map-marker-alt text-indigo-500 mr-2"></i> Destination Information
+                            </h3>
+                            
+                            <div class="mb-5">
+                                <label for="destination" class="block text-gray-700 font-medium mb-2">
+                                    Destination <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-globe-americas text-gray-400"></i>
+                                    </div>
+                                    <input type="text" name="destination" id="destination" value="{{ old('destination') }}" 
+                                        class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" 
+                                        placeholder="Where are you going? (e.g., Paris, France)" required>
+                                </div>
+                                <p class="text-sm text-gray-500 mt-1">Enter a city, country, or region for this trip</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="start_date" class="block text-gray-700 font-medium mb-2">
+                                        Start Date <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-calendar-alt text-gray-400"></i>
+                                        </div>
+                                        <input type="date" name="start_date" id="start_date" value="{{ old('start_date') }}" 
+                                            class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" 
+                                            required min="{{ date('Y-m-d') }}">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label for="end_date" class="block text-gray-700 font-medium mb-2">
+                                        End Date <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-calendar-check text-gray-400"></i>
+                                        </div>
+                                        <input type="date" name="end_date" id="end_date" value="{{ old('end_date') }}" 
+                                            class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200" 
+                                            required min="{{ date('Y-m-d') }}">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div>
-                            <label for="end_date" class="block text-gray-700 font-bold mb-2">
-                                End Date <span class="text-red-500">*</span>
-                            </label>
-                            <input type="date" name="end_date" id="end_date" value="{{ old('end_date') }}" 
-                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" 
-                                required min="{{ date('Y-m-d') }}">
+                        <!-- Categories section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-th-large text-indigo-500 mr-2"></i> Trip Categories
+                            </h3>
+                            <p class="text-gray-600 mb-4">Select categories that best describe this trip</p>
+                            
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                @foreach($categories as $category)
+                                <div class="flex items-center space-x-3 bg-gray-50 hover:bg-indigo-50 p-3 rounded-lg border border-gray-200 transition-colors cursor-pointer group">
+                                    <input type="checkbox" id="category-{{ $category->id }}" name="categories[]" value="{{ $category->id }}"
+                                           class="rounded border-gray-300 text-indigo-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all"
+                                           {{ in_array($category->id, old('categories', [])) ? 'checked' : '' }}>
+                                    <label for="category-{{ $category->id }}" class="flex-1 text-gray-700 cursor-pointer group-hover:text-indigo-700 transition-colors">{{ $category->name }}</label>
+                                </div>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="mb-4">
-                        <label for="cover_picture" class="block text-gray-700 font-bold mb-2">Cover Image (Optional)</label>
-                        <input type="file" name="cover_picture" id="cover_picture" 
-                            class="w-full px-4 py-2 border rounded-lg" 
-                            accept="image/*">
-                    </div>
+                        <!-- Tags section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-tags text-indigo-500 mr-2"></i> Trip Tags
+                            </h3>
+                            <p class="text-gray-600 mb-4">Add specific tags to make your trip more discoverable</p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <select name="tags[]" id="tags" multiple class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" size="5">
+                                    @foreach($tags as $tag)
+                                        <option value="{{ $tag->id }}" {{ in_array($tag->id, old('tags', [])) ? 'selected' : '' }}>
+                                            {{ $tag->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <p class="text-sm text-gray-500 mt-2 flex items-center">
+                                    <i class="fas fa-info-circle mr-1 text-indigo-400"></i>
+                                    Hold Ctrl (Windows) or Command (Mac) to select multiple tags
+                                </p>
+                            </div>
+                        </div>
 
-                    <div class="mt-6">
-                        <!-- Simplified submit button without Alpine.js -->
-                        <button 
-                            type="submit" 
-                            class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition-colors w-full cursor-pointer font-bold" 
-                            id="submitButton"
-                            onclick="console.log('Submit button clicked');"
-                        >
-                            <i class="fas fa-plane-departure mr-2"></i> Create Trip
-                        </button>
-                    </div>
-                </form>
+                        <!-- Cover image section -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-image text-indigo-500 mr-2"></i> Cover Image
+                            </h3>
+                            
+                            <div x-data="{ fileName: null, filePreview: null }">
+                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 border-dashed">
+                                    <div class="text-center" x-show="!filePreview">
+                                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-300 mb-2"></i>
+                                        <p class="text-gray-600 mb-3">Drag and drop an image here or click to browse</p>
+                                        <div class="relative">
+                                            <input type="file" name="cover_picture" id="cover_picture" 
+                                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+                                                accept="image/*"
+                                                @change="
+                                                    fileName = $event.target.files[0].name;
+                                                    const reader = new FileReader();
+                                                    reader.onload = (e) => {
+                                                        filePreview = e.target.result;
+                                                    };
+                                                    reader.readAsDataURL($event.target.files[0]);
+                                                ">
+                                            <button type="button" class="bg-indigo-100 text-indigo-600 px-4 py-2 rounded-lg hover:bg-indigo-200 transition-colors">
+                                                Select Image
+                                            </button>
+                                        </div>
+                                        <p class="text-sm text-gray-500 mt-2">JPG, PNG or GIF - Max size 2MB</p>
+                                    </div>
+                                    
+                                    <!-- Image preview -->
+                                    <div x-show="filePreview" class="relative">
+                                        <img :src="filePreview" class="mx-auto max-h-64 rounded-lg shadow-md">
+                                        <div class="mt-3 flex items-center justify-center">
+                                            <span x-text="fileName" class="text-sm text-gray-600 mr-2"></span>
+                                            <button type="button" @click="filePreview = null; document.getElementById('cover_picture').value = ''" 
+                                                    class="text-red-500 hover:text-red-700 text-sm">
+                                                <i class="fas fa-times-circle"></i> Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                <!-- Debugging info -->
-                <div class="mt-4 p-4 bg-gray-100 rounded-lg">
-                    <p class="text-gray-700 font-semibold">Troubleshooting Info:</p>
-                    <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
-                        <li>Form Action: <span class="text-blue-600">{{ route('trips.store') }}</span></li>
-                        <li>Method: <span class="text-blue-600">POST</span></li>
-                        <li>Enctype: <span class="text-blue-600">multipart/form-data</span></li>
-                    </ul>
+                        <!-- Form actions -->
+                        <div class="flex justify-end space-x-4 pt-4">
+                            <a href="{{ route('trips.index') }}" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors flex items-center">
+                                <i class="fas fa-times mr-2"></i>
+                                Cancel
+                            </a>
+                            <button type="submit" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-lg shadow-md hover:shadow-lg transform transition-all duration-300 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center">
+                                <i class="fas fa-paper-plane mr-2"></i>
+                                Create Trip
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -106,42 +219,71 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Track form submission
-        const form = document.getElementById('tripForm');
-        const submitButton = document.getElementById('submitButton');
-        
-        console.log('DOM loaded, form found:', !!form);
-        console.log('Submit button found:', !!submitButton);
-        
-        if (form) {
-            // Log when the form is submitted
-            form.addEventListener('submit', function(event) {
-                console.log('Form is being submitted');
-                // No preventDefault() to allow normal form submission
-            });
-        }
-        
-        if (submitButton) {
-            // Add extra click handler to make sure clicks are detected
-            submitButton.addEventListener('click', function(event) {
-                console.log('Submit button was clicked');
-            });
-        }
-        ent.getElementById('tripForm');
         // Set minimum end_date based on start_date
-        const startDateInput = document.getElementById('start_date');.log('Trip form found, attaching event listener');
+        const startDateInput = document.getElementById('start_date');
         const endDateInput = document.getElementById('end_date');
         
         if (startDateInput && endDateInput) {
             startDateInput.addEventListener('change', function() {
                 endDateInput.min = startDateInput.value;
                 if (endDateInput.value && new Date(endDateInput.value) < new Date(startDateInput.value)) {
-                    endDateInput.value = startDateInput.value;function updateFileDisplay(input) {
-                }nt.getElementById('preview-container');
-            });.getElementById('empty-container');
+                    endDateInput.value = startDateInput.value;
+                }
+            });
         }
+        
+        // Custom styling for checkboxes
+        const categoryCheckboxes = document.querySelectorAll('input[name="categories[]"]');
+        categoryCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const parentEl = this.closest('.bg-gray-50');
+                if (this.checked) {
+                    parentEl.classList.add('bg-indigo-50', 'border-indigo-200');
+                    parentEl.classList.remove('bg-gray-50', 'border-gray-200');
+                } else {
+                    parentEl.classList.remove('bg-indigo-50', 'border-indigo-200');
+                    parentEl.classList.add('bg-gray-50', 'border-gray-200');
+                }
+            });
+        });
     });
 </script>
-@endpush    const reader = new FileReader();
+@endpush
+
+@push('styles')
+<style>
+    /* Custom animations */
+    @keyframes fade-in {
+        0% { opacity: 0; transform: translateY(-10px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade-in {
+        animation: fade-in 0.3s ease-out;
+    }
+    
+    /* Custom styles for multiselect */
+    select[multiple] {
+        overflow-y: auto;
+        scrollbar-width: thin;
+    }
+    
+    select[multiple] option {
+        padding: 8px 12px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+    }
+    
+    select[multiple] option:hover {
+        background-color: #EEF2FF;
+    }
+    
+    select[multiple] option:checked {
+        background-color: #C7D2FE !important;
+        color: #4F46E5;
+    }
+</style>
+@endpush

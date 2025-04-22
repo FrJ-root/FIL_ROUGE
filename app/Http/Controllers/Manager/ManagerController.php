@@ -59,7 +59,11 @@ class ManagerController extends Controller
                 'destination' => 'required|string|max:255',
                 'start_date' => 'required|date|after_or_equal:today',
                 'end_date' => 'required|date|after_or_equal:start_date',
-                'cover_picture' => 'nullable|image|max:2048'
+                'cover_picture' => 'nullable|image|max:2048',
+                'categories' => 'nullable|array',
+                'categories.*' => 'exists:categories,id',
+                'tags' => 'nullable|array',
+                'tags.*' => 'exists:tags,id'
             ]);
 
             // Create the trip with validated data
@@ -79,6 +83,16 @@ class ManagerController extends Controller
             // Save the trip and throw an exception if it fails
             if (!$trip->save()) {
                 throw new \Exception('Failed to save trip to database');
+            }
+
+            // Attach categories if selected
+            if ($request->has('categories')) {
+                $trip->categories()->attach($request->categories);
+            }
+            
+            // Attach tags if selected
+            if ($request->has('tags')) {
+                $trip->tags()->attach($request->tags);
             }
 
             // Create the default itinerary
@@ -121,17 +135,7 @@ class ManagerController extends Controller
             // Commit the transaction as everything succeeded
             DB::commit();
             
-            // Get or create a destination based on the trip's destination
-            $destinationName = explode(',', $trip->destination)[0];
-            $destination = \App\Models\Destination::where('name', 'like', $destinationName . '%')->first();
-            
-            if ($destination) {
-                // Redirect to the destination show page if a matching destination exists
-                return redirect()->route('destinations.show', $destination->slug)
-                    ->with('success', 'Trip created successfully!');
-            }
-            
-            // Fallback to trip show page if no matching destination
+            // Redirect to show trip instead of trips list
             return redirect()->route('trips.show', $trip->id)
                 ->with('success', 'Trip created successfully!');
         } 
@@ -158,9 +162,14 @@ class ManagerController extends Controller
         $trip = Trip::with(['travellers.user', 'guides', 'hotels', 'transports', 'activities', 'itinerary', 'categories', 'tags'])
             ->findOrFail($id);
         
-        $canEdit = Auth::user()->role === 'manager' && 
-                  (Auth::id() === $trip->manager_id || 
-                   $trip->travellers->contains('user_id', Auth::id()));
+        // Check if user is manager of this trip - Handle guest users properly
+        $canEdit = false;
+        
+        if (Auth::check()) {
+            $canEdit = Auth::user()->role === 'manager' && 
+                     (Auth::id() === $trip->manager_id || 
+                      $trip->travellers->contains('user_id', Auth::id()));
+        }
         
         // Get related trips based on destination or categories
         $relatedTrips = Trip::where('id', '!=', $trip->id)

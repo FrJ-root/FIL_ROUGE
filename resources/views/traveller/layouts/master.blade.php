@@ -45,6 +45,25 @@
     @stack('styles')
 </head>
 <body class="font-sans antialiased bg-gray-100">
+    @php
+        // Check if user has pending payments
+        $pendingPayment = false;
+        if (Auth::check() && Auth::user()->role === 'traveller') {
+            $traveller = Auth::user()->traveller;
+            if ($traveller && $traveller->trip_id && $traveller->payment_status === 'pending') {
+                $pendingPayment = true;
+            }
+        }
+    @endphp
+    
+    @if($pendingPayment)
+    <div class="bg-yellow-500 text-white text-center py-2 px-4">
+        You have an unpaid trip booking. 
+        <a href="{{ route('traveller.trips.payment', Auth::user()->traveller->trip_id) }}" class="font-bold underline">Complete payment now</a>
+        to confirm your booking.
+    </div>
+    @endif
+    
     <div class="min-h-screen">
         <div x-data="{ sidebarOpen: false }" class="flex h-screen">
             @include('traveller.components.sidebar')

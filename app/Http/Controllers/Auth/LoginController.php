@@ -67,6 +67,31 @@ class LoginController extends Controller
                              ->with('status_type', $statusType);
             }
 
+            // Check for redirect parameter and handle trip payment redirection
+            $redirect = $request->input('redirect');
+            $tripId = $request->input('trip_id');
+            
+            if ($user->role === 'traveller') {
+                // Check if the user has a traveller profile with a pending payment
+                $traveller = \App\Models\Traveller::where('user_id', $user->id)->first();
+                
+                if ($traveller && $traveller->payment_status === 'pending' && $traveller->trip_id) {
+                    // Direct to payment page for the associated trip
+                    return redirect()->route('traveller.trips.payment', $traveller->trip_id)
+                        ->with('info', 'Please complete your payment to confirm your booking.');
+                }
+                
+                // If this login is from a "Trip with us" flow
+                if ($tripId) {
+                    return redirect()->to(route('traveller.trips.payment', $tripId));
+                } else if ($redirect) {
+                    return redirect()->to($redirect);
+                }
+                
+                return redirect()->route('traveller.dashboard');
+            }
+
+            // Default redirects based on role
             switch ($user->role) {
                 case 'admin':
                     return redirect()->route('admin.home');
@@ -76,8 +101,6 @@ class LoginController extends Controller
                     return redirect()->route('hotel.dashboard');
                 case 'transport':
                     return redirect()->route('transport.dashboard');
-                case 'traveller':
-                    return redirect()->route('traveller.dashboard');
                 case 'manager':
                     return redirect()->route('manager.dashboard');
                 default:

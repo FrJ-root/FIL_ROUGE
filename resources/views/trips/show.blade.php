@@ -102,14 +102,55 @@
                                     This journey takes you through the heart of this amazing destination, offering unforgettable experiences and memories.
                                 </p>
                                 
-                                @if($trip->itinerary && $trip->itinerary->description)
-                                <div class="mt-6">
-                                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Itinerary Details</h3>
-                                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                        {{ $trip->itinerary->description }}
+                                <!-- Itinerary Section -->
+                                <div class="mt-8">
+                                    <div class="flex justify-between items-center">
+                                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Itinerary Details</h3>
+                                        
+                                        @if(isset($canEdit) && $canEdit)
+                                        <button type="button" onclick="toggleItineraryForm()" class="text-indigo-600 hover:text-indigo-800 flex items-center text-sm font-medium">
+                                            <i class="fas fa-edit mr-1"></i> {{ $trip->itinerary ? 'Edit' : 'Add' }} Itinerary
+                                        </button>
+                                        @endif
+                                    </div>
+                                    
+                                    <!-- Itinerary Display -->
+                                    <div id="itinerary-display" class="{{ $trip->itinerary ? 'block' : 'hidden' }}">
+                                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                            <h4 class="font-bold text-gray-800 mb-2">{{ $trip->itinerary->title ?? 'Trip Itinerary' }}</h4>
+                                            <p class="text-gray-600">{{ $trip->itinerary->description ?? 'No detailed itinerary available yet.' }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Itinerary Form (initially hidden) -->
+                                    <div id="itinerary-form" class="hidden">
+                                        <form action="{{ route('itinerary.update', ['trip' => $trip->id]) }}" method="POST" class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                                            @csrf
+                                            @method('PUT')
+                                            
+                                            <div class="mb-4">
+                                                <label for="itinerary_title" class="block text-gray-700 font-medium mb-2">Itinerary Title</label>
+                                                <input type="text" name="title" id="itinerary_title" value="{{ $trip->itinerary->title ?? ('Trip to ' . $trip->destination) }}" required
+                                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                            </div>
+                                            
+                                            <div class="mb-4">
+                                                <label for="itinerary_description" class="block text-gray-700 font-medium mb-2">Description</label>
+                                                <textarea name="description" id="itinerary_description" rows="5" required
+                                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">{{ $trip->itinerary->description ?? '' }}</textarea>
+                                            </div>
+                                            
+                                            <div class="flex justify-end space-x-3">
+                                                <button type="button" onclick="toggleItineraryForm()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                                                    Cancel
+                                                </button>
+                                                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                                                    Save Itinerary
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
-                                @endif
                                 
                                 <!-- Trip Booking Section -->
                                 <div class="mt-8">
@@ -139,50 +180,158 @@
                                                     </button>
                                                 </form>
                                             @endif
+                                        @elseif(auth()->user()->role === 'manager' || auth()->user()->role === 'admin')
+                                            <div class="bg-blue-50 text-blue-700 px-6 py-4 rounded-xl border border-blue-200">
+                                                <p><i class="fas fa-info-circle mr-2"></i> As a {{ auth()->user()->role }}, you can manage trips but not book them.</p>
+                                            </div>
+                                        @elseif(auth()->user()->role === 'guide' || auth()->user()->role === 'hotel' || auth()->user()->role === 'transport')
+                                            <div class="bg-blue-50 text-blue-700 px-6 py-4 rounded-xl border border-blue-200">
+                                                <p><i class="fas fa-info-circle mr-2"></i> Service providers can't book trips. Please visit your dashboard to collaborate on trips.</p>
+                                            </div>
                                         @endif
+                                    @else
+                                        <div class="space-y-4">
+                                            <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-5">
+                                                <h3 class="text-xl font-bold text-indigo-800 mb-2 flex items-center">
+                                                    <i class="fas fa-suitcase-rolling text-indigo-600 mr-2"></i> Ready for an adventure?
+                                                </h3>
+                                                <p class="text-indigo-700 mb-4">Join us on this amazing trip to {{ $trip->destination }}!</p>
+                                                
+                                                <!-- Update the "Trip with us" button to pass the trip_id -->
+                                                <a href="{{ route('register') }}?trip_id={{ $trip->id }}&redirect={{ route('traveller.trips.payment', $trip->id) }}" 
+                                                   class="inline-flex items-center justify-center px-8 py-4 border border-transparent rounded-xl shadow-md text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all transform hover:-translate-y-1 hover:shadow-lg">
+                                                    <i class="fas fa-user-plus mr-2"></i>
+                                                    Trip with us
+                                                </a>
+                                                
+                                                <p class="mt-3 text-sm text-indigo-600">
+                                                    Already have an account? <a href="{{ route('login') }}?redirect={{ url()->current() }}" class="font-medium underline">Log in</a> to book this trip.
+                                                </p>
+                                            </div>
+                                        </div>
                                     @endauth
-                                    
-                                    @guest
-                                        <a href="{{ route('login') }}" class="w-full md:w-auto inline-flex items-center justify-center px-8 py-4 border border-transparent rounded-xl shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:-translate-y-1 hover:shadow-lg">
-                                            <i class="fas fa-sign-in-alt mr-2"></i>
-                                            Login to book this trip
-                                        </a>
-                                    @endguest
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Activities Section -->
-                    @if($trip->activities && $trip->activities->count() > 0)
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100" data-aos="fade-up" data-aos-delay="100">
-                        <div class="bg-gradient-to-r from-green-600 to-teal-600 px-6 py-5">
+                        <div class="bg-gradient-to-r from-green-600 to-teal-600 px-6 py-5 flex justify-between items-center">
                             <h2 class="text-2xl font-bold text-white flex items-center">
                                 <i class="fas fa-hiking mr-3"></i> Planned Activities
                             </h2>
+                            
+                            @if(isset($canEdit) && $canEdit)
+                            <button type="button" onclick="toggleActivityForm()" class="bg-white text-teal-600 px-3 py-1 rounded-lg text-sm font-medium hover:bg-teal-50 transition-colors">
+                                <i class="fas fa-plus mr-1"></i> Add Activity
+                            </button>
+                            @endif
                         </div>
-                        <div class="p-6">
-                            <div class="space-y-6">
-                                @foreach($trip->activities as $activity)
-                                <div class="flex items-start border-b border-gray-100 pb-6 last:border-0 last:pb-0">
-                                    <div class="bg-green-100 text-green-600 p-3 rounded-full mr-4">
-                                        <i class="fas fa-map-pin"></i>
-                                    </div>
+                        
+                        <!-- Activity Form (initially hidden) -->
+                        <div id="activity-form" class="hidden p-6 bg-gray-50 border-b border-gray-200">
+                            <form action="{{ route('activities.store', ['trip' => $trip->id]) }}" method="POST" class="space-y-4">
+                                @csrf
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <h3 class="font-bold text-gray-800 text-lg">{{ $activity->name }}</h3>
-                                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                                            <i class="fas fa-map-marker-alt mr-2"></i> {{ $activity->location }}
-                                            <span class="mx-2">•</span>
-                                            <i class="far fa-calendar-alt mr-2"></i> {{ \Carbon\Carbon::parse($activity->scheduled_at)->format('M d, Y - h:i A') }}
-                                        </div>
-                                        <p class="text-gray-600">{{ $activity->description }}</p>
+                                        <label for="activity_name" class="block text-gray-700 font-medium mb-2">Activity Name</label>
+                                        <input type="text" name="name" id="activity_name" required
+                                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                            placeholder="e.g., Desert Safari">
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="activity_location" class="block text-gray-700 font-medium mb-2">Location</label>
+                                        <input type="text" name="location" id="activity_location" required
+                                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                            placeholder="e.g., Sahara Desert">
                                     </div>
                                 </div>
-                                @endforeach
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="activity_date" class="block text-gray-700 font-medium mb-2">Date</label>
+                                        <input type="date" name="activity_date" id="activity_date" required
+                                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                            min="{{ $trip->start_date->format('Y-m-d') }}" 
+                                            max="{{ $trip->end_date->format('Y-m-d') }}">
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="activity_time" class="block text-gray-700 font-medium mb-2">Time</label>
+                                        <input type="time" name="activity_time" id="activity_time" required
+                                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="activity_description" class="block text-gray-700 font-medium mb-2">Description</label>
+                                    <textarea name="description" id="activity_description" rows="3"
+                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        placeholder="Describe the activity details..."></textarea>
+                                </div>
+                                
+                                <div class="flex justify-end space-x-3">
+                                    <button type="button" onclick="toggleActivityForm()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                                        Add Activity
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="space-y-6">
+                                @if($trip->activities && $trip->activities->count() > 0)
+                                    @foreach($trip->activities as $activity)
+                                    <div class="flex items-start border-b border-gray-100 pb-6 last:border-0 last:pb-0">
+                                        <div class="bg-green-100 text-green-600 p-3 rounded-full mr-4">
+                                            <i class="fas fa-map-pin"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between">
+                                                <h3 class="font-bold text-gray-800 text-lg">{{ $activity->name }}</h3>
+                                                
+                                                @if(isset($canEdit) && $canEdit)
+                                                <form action="{{ route('activities.destroy', ['activity' => $activity->id]) }}" method="POST" class="inline-block">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-500 hover:text-red-700" onclick="return confirm('Are you sure you want to delete this activity?')">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                                @endif
+                                            </div>
+                                            <div class="flex items-center text-sm text-gray-500 mb-2">
+                                                <i class="fas fa-map-marker-alt mr-2"></i> {{ $activity->location }}
+                                                <span class="mx-2">•</span>
+                                                <i class="far fa-calendar-alt mr-2"></i> {{ \Carbon\Carbon::parse($activity->scheduled_at)->format('M d, Y - h:i A') }}
+                                            </div>
+                                            <p class="text-gray-600">{{ $activity->description }}</p>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                @else
+                                    <div class="text-center py-8">
+                                        <div class="inline-block p-3 rounded-full bg-gray-100 text-gray-500 mb-3">
+                                            <i class="fas fa-calendar-day text-2xl"></i>
+                                        </div>
+                                        <h3 class="text-gray-500 mb-2">No Activities Planned Yet</h3>
+                                        <p class="text-gray-400 text-sm max-w-md mx-auto">
+                                            There are no planned activities for this trip yet. 
+                                            @if(isset($canEdit) && $canEdit)
+                                            Click the 'Add Activity' button to start creating your itinerary.
+                                            @endif
+                                        </p>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
-                    @endif
                 </div>
 
                 <!-- Sidebar -->

@@ -2,11 +2,11 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MapController;
-use App\Http\Controllers\SearchController;
+use App\Http\Controllers\Map\MapController;
+use App\Http\Controllers\Search\SearchController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\DestinationController;
+use App\Http\Controllers\Destination\DestinationController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Guide\GuideController;
 use \App\Http\Controllers\Hotel\HotelController;
@@ -238,6 +238,10 @@ Route::prefix('traveller')->name('traveller.')->middleware(['auth'])->group(func
     // Payment routes
     Route::get('/trips/{trip}/payment', [TravellerController::class, 'showPayment'])->name('trips.payment');
     Route::post('/trips/{trip}/payment', [TravellerController::class, 'processPayment'])->name('trips.process-payment');
+    
+    // Add a new route to check for required payments
+    Route::get('/check-payment', [TravellerController::class, 'checkPaymentRequired'])
+        ->name('check-payment');
 
 });
 
@@ -249,6 +253,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/trips/{trip}/edit', [ManagerController::class, 'edit'])->name('trips.edit');
     Route::put('/trips/{trip}', [ManagerController::class, 'update'])->name('trips.update');
     Route::delete('/trips/{trip}', [ManagerController::class, 'destroy'])->name('trips.destroy');
+    
+    // Activity routes
+    Route::post('/trips/{trip}/activities', [App\Http\Controllers\Activity\ActivityController::class, 'store'])->name('activities.store');
+    Route::delete('/activities/{activity}', [App\Http\Controllers\Activity\ActivityController::class, 'destroy'])->name('activities.destroy');
+    
+    // Itinerary routes
+    Route::put('/trips/{trip}/itinerary', [App\Http\Controllers\Itinerary\ItineraryController::class, 'update'])->name('itinerary.update');
 });
 
 // These routes should be after the specific routes above to avoid conflicts
@@ -315,57 +326,98 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 });
 
 Route::prefix('user')->name('user.')->middleware(['auth'])->group(function () {
+
     Route::get('/dashboard', function () {
         return view('user.dashboard');
     })->name('dashboard');
 
-    Route::get('/profile', [UserController::class, 'showProfile'])->name('profile');
-    Route::get('/profile/edit', [UserController::class, 'editProfile'])->name('profile.edit');
-    Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/profile', [UserController::class, 'showProfile'])
+    ->name('profile');
 
-    Route::get('/availability', [UserController::class, 'showAvailability'])->name('availability');
-    Route::post('/availability/update', [UserController::class, 'updateAvailability'])->name('availability.update');
+    Route::get('/profile/edit', [UserController::class, 'editProfile'])
+    ->name('profile.edit');
+    Route::post('/profile/update', [UserController::class, 'updateProfile'])
+    ->name('profile.update');
 
-    Route::get('/travellers', [UserController::class, 'showTravellers'])->name('travellers');
-    Route::get('/messages', [UserController::class, 'showMessages'])->name('messages');
+    Route::get('/availability', [UserController::class, 'showAvailability'])
+    ->name('availability');
+
+    Route::post('/availability/update', [UserController::class, 'updateAvailability'])
+    ->name('availability.update');
+
+    Route::get('/travellers', [UserController::class, 'showTravellers'])
+    ->name('travellers');
+    
+    Route::get('/messages', [UserController::class, 'showMessages'])
+    ->name('messages');
 });
 
 // Manager Routes
 Route::prefix('manager')->name('manager.')->middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [ManagerController::class, 'dashboard'])->name('dashboard');
+
+    Route::get('/dashboard', [ManagerController::class, 'dashboard'])
+    ->name('dashboard');
     
-    // Add profile routes
-    Route::get('/profile', [ManagerController::class, 'profile'])->name('profile');
-    Route::get('/profile/edit', [ManagerController::class, 'editProfile'])->name('profile.edit');
-    Route::post('/profile/update', [ManagerController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/profile', [ManagerController::class, 'profile'])
+    ->name('profile');
+
+    Route::get('/profile/edit', [ManagerController::class, 'editProfile'])
+    ->name('profile.edit');
+
+    Route::post('/profile/update', [ManagerController::class, 'updateProfile'])
+    ->name('profile.update');
     
-    // Add password edit route
-    Route::get('/profile/password', [ManagerController::class, 'editPassword'])->name('profile.password');
-    Route::post('/profile/password/update', [ManagerController::class, 'updatePassword'])->name('profile.password.update');
+    Route::get('/profile/password', [ManagerController::class, 'editPassword'])
+    ->name('profile.password');
+
+    Route::post('/profile/password/update', [ManagerController::class, 'updatePassword'])
+    ->name('profile.password.update');
     
-    // Add collaborators route
-    Route::get('/collaborators', [ManagerController::class, 'collaborators'])->name('collaborators');
+    Route::get('/collaborators', [ManagerController::class, 'collaborators'])
+    ->name('collaborators');
     
-    // Add travellers route
-    Route::get('/travellers', [ManagerController::class, 'travellers'])->name('travellers');
-    Route::get('/travellers/{id}', [ManagerController::class, 'viewTraveller'])->name('travellers.view');
-    Route::post('/travellers/{id}/cancel-trip', [ManagerController::class, 'cancelTravellerTrip'])->name('travellers.cancel-trip');
-    Route::post('/travellers/{id}/confirm-payment', [ManagerController::class, 'confirmTravellerPayment'])->name('travellers.confirm-payment');
+    Route::get('/travellers', [ManagerController::class, 'travellers'])
+    ->name('travellers');
+
+    Route::get('/travellers/{id}', [ManagerController::class, 'viewTraveller'])
+    ->name('travellers.view');
+
+    Route::post('/travellers/{id}/cancel-trip', [ManagerController::class, 'cancelTravellerTrip'])
+    ->name('travellers.cancel-trip');
+
+    Route::post('/travellers/{id}/confirm-payment', [ManagerController::class, 'confirmTravellerPayment'])
+    ->name('travellers.confirm-payment');
     
-    // Trips management - complete CRUD functionality
-    Route::get('/trips', [ManagerController::class, 'trips'])->name('trips');
-    Route::get('/trips/create', [ManagerController::class, 'create'])->name('trips.create');
-    Route::post('/trips', [ManagerController::class, 'store'])->name('trips.store');
-    Route::get('/trips/{id}', [ManagerController::class, 'show'])->name('trips.show');
-    Route::get('/trips/{id}/edit', [ManagerController::class, 'edit'])->name('trips.edit');
-    Route::put('/trips/{id}', [ManagerController::class, 'update'])->name('trips.update');
-    Route::delete('/trips/{id}', [ManagerController::class, 'destroy'])->name('trips.destroy');
+    Route::get('/trips', [ManagerController::class, 'trips'])
+    ->name('trips');
+
+    Route::get('/trips/create', [ManagerController::class, 'create'])
+    ->name('trips.create');
+
+    Route::post('/trips', [ManagerController::class, 'store'])
+    ->name('trips.store');
+
+    Route::get('/trips/{id}', [ManagerController::class, 'show'])
+    ->name('trips.show');
+
+    Route::get('/trips/{id}/edit', [ManagerController::class, 'edit'])
+    ->name('trips.edit');
+
+    Route::put('/trips/{id}', [ManagerController::class, 'update'])
+    ->name('trips.update');
+
+    Route::delete('/trips/{id}', [ManagerController::class, 'destroy'])
+    ->name('trips.destroy');
     
-    // Collaborations management
-    Route::get('/trips/{id}/collaborations', [ManagerController::class, 'manageCollaborations'])->name('collaborations');
-    Route::post('/trips/{id}/collaborators', [ManagerController::class, 'addCollaborator'])->name('collaborators.add');
-    Route::delete('/trips/{id}/collaborators', [ManagerController::class, 'removeCollaborator'])->name('collaborators.remove');
+    Route::get('/trips/{id}/collaborations', [ManagerController::class, 'manageCollaborations'])
+    ->name('collaborations');
+
+    Route::post('/trips/{id}/collaborators', [ManagerController::class, 'addCollaborator'])
+    ->name('collaborators.add');
+
+    Route::delete('/trips/{id}/collaborators', [ManagerController::class, 'removeCollaborator'])
+    ->name('collaborators.remove');
     
-    // Collaborator trips
-    Route::get('/collaborator-trips/{type}', [ManagerController::class, 'collaboratorTrips'])->name('collaborator.trips');
+    Route::get('/collaborator-trips/{type}', [ManagerController::class, 'collaboratorTrips'])
+    ->name('collaborator.trips');
 });

@@ -8,30 +8,73 @@
        <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-100 rounded-full opacity-50"></div>
         <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-100 rounded-full opacity-50"></div>
         
-        <div class="relative z-10 mb-8">
-            <div class="flex items-center justify-between">
-                <div class="flex flex-col items-center">
-                    <div id="step1-indicator" class="w-10 h-10 rounded-full flex items-center justify-center border-2 border-indigo-500 bg-indigo-500 text-white font-bold transition-all duration-300">1</div>
-                    <span class="text-xs font-medium mt-1 text-gray-600">Welcome</span>
+        @php
+            $fromTripWithUs = request()->has('trip_id');
+            $redirectUrl = request()->input('redirect');
+            $tripId = request()->input('trip_id');
+        @endphp
+
+        <style>
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+            .animate-pulse-custom {
+                animation: pulse 2s infinite;
+            }
+            
+            .role-radio:checked + .role-radio-circle .role-radio-dot {
+                display: block !important;
+            }
+            
+            .step-enter {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            .step-enter-active {
+                opacity: 1;
+                transform: translateX(0);
+                transition: opacity 300ms, transform 300ms;
+            }
+        </style>
+
+        <div class="mb-8">
+            <div class="relative pt-1">
+                <div class="flex items-center justify-between mb-2">
+                    <div>
+                        <span id="step-text" class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-indigo-600 bg-indigo-200">
+                            Step <span id="current-step-number">1</span> of 3
+                        </span>
+                    </div>
+                    <div class="text-right">
+                        <span id="progress-percentage" class="text-xs font-semibold inline-block text-indigo-600">
+                            33%
+                        </span>
+                    </div>
                 </div>
-                <div class="flex-1 h-1 mx-2 bg-gray-200 relative">
-                    <div id="progress-1-2" class="absolute top-0 left-0 h-full bg-indigo-500 transition-all duration-500" style="width: 0%"></div>
+                <div class="flex h-2 mb-4 overflow-hidden text-xs bg-indigo-200 rounded">
+                    <div id="progress-bar" style="width:33%" class="flex flex-col justify-center text-center text-white bg-indigo-600 shadow-none transition-all duration-500"></div>
                 </div>
-                <div class="flex flex-col items-center">
-                    <div id="step2-indicator" class="w-10 h-10 rounded-full flex items-center justify-center border-2 border-gray-300 text-gray-400 font-bold transition-all duration-300">2</div>
-                    <span class="text-xs font-medium mt-1 text-gray-600">Role</span>
-                </div>
-                <div class="flex-1 h-1 mx-2 bg-gray-200 relative">
-                    <div id="progress-2-3" class="absolute top-0 left-0 h-full bg-indigo-500 transition-all duration-500" style="width: 0%"></div>
-                </div>
-                <div class="flex flex-col items-center">
-                    <div id="step3-indicator" class="w-10 h-10 rounded-full flex items-center justify-center border-2 border-gray-300 text-gray-400 font-bold transition-all duration-300">3</div>
-                    <span class="text-xs font-medium mt-1 text-gray-600">Details</span>
+                
+                <div class="flex justify-between">
+                    <div id="step-indicator-1" class="flex flex-col items-center">
+                        <div class="w-6 h-6 mb-1 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xs">1</div>
+                        <span class="text-xs">Start</span>
+                    </div>
+                    <div id="step-indicator-2" class="flex flex-col items-center">
+                        <div class="w-6 h-6 mb-1 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold text-xs">2</div>
+                        <span class="text-xs">Role</span>
+                    </div>
+                    <div id="step-indicator-3" class="flex flex-col items-center">
+                        <div class="w-6 h-6 mb-1 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold text-xs">3</div>
+                        <span class="text-xs">Details</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <form method="POST" action="{{ route('register') }}" class="relative z-10">
+        <form method="POST" action="{{ route('register') }}?{{ http_build_query(request()->query()) }}" class="relative z-10">
             @csrf
 
             <div id="step1" class="step transition-all duration-500 transform">
@@ -64,6 +107,7 @@
 
             <div id="step2" class="step hidden transition-all duration-500 transform">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">I am a...</h2>
+                @if(!$fromTripWithUs)
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     @foreach([
                         ['Hotel', 'Building with rooms for travelers'],
@@ -83,6 +127,31 @@
                         </label>
                     @endforeach
                 </div>
+                @else
+                <input type="hidden" name="role" value="traveller">
+                
+                <div class="rounded-md bg-indigo-50 p-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-indigo-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-indigo-800">Trip Registration</h3>
+                            <div class="mt-2 text-sm text-indigo-700">
+                                <p>You're registering to join a trip to {{ $tripId ? \App\Models\Trip::find($tripId)->destination ?? 'your destination' : 'your destination' }}. After registration, you'll complete your booking.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+                @if(request()->has('trip_id'))
+                    <input type="hidden" name="trip_id" value="{{ request('trip_id') }}">
+                @endif
+
+                @if(request()->has('redirect'))
+                    <input type="hidden" name="redirect" value="{{ request('redirect') }}">
+                @endif
+
                 <div class="flex justify-between space-x-4">
                     <button type="button" class="flex-1 bg-gray-100 text-gray-700 font-medium py-3 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 flex items-center justify-center" onclick="prevStep()">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -112,6 +181,7 @@
                             class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-indigo-300"
                             placeholder="Your full name">
                     </div>
+                    <div id="name-error" class="text-red-500 text-xs mt-1 hidden">Please enter your full name</div>
                 </div>
 
                 <div class="mb-5">
@@ -125,6 +195,7 @@
                             class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-indigo-300"
                             placeholder="your.email@example.com">
                     </div>
+                    <div id="email-error" class="text-red-500 text-xs mt-1 hidden">Please enter a valid email address</div>
                 </div>
 
                 <div class="mb-5">
@@ -181,18 +252,51 @@
                     </button>
                 </div>
 
-                <a href="{{ url('login/google') }}" class="w-full bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-xl flex items-center justify-center">
-                    <span>Login with Google</span>
-                </a>
+                <div class="mt-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-500">
+                                Or continue with
+                            </span>
+                        </div>
+                    </div>
 
-                <a href="{{ url('login/facebook') }}" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-xl flex items-center justify-center">
-                    <span>Login with Facebook</span>
-                </a>
+                    <div class="mt-6 grid grid-cols-2 gap-3">
+                        <a href="{{ url('login/google') }}" 
+                           class="w-full inline-flex justify-center items-center py-3 px-4 rounded-md shadow-sm bg-white hover:bg-gray-50 border border-gray-200 transition-all duration-200 hover:shadow-md transform hover:-translate-y-1">
+                            <svg class="h-5 w-5 mr-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
+                                    <path fill="#4285F4" d="M -3.264 51.509 C -3.264 50.719 -3.334 49.969 -3.454 49.239 L -14.754 49.239 L -14.754 53.749 L -8.284 53.749 C -8.574 55.229 -9.424 56.479 -10.684 57.329 L -10.684 60.329 L -6.824 60.329 C -4.564 58.239 -3.264 55.159 -3.264 51.509 Z"/>
+                                    <path fill="#34A853" d="M -14.754 63.239 C -11.514 63.239 -8.804 62.159 -6.824 60.329 L -10.684 57.329 C -11.764 58.049 -13.134 58.489 -14.754 58.489 C -17.884 58.489 -20.534 56.379 -21.484 53.529 L -25.464 53.529 L -25.464 56.619 C -23.494 60.539 -19.444 63.239 -14.754 63.239 Z"/>
+                                    <path fill="#FBBC05" d="M -21.484 53.529 C -21.734 52.809 -21.864 52.039 -21.864 51.239 C -21.864 50.439 -21.724 49.669 -21.484 48.949 L -21.484 45.859 L -25.464 45.859 C -26.284 47.479 -26.754 49.299 -26.754 51.239 C -26.754 53.179 -26.284 54.999 -25.464 56.619 L -21.484 53.529 Z"/>
+                                    <path fill="#EA4335" d="M -14.754 43.989 C -12.984 43.989 -11.404 44.599 -10.154 45.789 L -6.734 42.369 C -8.804 40.429 -11.514 39.239 -14.754 39.239 C -19.444 39.239 -23.494 41.939 -25.464 45.859 L -21.484 48.949 C -20.534 46.099 -17.884 43.989 -14.754 43.989 Z"/>
+                                </g>
+                            </svg>
+                            <span class="text-gray-700 font-medium">Google</span>
+                        </a>
 
-            </div>
+                        <a href="{{ url('login/facebook') }}" 
+                           class="w-full inline-flex justify-center items-center py-3 px-4 rounded-md shadow-sm bg-[#4267B2] hover:bg-[#3b5998] text-white border border-[#4267B2] transition-all duration-200 hover:shadow-md transform hover:-translate-y-1">
+                            <svg class="h-5 w-5 mr-2 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.19795 21.5H13.198V13.4901H16.8021L17.198 9.50977H13.198V7.5C13.198 6.94772 13.6457 6.5 14.198 6.5H17.198V2.5H14.198C11.4365 2.5 9.19795 4.73858 9.19795 7.5V9.50977H7.19795L6.80206 13.4901H9.19795V21.5Z"/>
+                            </svg>
+                            <span class="font-medium">Facebook</span>
+                        </a>
+                    </div>
+                </div>
 
-            <div class="text-center mt-8 text-sm text-gray-500">
-                Already have an account? <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-800 font-medium">Sign in here</a>
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                        Already have an account?
+                        <a href="{{ route('login') }}?{{ http_build_query(request()->query()) }}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                            Sign in
+                        </a>
+                    </p>
+                </div>
+
             </div>
 
         </form>
@@ -201,168 +305,221 @@
 </div>
 
 <script>
-
-    let currentStep = 1;
-
-    function updateProgressBar() {
-        document.getElementById('step1-indicator').classList.toggle('bg-indigo-500', currentStep >= 1);
-        document.getElementById('step1-indicator').classList.toggle('text-white', currentStep >= 1);
-        document.getElementById('step1-indicator').classList.toggle('border-indigo-500', currentStep >= 1);
-        document.getElementById('step2-indicator').classList.toggle('bg-indigo-500', currentStep >= 2);
-        document.getElementById('step2-indicator').classList.toggle('text-white', currentStep >= 2);
-        document.getElementById('step2-indicator').classList.toggle('border-indigo-500', currentStep >= 2);
-        document.getElementById('step2-indicator').classList.toggle('border-gray-300', currentStep < 2);
-        document.getElementById('step2-indicator').classList.toggle('text-gray-400', currentStep < 2);
-        document.getElementById('step3-indicator').classList.toggle('bg-indigo-500', currentStep >= 3);
-        document.getElementById('step3-indicator').classList.toggle('text-white', currentStep >= 3);
-        document.getElementById('step3-indicator').classList.toggle('border-indigo-500', currentStep >= 3);
-        document.getElementById('step3-indicator').classList.toggle('border-gray-300', currentStep < 3);
-        document.getElementById('step3-indicator').classList.toggle('text-gray-400', currentStep < 3);
-        document.getElementById('progress-1-2').style.width = currentStep >= 2 ? '100%' : '0%';
-        document.getElementById('progress-2-3').style.width = currentStep >= 3 ? '100%' : '0%';
-    }
-
-    function showStep(step) {
-
-        currentStep = step;
+    document.addEventListener('DOMContentLoaded', function() {
+        let currentStep = 1;
+        const totalSteps = 3;
+        const fromTripWithUs = {{ $fromTripWithUs ? 'true' : 'false' }};
         
-        document.querySelectorAll('.step').forEach((el) => {
-
-            el.classList.add('hidden');
-
-            el.classList.remove('scale-105', 'opacity-0');
-        });
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercentage = document.getElementById('progress-percentage');
+        const currentStepNumber = document.getElementById('current-step-number');
+        const stepText = document.getElementById('step-text');
         
-        const currentStepEl = document.getElementById('step' + step);
-
-        currentStepEl.classList.remove('hidden');
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
         
-        setTimeout(() => {
-
-            currentStepEl.classList.remove('opacity-0', 'scale-95');
-
-            currentStepEl.classList.add('scale-100', 'opacity-100');
-        }, 10);
+        const stepIndicator1 = document.getElementById('step-indicator-1');
+        const stepIndicator2 = document.getElementById('step-indicator-2');
+        const stepIndicator3 = document.getElementById('step-indicator-3');
         
-        updateProgressBar();
-    }
-
-    function nextStep() {
-
-        if (currentStep < 3) {
-            const currentStepEl = document.getElementById('step' + currentStep);
-
-            currentStepEl.classList.add('scale-95', 'opacity-0');
+        const passwordField = document.getElementById('password');
+        const confirmPasswordField = document.getElementById('password_confirmation');
+        const passwordStrength = document.getElementById('password-strength');
+        
+        const roleOptions = document.querySelectorAll('.role-option');
+        const roleRadios = document.querySelectorAll('input[name="role"]');
+        const roleContinueBtn = document.getElementById('role-continue-btn');
+        
+        if (step1) step1.classList.remove('hidden');
+        if (step2) step2.classList.add('hidden');
+        if (step3) step3.classList.add('hidden');
+        
+        function updateProgress(step) {
+            const percentage = Math.round((step / totalSteps) * 100);
+            if (progressBar) progressBar.style.width = percentage + '%';
+            if (progressPercentage) progressPercentage.textContent = percentage + '%';
+            if (currentStepNumber) currentStepNumber.textContent = step;
             
-            setTimeout(() => {
-
-                currentStep++;
-                showStep(currentStep);
-            }, 300);
-        }
-    }
-
-    function prevStep() {
-
-        if (currentStep > 1) {
-            const currentStepEl = document.getElementById('step' + currentStep);
-
-            currentStepEl.classList.add('scale-105', 'opacity-0');
+            if (stepIndicator1) {
+                stepIndicator1.querySelector('div').className = step >= 1 
+                    ? 'w-6 h-6 mb-1 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xs' 
+                    : 'w-6 h-6 mb-1 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold text-xs';
+            }
             
-            setTimeout(() => {
-
-                currentStep--;
-                showStep(currentStep);
-
-            }, 300);
+            if (stepIndicator2) {
+                stepIndicator2.querySelector('div').className = step >= 2 
+                    ? 'w-6 h-6 mb-1 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xs' 
+                    : 'w-6 h-6 mb-1 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold text-xs';
+            }
+            
+            if (stepIndicator3) {
+                stepIndicator3.querySelector('div').className = step >= 3 
+                    ? 'w-6 h-6 mb-1 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xs animate-pulse-custom' 
+                    : 'w-6 h-6 mb-1 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold text-xs';
+            }
         }
-    }
-    
-    function validateAndContinue() {
-
-        if (document.querySelector('input[name="role"]:checked')) {
-            nextStep();
+        
+        function showStep(step) {
+            if (step1) step1.classList.add('hidden');
+            if (step2) step2.classList.add('hidden');
+            if (step3) step3.classList.add('hidden');
+            
+            if (step === 1 && step1) step1.classList.remove('hidden');
+            if (step === 2 && step2) step2.classList.remove('hidden');
+            if (step === 3 && step3) step3.classList.remove('hidden');
+            
+            updateProgress(step);
+            currentStep = step;
         }
-    }
-    
-    document.querySelectorAll('.role-option').forEach(option => {
-
-        option.addEventListener('click', function() {
-
-            document.querySelectorAll('.role-option').forEach(opt => {
-
-                opt.classList.remove('border-indigo-500', 'bg-indigo-50');
-
-                opt.querySelector('.role-radio-dot').classList.add('hidden');
+        
+        window.nextStep = function() {
+            if (fromTripWithUs && currentStep === 1) {
+                showStep(3);
+                return;
+            }
+            
+            if (currentStep < totalSteps) {
+                showStep(currentStep + 1);
+            }
+        };
+        
+        window.prevStep = function() {
+            if (fromTripWithUs && currentStep === 3) {
+                showStep(1);
+                return;
+            }
+            
+            if (currentStep > 1) {
+                showStep(currentStep - 1);
+            }
+        };
+        
+        window.validateAndContinue = function() {
+            if (fromTripWithUs) {
+                nextStep();
+                return;
+            }
+            
+            const selectedRole = document.querySelector('input[name="role"]:checked');
+            if (selectedRole) {
+                nextStep();
+            } else {
+                roleOptions.forEach(option => {
+                    option.classList.add('border-red-500');
+                    setTimeout(() => {
+                        option.classList.remove('border-red-500');
+                    }, 1000);
+                });
+                alert('Please select a role to continue');
+            }
+        };
+        
+        if (roleOptions) {
+            roleOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (radio) {
+                        roleRadios.forEach(r => r.checked = false);
+                        
+                        radio.checked = true;
+                        
+                        roleOptions.forEach(opt => {
+                            opt.classList.remove('border-indigo-500', 'bg-indigo-50');
+                            const dot = opt.querySelector('.role-radio-dot');
+                            if (dot) dot.classList.add('hidden');
+                        });
+                        
+                        this.classList.add('border-indigo-500', 'bg-indigo-50');
+                        const dot = this.querySelector('.role-radio-dot');
+                        if (dot) dot.classList.remove('hidden');
+                        
+                        if (roleContinueBtn) {
+                            roleContinueBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                            roleContinueBtn.disabled = false;
+                        }
+                    }
+                });
             });
-            
-            this.classList.add('border-indigo-500', 'bg-indigo-50');
-
-            this.querySelector('.role-radio-dot').classList.remove('hidden');
-
-            this.querySelector('input[type="radio"]').checked = true;
-            
-            document.getElementById('role-continue-btn').classList.remove('opacity-50', 'cursor-not-allowed');
-
-            document.getElementById('role-continue-btn').removeAttribute('disabled');
-        });
-    });
-    
-    document.getElementById('togglePassword').addEventListener('click', function() {
-
-        const passwordInput = document.getElementById('password');
-
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        
-        passwordInput.setAttribute('type', type);
-        
-        const eyeIcon = this.querySelector('svg');
-
-        if (type === 'text') {
-            eyeIcon.innerHTML = '<path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />';
-       
-        } else {
-            eyeIcon.innerHTML = '<path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd" /><path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />';
         }
-    });
-    
-    document.getElementById('password').addEventListener('input', function() {
-
-        const password = this.value;
-
-        let strength = 0;
-
-        if (password.length >= 8) strength += 1;
-
-        if (/[A-Z]/.test(password)) strength += 1;
-
-        if (/[0-9]/.test(password)) strength += 1;
-
-        if (/[^A-Za-z0-9]/.test(password)) strength += 1;
         
-        const strengthBar = document.getElementById('password-strength');
-
-        strengthBar.style.width = (strength * 25) + '%';
-        
-        if (strength === 0) {
-            strengthBar.className = 'h-1.5 rounded-full bg-gray-300';
-
-        } else if (strength === 1) {
-            strengthBar.className = 'h-1.5 rounded-full bg-red-500';
-
-        } else if (strength === 2) {
-            strengthBar.className = 'h-1.5 rounded-full bg-orange-500';
-
-        } else if (strength === 3) {
-            strengthBar.className = 'h-1.5 rounded-full bg-yellow-500';
-
-        } else {
-            strengthBar.className = 'h-1.5 rounded-full bg-green-500';
+        if (passwordField) {
+            passwordField.addEventListener('input', function() {
+                const password = this.value;
+                let strength = 0;
+                
+                if (password.length >= 8) strength += 25;
+                if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength += 25;
+                if (password.match(/\d/)) strength += 25;
+                if (password.match(/[^a-zA-Z\d]/)) strength += 25;
+                if (passwordStrength) {
+                    passwordStrength.style.width = strength + '%';
+                    if (strength < 50) {
+                        passwordStrength.classList.remove('bg-yellow-500', 'bg-green-500');
+                        passwordStrength.classList.add('bg-red-500');
+                    } else if (strength < 75) {
+                        passwordStrength.classList.remove('bg-red-500', 'bg-green-500');
+                        passwordStrength.classList.add('bg-yellow-500');
+                    } else {
+                        passwordStrength.classList.remove('bg-red-500', 'bg-yellow-500');
+                        passwordStrength.classList.add('bg-green-500');
+                    }
+                }
+            });
         }
+        
+        if (confirmPasswordField && passwordField) {
+            confirmPasswordField.addEventListener('input', function() {
+                if (this.value !== passwordField.value) {
+                    this.classList.add('border-red-500');
+                    this.classList.remove('border-gray-300');
+                } else {
+                    this.classList.remove('border-red-500');
+                    this.classList.add('border-gray-300');
+                }
+            });
+        }
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (currentStep === 3) {
+                    if (passwordField && confirmPasswordField && passwordField.value !== confirmPasswordField.value) {
+                        e.preventDefault();
+                        alert('Password and confirmation do not match!');
+                        confirmPasswordField.focus();
+                        return false;
+                    }
+                    if (passwordField && passwordField.value.length < 8) {
+                        e.preventDefault();
+                        alert('Password must be at least 8 characters long!');
+                        passwordField.focus();
+                        return false;
+                    }
+                }
+                
+                return true;
+            });
+        }
+        
+        const togglePassword = document.getElementById('togglePassword');
+        if (togglePassword && passwordField) {
+            togglePassword.addEventListener('click', function() {
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                
+                const eyeIcon = this.querySelector('svg');
+                if (eyeIcon) {
+                    if (type === 'password') {
+                        eyeIcon.innerHTML = '<path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />';
+                    } else {
+                        eyeIcon.innerHTML = '<path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 00-2.79.588l.77.771A5.944 5.944 0 018 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0114.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z" /><path d="M11.297 9.176a3.5 3.5 0 00-4.474-4.474l.823.823a2.5 2.5 0 012.829 2.829l.822.822zm-2.943 1.299l.822.822a3.5 3.5 0 01-4.474-4.474l.823.823a2.5 2.5 0 002.829 2.829z" /><path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 001.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 018 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709z" /><path fill-rule="evenodd" d="M13.646 14.354l-12-12 .708-.708 12 12-.708.708z" clip-rule="evenodd" />';
+                    }
+                }
+            });
+        }
+        
+        updateProgress(1);
     });
-
-    showStep(currentStep);
-
 </script>
 
 @endsection

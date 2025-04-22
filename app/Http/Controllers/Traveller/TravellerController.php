@@ -40,78 +40,75 @@ class TravellerController extends Controller
     
     public function trips(Request $request)
     {
-        $status = $request->input('status', 'all');
-        $traveller = Traveller::where('user_id', Auth::id())->first();
+        $activeStatus = $request->query('status', 'all');
+        
+        $traveller = auth()->user()->traveller;
+        $pendingPaymentTrips = collect();
         
         if (!$traveller) {
-            return view('traveller.pages.trips', [
-                'allTrips' => [],
-                'upcomingTrips' => [],
-                'completedTrips' => [],
-                'cancelledTrips' => [],
-                'pendingPaymentTrips' => [],
-                'activeStatus' => $status
-            ]);
-        }
-        
-        $query = Trip::query();
-        
-        if ($traveller->trip_id) {
-            $query->where('id', $traveller->trip_id);
+            $allTrips = collect();
         } else {
-            $query->whereNull('id');
-        }
-        
-        $allTrips = $query->get();
-        
-        $upcomingTrips = collect([]);
-        $completedTrips = collect([]);
-        $cancelledTrips = collect([]);
-        $pendingPaymentTrips = collect([]);
-        
-        foreach ($allTrips as $trip) {
-            $paymentStatus = $traveller->payment_status;
+            $query = Trip::query();
             
-            if ($paymentStatus === 'pending') {
-                $pendingPaymentTrips->push($trip);
-            } elseif ($paymentStatus === 'cancelled') {
-                $cancelledTrips->push($trip);
-            } elseif ($paymentStatus === 'paid') {
-                if ($trip->start_date > now()) {
-                    $upcomingTrips->push($trip);
-                } elseif ($trip->end_date < now()) {
-                    $completedTrips->push($trip);
+            if ($traveller->trip_id) {
+                if ($activeStatus === 'pending') {
+                    if ($traveller->payment_status === 'pending') {
+                        $query->where('id', $traveller->trip_id);
+                    } else {
+                        return view('traveller.pages.trips', [
+                            'allTrips' => collect(),
+                            'activeStatus' => $activeStatus,
+                            'pendingPaymentTrips' => collect(),
+                            'pendingPayment' => false
+                        ]);
+                    }
+                } elseif ($activeStatus === 'completed') {
+                    $query->where('id', $traveller->trip_id)
+                          ->where('end_date', '<', now())
+                          ->whereHas('travellers', function($q) {
+                              $q->where('payment_status', 'paid')
+                                ->where('user_id', auth()->id());
+                          });
+                } elseif ($activeStatus === 'cancelled') {
+                    $query->where('id', $traveller->trip_id)
+                          ->whereHas('travellers', function($q) {
+                              $q->where('payment_status', 'cancelled')
+                                ->where('user_id', auth()->id());
+                          });
+                } else {
+                    $query->where('id', $traveller->trip_id);
                 }
+            } else {
+                return view('traveller.pages.trips', [
+                    'allTrips' => collect(),
+                    'activeStatus' => $activeStatus,
+                    'pendingPaymentTrips' => collect(),
+                    'pendingPayment' => false
+                ]);
+            }
+            
+            $allTrips = $query->get();
+            
+            if ($traveller->payment_status === 'pending' && $traveller->trip_id) {
+                $pendingPaymentTrips = \App\Models\Trip::where('id', $traveller->trip_id)->get();
             }
         }
         
-        $displayTrips = [];
-        switch ($status) {
-            case 'upcoming':
-                $displayTrips = $upcomingTrips;
-                break;
-            case 'completed':
-                $displayTrips = $completedTrips;
-                break;
-            case 'cancelled':
-                $displayTrips = $cancelledTrips;
-                break;
-            case 'pending':
-                $displayTrips = $pendingPaymentTrips;
-                break;
-            default:
-                $displayTrips = $allTrips;
-                break;
+        $pendingPayment = $pendingPaymentTrips->isNotEmpty();
+        
+        return view('traveller.pages.trips', compact('allTrips', 'activeStatus', 'pendingPayment', 'pendingPaymentTrips'));
+    }
+    
+    public function checkPaymentRequired()
+    {
+        $traveller = auth()->user()->traveller;
+        
+        if ($traveller && $traveller->trip_id && $traveller->payment_status === 'pending') {
+            return redirect()->route('traveller.trips.payment', $traveller->trip_id)
+                ->with('info', 'Please complete your payment to confirm your trip booking.');
         }
         
-        return view('traveller.pages.trips', [
-            'allTrips' => $displayTrips,
-            'upcomingTrips' => $upcomingTrips,
-            'completedTrips' => $completedTrips,
-            'cancelledTrips' => $cancelledTrips,
-            'pendingPaymentTrips' => $pendingPaymentTrips,
-            'activeStatus' => $status
-        ]);
+        return redirect()->route('traveller.trips');
     }
     
     public function profile()
@@ -258,51 +255,49 @@ class TravellerController extends Controller
         }
     }
     
-    public function showPayment(Trip $trip)
+    public function showPayment($tripId)
     {
-        $user = Auth::user();
-        $traveller = Traveller::where('user_id', $user->id)
-            ->where('trip_id', $trip->id)
-            ->first();
-            
-        if (!$traveller || $traveller->payment_status !== 'pending') {
-            return redirect()->route('traveller.trips');
+        $trip = \App\Models\Trip::findOrFail($tripId);
+        
+        $traveller = auth()->user()->traveller;
+        
+        if (!$traveller) {
+            $traveller = \App\Models\Traveller::create([
+                'user_id' => auth()->id(),
+                'trip_id' => $trip->id,
+                'itinerary_id' => $trip->itinerary ? $trip->itinerary->id : null,
+                'payment_status' => 'pending'
+            ]);
+        } else if ($traveller->trip_id != $trip->id) {
+            $traveller->trip_id = $trip->id;
+            $traveller->itinerary_id = $trip->itinerary ? $trip->itinerary->id : null;
+            $traveller->payment_status = 'pending';
+            $traveller->save();
         }
         
-        return view('traveller.pages.payment', [
-            'trip' => $trip,
-            'traveller' => $traveller
-        ]);
+        return view('traveller.pages.payment', compact('trip'));
     }
     
-    public function processPayment(Request $request, Trip $trip)
+    public function processPayment(Request $request, $tripId)
     {
-        $user = Auth::user();
-        $traveller = Traveller::where('user_id', $user->id)
-            ->where('trip_id', $trip->id)
-            ->first();
-            
-        if (!$traveller) {
-            return redirect()->route('traveller.trips');
-        }
-        
-        $validator = Validator::make($request->all(), [
-            'card_number' => 'required|string|min:16|max:16',
-            'card_holder' => 'required|string',
-            'expiry_date' => 'required|string',
-            'cvv' => 'required|numeric|min:3',
+        $request->validate([
+            'card_name' => 'required',
+            'card_number' => 'required',
+            'expiration' => 'required',
+            'cvc' => 'required'
         ]);
         
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+        $trip = \App\Models\Trip::findOrFail($tripId);
+        
+        try {
+            $traveller = auth()->user()->traveller;
+            $traveller->payment_status = 'paid';
+            $traveller->save();
+            
+            return redirect()->route('traveller.trips')
+                ->with('success', 'Payment successful! You are now booked for this trip.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Payment failed: ' . $e->getMessage());
         }
-        
-        $traveller->payment_status = 'paid';
-        $traveller->save();
-        
-        return redirect()->route('traveller.trips', ['status' => 'upcoming'])
-            ->with('success', 'Payment successful! Your trip has been confirmed.');
     }
 }
