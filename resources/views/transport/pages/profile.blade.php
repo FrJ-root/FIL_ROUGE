@@ -14,7 +14,6 @@
 <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
     <div class="p-6">
         <div class="flex flex-col md:flex-row items-start gap-8">
-            <!-- Profile Image -->
             <div class="w-full md:w-1/3 flex flex-col items-center">
                 <div class="rounded-full overflow-hidden border-4 border-transport-blue w-48 h-48 mb-4">
                     <img src="{{ Auth::user()->picture ? asset('storage/'.Auth::user()->picture) : asset('images/default-profile.png') }}" 
@@ -27,7 +26,6 @@
                 </span>
             </div>
             
-            <!-- Profile Details -->
             <div class="w-full md:w-2/3 mt-6 md:mt-0">
                 <h3 class="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-200">
                     <i class="fas fa-info-circle text-transport-blue mr-2"></i>

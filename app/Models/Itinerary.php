@@ -11,8 +11,8 @@ class Itinerary extends Model
 
     protected $fillable = [
         'title',
-        'description',
         'trip_id',
+        'description',
     ];
 
     public function travellers()

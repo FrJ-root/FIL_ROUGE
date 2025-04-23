@@ -15,9 +15,7 @@
     </div>
 </div>
 
-<!-- Statistics Section -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <!-- Total Trips Card -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
         <div class="p-5">
             <div class="flex items-center justify-between">
@@ -44,7 +42,6 @@
         </div>
     </div>
 
-    <!-- Active Trips Card -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
         <div class="p-5">
             <div class="flex items-center justify-between">
@@ -70,7 +67,6 @@
         </div>
     </div>
 
-    <!-- Upcoming Trips Card -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
         <div class="p-5">
             <div class="flex items-center justify-between">
@@ -94,7 +90,6 @@
         </div>
     </div>
 
-    <!-- Total Travellers Card -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
         <div class="p-5">
             <div class="flex items-center justify-between">
@@ -120,7 +115,6 @@
         </div>
     </div>
 
-    <!-- Payment Status Statistics Card -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
         <div class="p-5">
             <div class="flex items-center justify-between">
@@ -150,9 +144,7 @@
     </div>
 </div>
 
-<!-- Collaboration Stats Section -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-    <!-- Collaborators Card -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
             <h3 class="text-white font-semibold text-lg flex items-center">
@@ -187,7 +179,6 @@
         </div>
     </div>
 
-    <!-- Revenue Card -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4">
             <h3 class="text-white font-semibold text-lg flex items-center">
@@ -240,7 +231,6 @@
     </div>
 </div>
 
-<!-- Add Travellers Section -->
 <div class="bg-white rounded-lg shadow-md p-6 mb-6">
     <h2 class="text-xl font-semibold text-gray-800 mb-4">
         <i class="fas fa-users mr-2 text-blue-500"></i> Travellers and Their Trips

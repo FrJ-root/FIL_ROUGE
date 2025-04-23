@@ -21,7 +21,6 @@
     @endif
 
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <!-- Traveller Profile Header -->
         <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
             <div class="flex flex-col md:flex-row items-center md:items-start">
                 <div class="w-24 h-24 rounded-full overflow-hidden bg-white border-4 border-white shadow-md mb-4 md:mb-0 md:mr-6">
@@ -50,10 +49,8 @@
             </div>
         </div>
 
-        <!-- Traveller Information -->
         <div class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Personal Details -->
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <h3 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Personal Information</h3>
                     <div class="space-y-3">
@@ -84,7 +81,6 @@
                     </div>
                 </div>
 
-                <!-- Trip Details -->
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <h3 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Trip Information</h3>
                     @if($traveller->trip)
@@ -135,7 +131,6 @@
                 </div>
             </div>
 
-            <!-- Actions Section -->
             <div class="mt-6 flex flex-col sm:flex-row items-center justify-between border-t pt-6">
                 <div>
                     <h3 class="text-lg font-semibold text-gray-700 mb-2">Actions</h3>

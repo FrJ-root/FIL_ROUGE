@@ -71,7 +71,6 @@
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Upcoming Trips -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="bg-transport-blue text-white px-6 py-4 flex items-center justify-between">
             <div class="flex items-center">
@@ -84,7 +83,6 @@
         </div>
         <div class="p-6">
             <div class="space-y-4">
-                <!-- Sample trip items - would be replaced with real data -->
                 <div class="border-b border-gray-100 pb-4">
                     <div class="flex justify-between items-center">
                         <div>
@@ -124,7 +122,6 @@
         </div>
     </div>
 
-    <!-- Vehicle Status -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="bg-transport-green text-white px-6 py-4 flex items-center justify-between">
             <div class="flex items-center">

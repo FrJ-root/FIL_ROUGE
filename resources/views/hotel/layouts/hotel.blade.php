@@ -27,15 +27,9 @@
 </head>
 <body class="bg-gray-50 font-sans">
     <div class="flex min-h-screen">
-        <!-- Sidebar -->
         @include('hotel.components.sidebar')
-
-        <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Navbar -->
             @include('hotel.components.header')
-
-            <!-- Page Content -->
             <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
                 @yield('content')
             </main>
@@ -43,7 +37,6 @@
     </div>
 
     <script>
-        // Simple animation for sidebar items
         document.querySelectorAll('nav a').forEach(link => {
             link.addEventListener('mouseenter', () => {
                 link.querySelector('i').classList.add('animate-pulse');

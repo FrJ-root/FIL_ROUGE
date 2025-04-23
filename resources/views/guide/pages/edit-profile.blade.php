@@ -29,7 +29,6 @@
     <form method="POST" action="{{ route('guide.profile.update') }}" enctype="multipart/form-data" class="p-6">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Left Column -->
             <div>
                 <div class="mb-6">
                     <label for="license_number" class="block text-lg font-semibold text-gray-700 mb-2">
@@ -54,7 +53,6 @@
                 </div>
             </div>
 
-            <!-- Right Column -->
             <div>
                 <div class="mb-6">
                     <label for="preferred_locations" class="block text-lg font-semibold text-gray-700 mb-2">
@@ -109,7 +107,6 @@
 </div>
 
 <script>
-    // Preview image before upload
     document.getElementById('picture').addEventListener('change', function(event) {
         const [file] = event.target.files;
         if (file) {

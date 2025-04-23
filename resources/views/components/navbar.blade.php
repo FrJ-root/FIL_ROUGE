@@ -156,14 +156,12 @@
                          tabindex="-1"
                          style="backdrop-filter: blur(8px);">
                          
-                        <!-- User role badge -->
                         <div class="px-4 py-2 border-b border-gray-700">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-400">
                                 {{ ucfirst(Auth::user()->role) }}
                             </span>
                         </div>
                         
-                        <!-- Dashboard link -->
                         <a href="{{ route(Auth::user()->role . '.dashboard') }}" 
                            class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-150 flex items-center" 
                            role="menuitem">
@@ -171,16 +169,13 @@
                             Dashboard
                         </a>
                         
-                        <!-- Settings link -->
                         <a href="javascript:void(0)" 
                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             Settings
                         </a>
                         
-                        <!-- Divider -->
                         <div class="border-t border-gray-700 my-1"></div>
                         
-                        <!-- Sign out button -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" 

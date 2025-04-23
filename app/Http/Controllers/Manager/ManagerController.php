@@ -1,30 +1,24 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\Trip;
-use App\Models\Hotel;
-use App\Models\Guide;
+use Illuminate\Http\Request;
 use App\Models\Transport;
 use App\Models\Traveller;
-use App\Models\Activity;
 use App\Models\Itinerary;
-use App\Models\User;
+use App\Models\Activity;
 use App\Models\Category;
+use App\Models\Hotel;
+use App\Models\Guide;
+use App\Models\Trip;
+use App\Models\User;
 use App\Models\Tag;
 
 class ManagerController extends Controller
 {
-    /**
-     * Display a listing of all trips.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $trips = Trip::with(['travellers', 'guides', 'hotels', 'transports'])
@@ -34,9 +28,6 @@ class ManagerController extends Controller
         return view('trips.index', compact('trips'));
     }
 
-    /**
-     * Show the form for creating a new trip
-     */
     public function create()
     {
         $categories = Category::all();
@@ -45,124 +36,63 @@ class ManagerController extends Controller
         return view('trips.create', compact('categories', 'tags'));
     }
 
-    /**
-     * Store a newly created trip
-     */
     public function store(Request $request)
     {
-        // Begin a database transaction to ensure all operations succeed or fail together
-        DB::beginTransaction();
-        
+        $request->validate([
+            'cover_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'start_date' => 'required|date|after_or_equal:today',
+            'destination' => 'required|string|max:255',
+            'categories.*' => 'exists:categories,id',
+            'categories' => 'nullable|array',
+            'tags.*' => 'exists:tags,id',
+            'tags' => 'nullable|array',
+        ]);
+
         try {
-            // Validate the form data
-            $validated = $request->validate([
-                'destination' => 'required|string|max:255',
-                'start_date' => 'required|date|after_or_equal:today',
-                'end_date' => 'required|date|after_or_equal:start_date',
-                'cover_picture' => 'nullable|image|max:2048',
-                'categories' => 'nullable|array',
-                'categories.*' => 'exists:categories,id',
-                'tags' => 'nullable|array',
-                'tags.*' => 'exists:tags,id'
-            ]);
+            $coverPicturePath = null;
+            if ($request->hasFile('cover_picture') && $request->file('cover_picture')->isValid()) {
+                $coverPicturePath = $request->file('cover_picture')->store('images/trip', 'public');
+                $coverPicturePath = basename($coverPicturePath);
+            }
 
-            // Create the trip with validated data
             $trip = new Trip();
-            $trip->destination = $validated['destination'];
-            $trip->start_date = $validated['start_date'];
-            $trip->end_date = $validated['end_date'];
-            $trip->manager_id = Auth::id();
+            $trip->destination = $request->destination;
+            $trip->start_date = $request->start_date;
+            $trip->end_date = $request->end_date;
+            $trip->cover_picture = $coverPicturePath;
+            $trip->manager_id = auth()->id();
             $trip->status = 'active';
+            $trip->save();
 
-            // Handle file upload if present
-            if ($request->hasFile('cover_picture')) {
-                $path = $request->file('cover_picture')->store('images/trip', 'public');
-                $trip->cover_picture = basename($path);
-            }
-
-            // Save the trip and throw an exception if it fails
-            if (!$trip->save()) {
-                throw new \Exception('Failed to save trip to database');
-            }
-
-            // Attach categories if selected
-            if ($request->has('categories')) {
+            if ($request->has('categories') && is_array($request->categories)) {
                 $trip->categories()->attach($request->categories);
             }
-            
-            // Attach tags if selected
-            if ($request->has('tags')) {
+
+            if ($request->has('tags') && is_array($request->tags)) {
                 $trip->tags()->attach($request->tags);
             }
 
-            // Create the default itinerary
-            $itinerary = new Itinerary();
-            $itinerary->title = 'Trip to ' . $validated['destination'];
-            $itinerary->description = 'Default itinerary for ' . $validated['destination'];
-            $itinerary->trip_id = $trip->id;
-            
-            if (!$itinerary->save()) {
-                throw new \Exception('Failed to create itinerary');
-            }
+            $itinerary = new \App\Models\Itinerary([
+                'title' => 'Trip to ' . $trip->destination,
+                'description' => 'Default itinerary for trip to ' . $trip->destination,
+            ]);
+            $trip->itinerary()->save($itinerary);
 
-            // Add the current user as a traveller if they are a traveller or manager
-            if (Auth::user()->role === 'traveller' || Auth::user()->role === 'manager') {
-                // Check if user already has a traveller record
-                $existingTraveller = Traveller::where('user_id', Auth::id())->first();
-                
-                if ($existingTraveller) {
-                    // Update existing traveller record
-                    $existingTraveller->trip_id = $trip->id;
-                    $existingTraveller->itinerary_id = $itinerary->id;
-                    
-                    if (!$existingTraveller->save()) {
-                        throw new \Exception('Failed to update traveller with trip information');
-                    }
-                } else {
-                    // Create new traveller record with all required fields
-                    $traveller = new Traveller();
-                    $traveller->user_id = Auth::id();
-                    $traveller->trip_id = $trip->id;
-                    $traveller->itinerary_id = $itinerary->id;
-                    $traveller->passport_number = null; // Optional field
-                    
-                    if (!$traveller->save()) {
-                        throw new \Exception('Failed to create traveller record');
-                    }
-                }
-            }
-
-            // Commit the transaction as everything succeeded
-            DB::commit();
-            
-            // Redirect to show trip instead of trips list
             return redirect()->route('trips.show', $trip->id)
-                ->with('success', 'Trip created successfully!');
-        } 
-        catch (\Exception $e) {
-            // Roll back the transaction if anything failed
-            DB::rollback();
-            
-            // Log the detailed error
-            \Log::error('Trip creation error: ' . $e->getMessage());
-            \Log::error($e->getTraceAsString());
-            
-            // Redirect back with input and error message
+                            ->with('success', 'Trip created successfully!');
+        } catch (\Exception $e) {
             return redirect()->back()
-                ->withInput()
-                ->with('error', 'Failed to create trip: ' . $e->getMessage());
+                            ->withInput()
+                            ->with('error', 'Failed to create trip. Please try again or contact support.');
         }
     }
 
-    /**
-     * Display the specified trip
-     */
     public function show($id)
     {
         $trip = Trip::with(['travellers.user', 'guides', 'hotels', 'transports', 'activities', 'itinerary', 'categories', 'tags'])
             ->findOrFail($id);
         
-        // Check if user is manager of this trip - Handle guest users properly
         $canEdit = false;
         
         if (Auth::check()) {
@@ -171,12 +101,9 @@ class ManagerController extends Controller
                       $trip->travellers->contains('user_id', Auth::id()));
         }
         
-        // Get related trips based on destination or categories
         $relatedTrips = Trip::where('id', '!=', $trip->id)
             ->where(function($query) use ($trip) {
-                // Match by similar destination
                 $query->where('destination', 'like', '%' . explode(',', $trip->destination)[0] . '%')
-                // Or match by categories if the trip has categories
                 ->orWhereHas('categories', function($categoryQuery) use ($trip) {
                     if ($trip->categories->count() > 0) {
                         $categoryQuery->whereIn('categories.id', $trip->categories->pluck('id'));
@@ -189,28 +116,18 @@ class ManagerController extends Controller
         return view('trips.show', compact('trip', 'canEdit', 'relatedTrips'));
     }
 
-    /**
-     * Show the form for editing the specified trip
-     */
     public function edit($id)
     {
         try {
             $trip = Trip::findOrFail($id);
-            
-            // Make sure to load related data
             $categories = Category::all();
             $tags = Tag::all();
-            
             return view('trips.edit', compact('trip', 'categories', 'tags'));
         } catch (\Exception $e) {
-            \Log::error('Error showing edit form: ' . $e->getMessage());
             return redirect()->route('manager.trips')->with('error', 'Error loading trip: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Update the specified trip
-     */
     public function update(Request $request, $id)
     {
         try {
@@ -228,7 +145,6 @@ class ManagerController extends Controller
             $trip->end_date = $validated['end_date'];
 
             if ($request->hasFile('cover_picture')) {
-                // Delete old image if exists
                 if ($trip->cover_picture) {
                     $oldImagePath = 'public/images/trip/' . $trip->cover_picture;
                     if (Storage::exists($oldImagePath)) {
@@ -236,43 +152,34 @@ class ManagerController extends Controller
                     }
                 }
                 
-                // Store new image
                 $path = $request->file('cover_picture')->store('images/trip', 'public');
                 $trip->cover_picture = basename($path);
             }
 
             $trip->save();
             
-            // Get or create a destination based on the trip's destination
             $destinationName = explode(',', $trip->destination)[0];
             $destination = \App\Models\Destination::where('name', 'like', $destinationName . '%')->first();
             
             if ($destination) {
-                // Redirect to the destination show page if a matching destination exists
                 return redirect()->route('destinations.show', $destination->slug)
                     ->with('success', 'Trip updated successfully!');
             }
             
-            // Fallback to trip show page if no matching destination
             return redirect()->route('trips.show', $trip->id)
                 ->with('success', 'Trip updated successfully!');
         } catch (\Exception $e) {
-            \Log::error('Error updating trip: ' . $e->getMessage());
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Error updating trip: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Remove the specified trip
-     */
     public function destroy($id)
     {
         try {
             $trip = Trip::findOrFail($id);
             
-            // Delete cover picture if exists
             if ($trip->cover_picture) {
                 $picturePath = 'public/images/trip/' . $trip->cover_picture;
                 if (Storage::exists($picturePath)) {
@@ -280,7 +187,6 @@ class ManagerController extends Controller
                 }
             }
             
-            // The associated records will be deleted via the database cascade
             $trip->delete();
             
             return redirect()->route('manager.trips')
@@ -291,9 +197,6 @@ class ManagerController extends Controller
         }
     }
 
-    /**
-     * Add traveller to trip
-     */
     public function addTraveller(Request $request, Trip $trip)
     {
         $request->validate([
@@ -339,9 +242,6 @@ class ManagerController extends Controller
         return redirect()->back()->with('success', 'Traveller added to trip successfully!');
     }
 
-    /**
-     * Remove traveller from trip
-     */
     public function removeTraveller(Trip $trip, $travellerId)
     {
         $traveller = Traveller::findOrFail($travellerId);
@@ -357,9 +257,6 @@ class ManagerController extends Controller
         return redirect()->back()->with('success', 'Traveller removed from trip successfully!');
     }
 
-    /**
-     * Update trip itinerary
-     */
     public function updateItinerary(Request $request, Trip $trip)
     {
         $request->validate([
@@ -382,9 +279,6 @@ class ManagerController extends Controller
         return redirect()->back()->with('success', 'Itinerary updated successfully!');
     }
 
-    /**
-     * Remove activity from trip
-     */
     public function removeActivity(Trip $trip, Activity $activity)
     {
         if ($activity->trip_id != $trip->id) {
@@ -396,9 +290,6 @@ class ManagerController extends Controller
         return redirect()->back()->with('success', 'Activity removed successfully!');
     }
 
-    /**
-     * Display the manager dashboard
-     */
     public function dashboard()
     {
         $user = auth()->user();
@@ -477,9 +368,6 @@ class ManagerController extends Controller
         ));
     }
 
-    /**
-     * Add activity to trip
-     */
     public function addActivity(Request $request, Trip $trip)
     {
         $request->validate([
@@ -501,12 +389,8 @@ class ManagerController extends Controller
         return redirect()->back()->with('success', 'Activity added successfully!');
     }
 
-    /**
-     * Display the trip management page for managers
-     */
     public function trips()
     {
-        // Load all trips instead of filtering by manager
         $trips = Trip::with(['travellers', 'guides', 'hotels', 'transports'])
             ->latest()
             ->paginate(10);
@@ -514,9 +398,6 @@ class ManagerController extends Controller
         return view('manager.pages.trips', compact('trips'));
     }
 
-    /**
-     * Display trips associated with a specific collaborator type (hotel, guide, transport)
-     */
     public function collaboratorTrips($type)
     {
         if (!in_array($type, ['hotel', 'guide', 'transport'])) {
@@ -547,9 +428,6 @@ class ManagerController extends Controller
         return view('manager.pages.collaborator-trips', compact('trips', 'type', 'pageTitle', 'iconClass'));
     }
 
-    /**
-     * Show collaborators list
-     */
     public function collaborators()
     {
         $hotels = Hotel::with('user')->get();
@@ -558,27 +436,18 @@ class ManagerController extends Controller
         return view('manager.pages.collaborators', compact('hotels', 'guides', 'transports'));
     }
 
-    /**
-     * Display the manager's profile
-     */
     public function profile()
     {
         $user = Auth::user();
         return view('manager.pages.profile', compact('user'));
     }
 
-    /**
-     * Show the form for editing the manager's profile
-     */
     public function editProfile()
     {
         $user = Auth::user();
         return view('manager.pages.edit-profile', compact('user'));
     }
 
-    /**
-     * Update the manager's profile
-     */
     public function updateProfile(Request $request)
     {
         $request->validate([
@@ -604,17 +473,11 @@ class ManagerController extends Controller
         return redirect()->route('manager.profile')->with('success', 'Profile updated successfully!');
     }
 
-    /**
-     * Show the form for editing the manager's password
-     */
     public function editPassword()
     {
         return view('manager.pages.edit-password');
     }
 
-    /**
-     * Update the manager's password
-     */
     public function updatePassword(Request $request)
     {
         $request->validate([
@@ -629,9 +492,6 @@ class ManagerController extends Controller
         return redirect()->route('manager.profile')->with('success', 'Password updated successfully!');
     }
 
-    /**
-     * Display all travellers
-     */
     public function travellers(Request $request)
     {
         $filter = $request->input('filter', 'all');
@@ -657,9 +517,6 @@ class ManagerController extends Controller
         ));
     }
 
-    /**
-     * Confirm traveller payment
-     */
     public function confirmTravellerPayment($id)
     {
         $traveller = Traveller::findOrFail($id);
@@ -671,18 +528,12 @@ class ManagerController extends Controller
             ->with('success', 'Payment confirmed successfully');
     }
 
-    /**
-     * Display a traveller's details
-     */
     public function viewTraveller($id)
     {
         $traveller = Traveller::with(['user', 'trip'])->findOrFail($id);
         return view('manager.pages.traveller-details', compact('traveller'));
     }
 
-    /**
-     * Cancel a traveller's trip
-     */
     public function cancelTravellerTrip($id)
     {
         $traveller = Traveller::findOrFail($id);

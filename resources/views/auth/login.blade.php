@@ -36,7 +36,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{ route('login') }}" id="login-form" onsubmit="return validateLoginForm()">
             @csrf
             
             <div class="mb-4">
@@ -113,3 +113,54 @@
         {{ session('success') }}
     </div>
 @endif
+
+<script>
+    function validateLoginForm() {
+        const errorMessages = document.querySelectorAll('.error-message');
+        errorMessages.forEach(el => el.remove());
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!email.value.trim() || !emailRegex.test(email.value)) {
+            showHackerError(email, 'You look like a Hacker ^_-');
+            return false;
+        }
+        
+        if (!password.value || password.value.length < 6) {
+            showHackerError(password, 'You look like a Hacker ^_-');
+            return false;
+        }
+        
+        if (containsSuspiciousPatterns(email.value) || containsSuspiciousPatterns(password.value)) {
+            showHackerError(email, 'You look like a Hacker ^_-');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    function containsSuspiciousPatterns(input) {
+        const suspiciousPatterns = [
+            '<script>', 'javascript:', 'onerror=', 'onclick=', 
+            'onload=', 'alert(', '--', '/*', '*/', 'SELECT ', 
+            'DROP ', 'DELETE ', 'UPDATE '
+        ];
+        const lowerInput = input.toLowerCase();
+        return suspiciousPatterns.some(pattern => lowerInput.includes(pattern));
+    }
+    
+    function showHackerError(inputElement, message) {
+        const existingError = inputElement.parentNode.querySelector('.error-message');
+        if (existingError) {
+            existingError.remove();
+        }
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message text-red-500 text-sm mt-1 animate-pulse font-medium';
+        errorDiv.innerHTML = `<i class="fas fa-user-secret mr-1"></i>${message}`;
+        inputElement.parentNode.appendChild(errorDiv);
+        inputElement.classList.add('border-red-500');
+        inputElement.focus();
+        
+        return false;
+    }
+</script>

@@ -9,7 +9,6 @@
         class="transition-all duration-300" 
         id="main-content"
     >
-        <!-- Hero Header -->
         <div class="relative h-[500px] overflow-hidden">
             <div class="absolute inset-0 bg-cover bg-center" 
                 style="background-image: url('{{ getDestinationImageUrl($destination->name, $destination->location) }}');">
@@ -28,19 +27,16 @@
 
         <div class="container mx-auto px-4 py-12">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Main Content -->
                 <div class="lg:col-span-2">
                     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
                         <h2 class="text-2xl font-bold text-gray-800 mb-4">About {{ $destination->name }}</h2>
                         <div class="prose max-w-none">
                             <p class="text-gray-700 mb-6">{{ $destination->description }}</p>
                             
-                            <!-- Location Map -->
                             <div class="h-64 bg-gray-200 rounded-lg overflow-hidden mb-6">
                                 <div id="map" class="w-full h-full"></div>
                             </div>
                             
-                            <!-- Things to Do Section -->
                             <h3 class="text-xl font-bold text-gray-800 mb-4">Top Things to Do</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                 <div class="bg-gray-50 p-4 rounded-lg">
@@ -61,7 +57,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Best Time to Visit -->
                             <h3 class="text-xl font-bold text-gray-800 mb-4">Best Time to Visit</h3>
                             <p class="text-gray-700 mb-2">The ideal time to visit {{ $destination->name }} typically depends on what activities you're interested in:</p>
                             <div class="overflow-x-auto mb-6">
@@ -99,7 +94,6 @@
                         </div>
                     </div>
                     
-                    <!-- Related Trips -->
                     @if($relatedTrips->count() > 0)
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h2 class="text-2xl font-bold text-gray-800 mb-4">Related Trips</h2>
@@ -134,9 +128,7 @@
                     @endif
                 </div>
                 
-                <!-- Sidebar -->
                 <div>
-                    <!-- Quick Info -->
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h3 class="text-xl font-bold text-gray-800 mb-4">Quick Information</h3>
                         <ul class="space-y-3">
@@ -178,7 +170,6 @@
                         </ul>
                     </div>
                     
-                    <!-- Plan Your Trip -->
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-xl font-bold text-gray-800 mb-4">Plan Your Trip</h3>
                         <p class="text-gray-600 mb-4">Ready to explore {{ $destination->name }}? Create your custom trip now!</p>
@@ -199,13 +190,11 @@
 @endsection
 
 @push('scripts')
-<!-- Leaflet JS for the map -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Sidebar observer
         const sidebarWrapper = document.querySelector('.sidebar-wrapper');
         if (sidebarWrapper) {
             const observer = new MutationObserver((mutations) => {
@@ -230,21 +219,17 @@
             observer.observe(sidebarWrapper, { attributes: true });
         }
         
-        // Initialize map
         const destinationName = "{{ $destination->name }}, {{ $destination->location }}";
         initMap(destinationName);
     });
     
     function initMap(location) {
-        // Create map instance
         const map = L.map('map').setView([0, 0], 13);
         
-        // Add OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
         
-        // Geocode location
         fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`)
             .then(response => response.json())
             .then(data => {
@@ -252,10 +237,8 @@
                     const lat = parseFloat(data[0].lat);
                     const lon = parseFloat(data[0].lon);
                     
-                    // Set map view to the location
                     map.setView([lat, lon], 10);
                     
-                    // Add marker
                     const marker = L.marker([lat, lon]).addTo(map);
                     marker.bindPopup(`<b>${location}</b>`).openPopup();
                 } else {

@@ -27,12 +27,9 @@
 </head>
 <body class="bg-transport-sand font-sans">
     <div class="flex min-h-screen">
-        <!-- Sidebar -->
         @include('transport.components.sidebar')
 
-        <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Navbar -->
             <header class="bg-white shadow-md">
                 <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
                     <h1 class="text-2xl font-bold text-gray-800 flex items-center">
@@ -53,7 +50,6 @@
                 </div>
             </header>
 
-            <!-- Page Content -->
             <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
                 @yield('content')
             </main>

@@ -19,7 +19,6 @@
     @endif
 
     <div class="p-6">
-        <!-- Reviews Summary -->
         <div class="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div class="mb-4 md:mb-0">
@@ -80,7 +79,6 @@
             </div>
         </div>
 
-        <!-- Reviews List -->
         @if(isset($reviews) && $reviews->count() > 0)
             <h3 class="text-xl font-bold text-gray-800 mb-4">Guest Reviews</h3>
             <div class="space-y-6">
@@ -123,7 +121,6 @@
 </div>
 
 <style>
-    /* Pagination Styling */
     .pagination {
         display: flex;
         justify-content: center;

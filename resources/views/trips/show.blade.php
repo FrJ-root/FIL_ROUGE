@@ -22,7 +22,6 @@
             }
         @endphp
         
-        <!-- Enhanced Hero Section with Parallax Effect -->
         <div class="relative w-full h-[500px] md:h-[600px] overflow-hidden">
             <div class="absolute inset-0 bg-cover bg-center transform transition-transform duration-700 hover:scale-105" 
                  style="background-image: url('{{ $coverImageUrl }}')"></div>
@@ -65,7 +64,6 @@
             </div>
         </div>
 
-        <!-- Main Content Section -->
         <div class="container mx-auto px-4 py-12">
             @if(session('success'))
             <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg shadow-md" role="alert">
@@ -86,9 +84,7 @@
             @endif
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Trip Details -->
                 <div class="lg:col-span-2 space-y-8">
-                    <!-- Trip Overview Card -->
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100" data-aos="fade-up">
                         <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-5">
                             <h2 class="text-2xl font-bold text-white flex items-center">
@@ -102,7 +98,6 @@
                                     This journey takes you through the heart of this amazing destination, offering unforgettable experiences and memories.
                                 </p>
                                 
-                                <!-- Itinerary Section -->
                                 <div class="mt-8">
                                     <div class="flex justify-between items-center">
                                         <h3 class="text-xl font-semibold text-gray-800 mb-3">Itinerary Details</h3>
@@ -114,7 +109,6 @@
                                         @endif
                                     </div>
                                     
-                                    <!-- Itinerary Display -->
                                     <div id="itinerary-display" class="{{ $trip->itinerary ? 'block' : 'hidden' }}">
                                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                                             <h4 class="font-bold text-gray-800 mb-2">{{ $trip->itinerary->title ?? 'Trip Itinerary' }}</h4>
@@ -122,7 +116,6 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Itinerary Form (initially hidden) -->
                                     <div id="itinerary-form" class="hidden">
                                         <form action="{{ route('itinerary.update', ['trip' => $trip->id]) }}" method="POST" class="bg-gray-50 p-5 rounded-lg border border-gray-200">
                                             @csrf
@@ -152,7 +145,6 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Trip Booking Section -->
                                 <div class="mt-8">
                                     @auth
                                         @if(auth()->user()->role === 'traveller')
@@ -197,7 +189,6 @@
                                                 </h3>
                                                 <p class="text-indigo-700 mb-4">Join us on this amazing trip to {{ $trip->destination }}!</p>
                                                 
-                                                <!-- Update the "Trip with us" button to pass the trip_id -->
                                                 <a href="{{ route('register') }}?trip_id={{ $trip->id }}&redirect={{ route('traveller.trips.payment', $trip->id) }}" 
                                                    class="inline-flex items-center justify-center px-8 py-4 border border-transparent rounded-xl shadow-md text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all transform hover:-translate-y-1 hover:shadow-lg">
                                                     <i class="fas fa-user-plus mr-2"></i>
@@ -215,7 +206,6 @@
                         </div>
                     </div>
                     
-                    <!-- Activities Section -->
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100" data-aos="fade-up" data-aos-delay="100">
                         <div class="bg-gradient-to-r from-green-600 to-teal-600 px-6 py-5 flex justify-between items-center">
                             <h2 class="text-2xl font-bold text-white flex items-center">
@@ -229,7 +219,6 @@
                             @endif
                         </div>
                         
-                        <!-- Activity Form (initially hidden) -->
                         <div id="activity-form" class="hidden p-6 bg-gray-50 border-b border-gray-200">
                             <form action="{{ route('activities.store', ['trip' => $trip->id]) }}" method="POST" class="space-y-4">
                                 @csrf
@@ -334,9 +323,7 @@
                     </div>
                 </div>
 
-                <!-- Sidebar -->
                 <div class="space-y-8">
-                    <!-- Trip Details Card -->
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100" data-aos="fade-up" data-aos-delay="150">
                         <div class="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-5">
                             <h2 class="text-xl font-bold text-white flex items-center">
@@ -397,7 +384,6 @@
                                 </li>
                                 @endif
                                 
-                                <!-- NEW: View on Map Link -->
                                 <li class="flex items-center text-gray-700 pt-4 border-t border-gray-100">
                                     <a href="{{ route('maps.index') }}?search={{ urlencode($trip->destination) }}" 
                                        class="flex items-center w-full text-indigo-600 hover:text-indigo-800 transition-colors group">
@@ -409,7 +395,6 @@
                                     </a>
                                 </li>
                                 
-                                <!-- NEW: View Destination Link -->
                                 @php
                                     $destinationName = explode(',', $trip->destination)[0] ?? '';
                                     $destination = \App\Models\Destination::where('name', 'like', $destinationName . '%')->first();
@@ -431,7 +416,6 @@
                         </div>
                     </div>
                     
-                    <!-- Team Card -->
                     @if(($trip->guides && $trip->guides->count() > 0) || ($trip->hotels && $trip->hotels->count() > 0) || ($trip->transports && $trip->transports->count() > 0))
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100" data-aos="fade-up" data-aos-delay="200">
                         <div class="bg-gradient-to-r from-amber-600 to-orange-600 px-6 py-5">
@@ -511,7 +495,6 @@
             </div>
         </div>
 
-        <!-- Related Trips Section -->
         <div class="bg-gradient-to-b from-gray-50 to-gray-100 py-16">
             <div class="container mx-auto px-4">
                 <h2 class="text-3xl font-bold text-gray-800 mb-2 flex items-center" data-aos="fade-up">
@@ -596,7 +579,6 @@
                     @endforelse
                 </div>
                 
-                <!-- More Trips Button -->
                 @if(count($relatedTrips) > 0)
                 <div class="mt-12 text-center" data-aos="fade-up">
                     <a href="{{ route('trips.index') }}" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-full text-indigo-700 bg-indigo-100 hover:bg-indigo-200 transition duration-300 shadow-sm hover:shadow">
@@ -611,7 +593,6 @@
 
 @push('styles')
 <style>
-    /* Enhanced parallax effect */
     .bg-cover {
         background-size: cover;
         transition: transform 0.7s ease-out;
@@ -621,7 +602,6 @@
         transform: scale(1.05);
     }
     
-    /* Smooth animations */
     @keyframes fadeInUp {
         from {
             opacity: 0;
@@ -633,7 +613,6 @@
         }
     }
     
-    /* Card hover effects */
     .hover-card {
         transition: all 0.3s ease;
     }
@@ -643,7 +622,6 @@
         box-shadow: 0 15px 30px rgba(0,0,0,0.1);
     }
     
-    /* Typography enhancements */
     h1, h2, h3 {
         letter-spacing: -0.02em;
     }
@@ -655,7 +633,6 @@
         background-image: linear-gradient(to right, #3b82f6, #8b5cf6);
     }
     
-    /* Enhanced cards for Similar Adventures section */
     .similar-adventure-card {
         backface-visibility: hidden;
         transform: perspective(1000px) translateZ(0);
@@ -700,7 +677,6 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Animate elements on scroll using Intersection Observer API
         const animatedElements = document.querySelectorAll('.bg-white.rounded-2xl, .grid > div');
         
         const observer = new IntersectionObserver((entries) => {
@@ -719,7 +695,6 @@
             observer.observe(element);
         });
         
-        // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -730,7 +705,6 @@
             });
         });
 
-        // Add hover effects to similar adventures cards
         const similarAdventureCards = document.querySelectorAll('.grid > div');
         similarAdventureCards.forEach(card => {
             card.addEventListener('mouseenter', function() {
@@ -743,7 +717,6 @@
         });
     });
     
-    // Helper functions
     function safeToggle(elementId) {
         const element = document.getElementById(elementId);
         if (element) {

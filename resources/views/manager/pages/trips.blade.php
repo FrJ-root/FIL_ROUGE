@@ -157,7 +157,6 @@
 </div>
 
 <script>
-    // Simple search functionality
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('search');
         const tableRows = document.querySelectorAll('tbody tr');

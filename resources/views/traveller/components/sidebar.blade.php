@@ -52,7 +52,6 @@
     </div>
 </aside>
 
-<!-- Mobile Sidebar Overlay -->
 <div @click="sidebarOpen = true" class="fixed inset-0 z-10 flex items-end bg-black bg-opacity-50 sm:hidden" 
     x-show="sidebarOpen" 
     x-description="Off-canvas menu for mobile, show/hide based on off-canvas menu state." 
@@ -74,7 +73,6 @@
             </button>
         </div>
         <div class="mt-5 flex-1 px-2">
-            <!-- Mobile navigation links -->
             <a href="{{ route('traveller.dashboard') }}" class="group flex items-center rounded-md px-2 py-2 text-base font-medium text-white hover:bg-blue-700">
                 <i class="fas fa-tachometer-alt mr-4 h-6 w-6"></i>
                 Dashboard

@@ -81,7 +81,6 @@
     @endif
 </div>
 
-<!-- Upcoming Trip Statistics Cards (preserved from original) -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <div class="bg-white rounded-xl shadow-lg overflow-hidden">
         <div class="p-6 border-b border-gray-200">

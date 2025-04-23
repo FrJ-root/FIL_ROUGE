@@ -10,15 +10,14 @@ class Trip extends Model
     use HasFactory;
 
     protected $fillable = [
+        'cover_picture',
         'destination',
         'start_date',
-        'end_date',
-        'cover_picture',
         'manager_id',
+        'end_date',
         'status',
     ];
 
-    // Make sure dates are properly cast
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',

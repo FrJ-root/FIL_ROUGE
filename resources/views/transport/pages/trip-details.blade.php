@@ -45,9 +45,7 @@
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Trip Details -->
     <div class="lg:col-span-2">
-        <!-- Itinerary -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
             <div class="bg-transport-blue text-white px-6 py-4">
                 <h2 class="text-xl font-bold flex items-center">
@@ -64,7 +62,6 @@
             </div>
         </div>
         
-        <!-- Activities -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
             <div class="bg-transport-green text-white px-6 py-4">
                 <h2 class="text-xl font-bold flex items-center">
@@ -101,7 +98,6 @@
             </div>
         </div>
         
-        <!-- Transport Requirements -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
             <div class="bg-transport-orange text-white px-6 py-4">
                 <h2 class="text-xl font-bold flex items-center">
@@ -145,9 +141,7 @@
         </div>
     </div>
     
-    <!-- Sidebar -->
     <div class="lg:col-span-1">
-        <!-- Trip Stats -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
             <div class="bg-transport-blue text-white px-6 py-4">
                 <h2 class="font-bold flex items-center">
@@ -199,7 +193,6 @@
             </div>
         </div>
         
-        <!-- Guides -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
             <div class="bg-transport-green text-white px-6 py-4">
                 <h2 class="font-bold flex items-center">
@@ -226,7 +219,6 @@
             </div>
         </div>
         
-        <!-- Key Dates -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
             <div class="bg-transport-orange text-white px-6 py-4">
                 <h2 class="font-bold flex items-center">

@@ -15,16 +15,16 @@ class Hotel extends Model
         'image',
         'address',
         'country',
+        'user_id',
         'latitude',
         'longitude',
         'amenities',
         'description',
         'star_rating',
-        'price_per_night',
         'availability',
         'selected_dates',
         'available_rooms',
-        'user_id',
+        'price_per_night',
     ];
 
     protected $casts = [

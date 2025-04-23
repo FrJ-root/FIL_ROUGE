@@ -10,7 +10,6 @@
         id="main-content"
     >
         <div class="container mx-auto px-4 py-8 mt-16">
-            <!-- Hero Banner -->
             <div class="relative rounded-2xl overflow-hidden mb-10 shadow-xl">
                 <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 opacity-90"></div>
                 <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488085061387-422e29b40080?ixlib=rb-4.0.3')] bg-cover bg-center mix-blend-overlay"></div>
@@ -49,7 +48,6 @@
             </div>
             @endif
 
-            <!-- Filter Section -->
             <div class="bg-white rounded-xl shadow-md p-6 mb-8">
                 <div class="flex flex-col md:flex-row md:items-center justify-between">
                     <h2 class="text-xl font-bold text-gray-800 mb-4 md:mb-0">Find Your Perfect Trip</h2>
@@ -72,7 +70,6 @@
                 </div>
             </div>
 
-            <!-- All Trips Section -->
             <section id="trips" class="mb-12">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
                     <i class="fas fa-globe-africa text-purple-600 mr-2"></i>Browse All Trips
@@ -174,13 +171,11 @@
                 @endif
             </section>
 
-            <!-- ...remaining code for My Trips section... -->
         </div>
     </div>
 
     @push('styles')
     <style>
-        /* Card Styles */
         .trip-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             will-change: transform;
@@ -190,7 +185,6 @@
             transform: translateY(-10px);
         }
         
-        /* Custom pagination styling */
         .pagination {
             display: flex;
             list-style: none;
@@ -224,12 +218,10 @@
             border-color: #d1d5db;
         }
         
-        /* Smooth scrolling */
         html {
             scroll-behavior: smooth;
         }
         
-        /* Gradient text */
         .text-gradient {
             background-clip: text;
             -webkit-background-clip: text;

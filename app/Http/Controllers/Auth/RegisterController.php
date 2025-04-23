@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 use App\Repositories\Eloquent\UserRepository;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Auth\Events\Registered;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,6 @@ use App\Models\Guide;
 use App\Models\Hotel;
 use App\Models\Trip;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -34,44 +34,39 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
             'role' => ['required', 'in:transport,traveller,admin,hotel,guide,manager'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'name' => ['required', 'string', 'max:255'],
         ]);
     }
 
     protected function create(array $data)
     {
         $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => $data['password'],
             'role' => $data['role'] ?? 'traveller',
+            'password' => $data['password'],
+            'email' => $data['email'],
+            'name' => $data['name'],
             'status' => 'valide',
         ]);
 
         if ($user->role === 'traveller') {
-            // Check if there's a trip ID in the request (from "Trip with us" button)
             $trip_id = request()->query('trip_id');
             
             if ($trip_id) {
-                // Find the trip and its itinerary to complete traveller creation
-                $trip = \App\Models\Trip::find($trip_id);
+                $trip = Trip::find($trip_id);
                 
                 if ($trip && $trip->itinerary) {
-                    // Create traveller with the necessary fields
-                    \App\Models\Traveller::create([
+                    Traveller::create([
                         'user_id' => $user->id,
                         'trip_id' => $trip->id,
                         'itinerary_id' => $trip->itinerary->id,
-                        'payment_status' => 'pending', // Set payment status to pending
+                        'payment_status' => 'pending',
                     ]);
                 }
-            } else {
-                // If no specific trip was selected, don't create a traveller record yet
-                // The user can select a trip later
-            }
+            } else {}
+
         } elseif ($user->role === 'guide') {
             Guide::create([
                 'user_id' => $user->id,
@@ -89,28 +84,21 @@ class RegisterController extends Controller
         return $user;
     }
 
-    /**
-     * Handle a registration request for the application.
-     */
-    protected function register(Request $request)
-    {
+    protected function register(Request $request){
         $this->validator($request->all())->validate();
 
         event(new Registered($user = $this->create($request->all())));
 
-        // Instead of logging in the user, redirect to login page with query parameters
         $redirectUrl = $request->query('redirect');
         $tripId = $request->query('trip_id');
         
         $loginRedirect = route('login');
         
-        // Add query parameters to redirect to the payment page after login
         if ($tripId) {
             $loginRedirect .= '?trip_id=' . $tripId;
             if ($redirectUrl) {
                 $loginRedirect .= '&redirect=' . urlencode($redirectUrl);
             } else {
-                // If no redirect URL is provided, redirect to payment page after login
                 $loginRedirect .= '&redirect=' . urlencode(route('traveller.trips.payment', $tripId));
             }
         } elseif ($redirectUrl) {

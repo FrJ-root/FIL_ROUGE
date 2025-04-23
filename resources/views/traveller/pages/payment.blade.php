@@ -24,7 +24,6 @@
 
         <div class="p-6">
             <div class="flex flex-col md:flex-row md:space-x-6">
-                <!-- Trip summary -->
                 <div class="md:w-1/2 mb-6 md:mb-0">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Trip Summary</h3>
                     
@@ -68,11 +67,10 @@
                     </div>
                 </div>
                 
-                <!-- Payment form -->
                 <div class="md:w-1/2 border-t md:border-t-0 md:border-l border-gray-200 pt-6 md:pt-0 md:pl-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Payment Method</h3>
                     
-                    <form action="{{ route('traveller.trips.process-payment', $trip->id) }}" method="POST" class="space-y-4">
+                    <form action="{{ route('traveller.trips.process-payment', $trip->id) }}" method="POST" id="payment-form" onsubmit="return validatePaymentForm()" class="space-y-4">
                         @csrf
                         
                         <div class="space-y-2 mb-4">
@@ -126,4 +124,88 @@
         </div>
     </div>
 </div>
+
+<script>
+    function validatePaymentForm() {
+        const cardName = document.getElementById('card_name');
+        const cardNumber = document.getElementById('card_number');
+        const expiration = document.getElementById('expiration');
+        const cvc = document.getElementById('cvc');
+        
+        if (!cardName.value.trim()) {
+            showError(cardName, 'Cardholder name is required');
+            return false;
+        }
+        
+        if (!cardNumber.value.trim() || cardNumber.value.replace(/\s/g, '').length < 13) {
+            showError(cardNumber, 'Please enter a valid card number');
+            return false;
+        }
+        
+        const expRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
+        if (!expiration.value.trim() || !expRegex.test(expiration.value)) {
+            showError(expiration, 'Please enter a valid expiration date (MM/YY)');
+            return false;
+        }
+        
+        const [month, year] = expiration.value.split('/');
+        const expiryDate = new Date(2000 + parseInt(year), parseInt(month) - 1, 1);
+        const today = new Date();
+        
+        if (expiryDate < today) {
+            showError(expiration, 'This card has expired');
+            return false;
+        }
+        
+        if (!cvc.value.trim() || !/^[0-9]{3,4}$/.test(cvc.value)) {
+            showError(cvc, 'Please enter a valid security code (CVC/CVV)');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    function showError(inputElement, message) {
+        const existingError = inputElement.parentNode.querySelector('.error-message');
+        if (existingError) {
+            existingError.remove();
+        }
+        
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message text-red-500 text-sm mt-1';
+        errorDiv.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i>${message}`;
+        
+        inputElement.parentNode.appendChild(errorDiv);
+        
+        inputElement.classList.add('border-red-500');
+        
+        inputElement.focus();
+        
+        return false;
+    }
+    
+    document.getElementById('card_number').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        let formattedValue = '';
+        
+        for (let i = 0; i < value.length; i++) {
+            if (i > 0 && i % 4 === 0) {
+                formattedValue += ' ';
+            }
+            formattedValue += value[i];
+        }
+        
+        e.target.value = formattedValue;
+    });
+    
+    document.getElementById('expiration').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        
+        if (value.length > 2) {
+            e.target.value = value.slice(0, 2) + '/' + value.slice(2, 4);
+        } else {
+            e.target.value = value;
+        }
+    });
+</script>
 @endsection

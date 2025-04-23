@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <!-- Hero Header -->
     <div class="relative bg-cover bg-center rounded-xl shadow-xl overflow-hidden mb-8" style="background-image: url('{{ asset('images/transport-fleet.jpg') }}'); height: 300px;">
         <div class="absolute inset-0 bg-gradient-to-r from-transport-blue/90 to-blue-800/90"></div>
         <div class="relative z-10 p-8 h-full flex flex-col justify-center">
@@ -11,9 +10,7 @@
         </div>
     </div>
 
-    <!-- Main Content Card -->
     <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-        <!-- Status Messages -->
         @if (session('success'))
             <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
                 <div class="flex items-center">
@@ -43,7 +40,6 @@
             <form method="POST" action="{{ route('transport.availability.update') }}">
                 @csrf
                 
-                <!-- Availability Toggle -->
                 <div class="mb-8">
                     <label class="block text-lg font-semibold text-gray-800 mb-3">
                         <i class="fas fa-truck text-transport-blue mr-2"></i>
@@ -88,7 +84,6 @@
                     </div>
                 </div>
 
-                <!-- Calendar Section -->
                 <div id="calendar-section" class="mb-8 {{ old('availability', $transport->availability ?? '') === 'available' ? '' : 'hidden' }}">
                     <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
                         <label class="block text-lg font-semibold text-gray-800 mb-2 md:mb-0">
@@ -119,7 +114,6 @@
                         </div>
 
                         <div id="calendar" class="grid grid-cols-7 gap-2">
-                            <!-- Calendar headers -->
                             <div class="text-center font-medium text-gray-500 text-sm py-2">Sun</div>
                             <div class="text-center font-medium text-gray-500 text-sm py-2">Mon</div>
                             <div class="text-center font-medium text-gray-500 text-sm py-2">Tue</div>
@@ -127,7 +121,6 @@
                             <div class="text-center font-medium text-gray-500 text-sm py-2">Thu</div>
                             <div class="text-center font-medium text-gray-500 text-sm py-2">Fri</div>
                             <div class="text-center font-medium text-gray-500 text-sm py-2">Sat</div>
-                            <!-- Calendar days will be inserted here by JavaScript -->
                         </div>
                     </div>
                     <input type="hidden" id="selected_dates" name="selected_dates" value="{{ old('selected_dates', $transport->selected_dates ?? '') }}">
@@ -136,7 +129,6 @@
                     </p>
                 </div>
 
-                <!-- Transport Type -->
                 <div id="transport-type-section" class="mb-8 {{ old('availability', $transport->availability ?? '') === 'available' ? '' : 'hidden' }}">
                     <label class="block text-lg font-semibold text-gray-800 mb-3">
                         <i class="fas fa-truck text-transport-purple mr-2"></i>
@@ -255,7 +247,6 @@
                     </div>
                 </div>
 
-                <!-- Vehicle Capacity -->
                 <div id="vehicle-capacity-section" class="mb-8 {{ old('availability', $transport->availability ?? '') === 'available' ? '' : 'hidden' }}">
                     <label class="block text-lg font-semibold text-gray-800 mb-3">
                         <i class="fas fa-users text-transport-blue mr-2"></i>
@@ -264,7 +255,6 @@
                     <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                         <p class="text-gray-600 mb-3">Please specify your capacity based on selected transport type:</p>
                         
-                        <!-- Tourist Vehicle capacity options -->
                         <div id="capacity-tourist-vehicle" class="capacity-options {{ old('transport_type', $transport->transport_type ?? '') == 'Tourist vehicle' ? '' : 'hidden' }}">
                             <select name="vehicle_capacity" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-transport-blue focus:border-transport-blue">
                                 <option value="">Select Tourist Vehicle capacity</option>
@@ -274,7 +264,6 @@
                             </select>
                         </div>
                         
-                        <!-- Bus capacity options -->
                         <div id="capacity-bus" class="capacity-options {{ old('transport_type', $transport->transport_type ?? '') == 'Bus' ? '' : 'hidden' }}">
                             <select name="vehicle_capacity" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-transport-blue focus:border-transport-blue">
                                 <option value="">Select Bus capacity</option>
@@ -284,7 +273,6 @@
                             </select>
                         </div>
                         
-                        <!-- Train capacity options -->
                         <div id="capacity-train" class="capacity-options {{ old('transport_type', $transport->transport_type ?? '') == 'Train' ? '' : 'hidden' }}">
                             <select name="vehicle_capacity" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-transport-blue focus:border-transport-blue">
                                 <option value="">Select Train capacity</option>
@@ -295,7 +283,6 @@
                             </select>
                         </div>
                         
-                        <!-- Plane capacity options -->
                         <div id="capacity-plane" class="capacity-options {{ old('transport_type', $transport->transport_type ?? '') == 'Plane' ? '' : 'hidden' }}">
                             <select name="vehicle_capacity" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-transport-blue focus:border-transport-blue">
                                 <option value="">Select Plane capacity</option>
@@ -305,7 +292,6 @@
                             </select>
                         </div>
                         
-                        <!-- Horse capacity options -->
                         <div id="capacity-horse" class="capacity-options {{ old('transport_type', $transport->transport_type ?? '') == 'Horse' ? '' : 'hidden' }}">
                             <select name="vehicle_capacity" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-transport-blue focus:border-transport-blue">
                                 <option value="">Select Horse capacity</option>
@@ -315,7 +301,6 @@
                             </select>
                         </div>
                         
-                        <!-- Camel capacity options -->
                         <div id="capacity-camel" class="capacity-options {{ old('transport_type', $transport->transport_type ?? '') == 'Camel' ? '' : 'hidden' }}">
                             <select name="vehicle_capacity" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-transport-blue focus:border-transport-blue">
                                 <option value="">Select Camel capacity</option>
@@ -327,7 +312,6 @@
                     </div>
                 </div>
 
-                <!-- Submit Button -->
                 <div class="flex justify-end pt-4 border-t border-gray-200">
                     <button type="submit" class="flex items-center justify-center bg-transport-green hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg transform hover:-translate-y-0.5">
                         <i class="fas fa-save mr-2"></i> Save Availability
@@ -351,32 +335,27 @@
         const availableRadio = document.getElementById('available');
         const notAvailableRadio = document.getElementById('not_available');
         
-        // Show/hide sections based on initial availability selection
         function initializeDisplay() {
             const isAvailable = availableRadio && availableRadio.checked;
             toggleAvailabilitySections(isAvailable);
         }
         
-        // Toggle all availability-dependent sections
         window.toggleAvailabilitySections = function(show) {
             if (calendarSection) calendarSection.classList.toggle('hidden', !show);
             if (transportTypeSection) transportTypeSection.classList.toggle('hidden', !show);
             if (vehicleCapacitySection) vehicleCapacitySection.classList.toggle('hidden', !show);
         };
         
-        // Handle transport type selection to show appropriate capacity options
         const transportRadios = document.querySelectorAll('input[name="transport_type"]');
         const capacityOptions = document.querySelectorAll('.capacity-options');
         
         function updateCapacityOptions() {
             const selectedTransport = document.querySelector('input[name="transport_type"]:checked')?.value;
             
-            // Hide all capacity options first
             capacityOptions.forEach(option => {
                 option.classList.add('hidden');
             });
             
-            // Show only the capacity option for the selected transport
             if (selectedTransport) {
                 const targetOption = document.getElementById(`capacity-${selectedTransport.toLowerCase().replace(' ', '-')}`);
                 if (targetOption) {
@@ -385,22 +364,18 @@
             }
         }
         
-        // Add event listeners to radio buttons
         transportRadios.forEach(radio => {
             radio.addEventListener('change', updateCapacityOptions);
         });
         
-        // Calendar functions
         let currentDate = new Date();
         let selectedDates = new Set(selectedDatesInput.value.split(',').filter(date => date));
 
         function renderCalendar() {
-            // Clear previous calendar days (keep headers)
             while (calendarContainer.children.length > 7) {
                 calendarContainer.removeChild(calendarContainer.lastChild);
             }
 
-            // Set month title
             currentMonthElement.textContent = new Intl.DateTimeFormat('en-US', { 
                 month: 'long', 
                 year: 'numeric' 
@@ -409,26 +384,21 @@
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
             
-            // Get days in month and first day of month
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const firstDay = new Date(year, month, 1).getDay();
             
-            // Get today's date for comparison
             const today = new Date();
-            today.setHours(0, 0, 0, 0); // Normalize today's date to midnight
+            today.setHours(0, 0, 0, 0);
 
-            // Add empty cells for days before the first day of the month
             for (let i = 0; i < firstDay; i++) {
                 const emptyCell = document.createElement('div');
                 emptyCell.className = 'invisible';
                 calendarContainer.appendChild(emptyCell);
             }
 
-            // Add days of the month
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = new Date(year, month, day);
                 if (date < today) {
-                    // Skip past days
                     continue;
                 }
 
@@ -437,17 +407,14 @@
                 dayElement.type = 'button';
                 dayElement.textContent = day;
                 
-                // Base classes
                 dayElement.className = 'w-10 h-10 flex items-center justify-center rounded-full text-sm font-medium transition-colors';
                 
-                // Add selected class if date is selected
                 if (selectedDates.has(formattedDate)) {
                     dayElement.classList.add('bg-transport-green', 'text-white', 'hover:bg-green-600');
                 } else {
                     dayElement.classList.add('bg-white', 'text-gray-700', 'hover:bg-gray-100');
                 }
                 
-                // Add today class if it's today's date
                 if (date.getTime() === today.getTime()) {
                     dayElement.classList.add('border-2', 'border-blue-300', 'bg-blue-50');
                 }
@@ -471,7 +438,6 @@
             selectedDatesInput.value = Array.from(selectedDates).join(',');
         }
 
-        // Month navigation
         prevMonthButton.addEventListener('click', () => {
             currentDate.setMonth(currentDate.getMonth() - 1);
             renderCalendar();
@@ -482,7 +448,6 @@
             renderCalendar();
         });
 
-        // Initialize calendar and capacity options
         renderCalendar();
         updateCapacityOptions();
         initializeDisplay();

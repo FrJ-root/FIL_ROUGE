@@ -109,7 +109,6 @@
 
     @push('scripts')
     <script>
-        // Preview profile picture before upload
         document.getElementById('picture').addEventListener('change', function(e) {
             const reader = new FileReader();
             reader.onload = function(event) {

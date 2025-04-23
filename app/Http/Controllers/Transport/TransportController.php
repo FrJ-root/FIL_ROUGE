@@ -10,7 +10,7 @@ class TransportController extends Controller
 {
     public function showProfile()
     {
-        $transport = Auth::user()->transports; // Using the correct relationship name
+        $transport = Auth::user()->transports;
         return view('transport.pages.profile', compact('transport'));
     }
 
@@ -70,7 +70,6 @@ class TransportController extends Controller
         $transport = Auth::user()->transports;
         $trip = Trip::with(['guides', 'travellers', 'activities', 'itinerary'])->findOrFail($id);
         
-        // Check if transport is assigned to this trip
         $isAssigned = $transport ? $transport->trips()->where('trips.id', $id)->exists() : false;
         
         return view('transport.pages.trip-details', compact('trip', 'isAssigned'));
@@ -80,15 +79,12 @@ class TransportController extends Controller
     {
         $transport = Auth::user()->transports;
         
-        // Get IDs of trips that the transport is already assigned to
         $assignedTripIds = $transport ? $transport->trips()->pluck('trips.id')->toArray() : [];
         
-        // Get all trips with relationships
         $availableTrips = Trip::with(['guides', 'travellers', 'activities', 'itinerary'])
             ->orderBy('start_date')
             ->get();
         
-        // Change the view name to match your actual file
         return view('transport.pages.availability', compact('availableTrips', 'assignedTripIds'));
     }
 
@@ -101,11 +97,9 @@ class TransportController extends Controller
         if (!$transport) {
             return redirect()->back()->with('error', 'Transport profile not found');
         }
-        // Check if already assigned to this trip
         if ($transport->trips()->where('trips.id', $request->trip_id)->exists()) {
             return redirect()->back()->with('info', 'You are already assigned to this trip');
         }
-        // Assign transport to trip
         $transport->trips()->attach($request->trip_id);
         return redirect()->route('transport.trips')->with('success', 'Successfully joined the trip');
     }
@@ -116,7 +110,6 @@ class TransportController extends Controller
         if (!$transport) {
             return redirect()->back()->with('error', 'Transport profile not found');
         }
-        // Remove transport from trip
         $transport->trips()->detach($id);
         return redirect()->route('transport.trips')->with('success', 'Successfully withdrawn from the trip');
     }
@@ -131,10 +124,10 @@ class TransportController extends Controller
     {
         $request->validate([
             'availability' => 'required|string|in:available,not available',
+            'vehicle_capacity' => 'nullable|string',
             'selected_dates' => 'nullable|string',
             'service_areas' => 'nullable|array',
             'service_areas.*' => 'string',
-            'vehicle_capacity' => 'nullable|string',
         ]);
 
         $transport = Auth::user()->transports;

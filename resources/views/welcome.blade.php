@@ -2,13 +2,11 @@
 
 @section('content')
     @include('components.sidebar')
-    <div 
-        x-data="{ sidebarCollapsed: true }"
+    <div x-data="{ sidebarCollapsed: true }"
         @sidebar-state-changed.window="sidebarCollapsed = $event.detail.isCollapsed"
         :class="{'md:ml-64': !sidebarCollapsed, 'md:ml-16': sidebarCollapsed}"
         class="transition-all duration-300" 
-        id="main-content"
-    >
+        id="main-content">
         @include('components.hero')
         @include('components.propositions')
         @include('components.destinations')

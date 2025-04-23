@@ -10,16 +10,16 @@ class TravelGuide extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
         'slug',
-        'description',
-        'content',
+        'title',
         'image',
+        'views',
+        'content',
+        'author_id',
+        'description',
+        'is_featured',
         'category_id',
         'destination_id',
-        'author_id',
-        'is_featured',
-        'views'
     ];
 
     public function categorys()

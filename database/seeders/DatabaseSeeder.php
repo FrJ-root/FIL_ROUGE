@@ -14,13 +14,13 @@ class DatabaseSeeder extends Seeder
             HotelSeeder::class,
             GuideSeeder::class,
             CategorySeeder::class,
+            RoomTypeSeeder::class,
             ActivitySeeder::class,
             ItinerarySeeder::class,
             TransportSeeder::class,
             TravellerSeeder::class,
             DestinationSeeder::class,
             TripRelationshipsSeeder::class,
-            RoomTypeSeeder::class
         ]);
     }
 }

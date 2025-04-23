@@ -25,14 +25,14 @@ class GuideController extends Controller
     public function updateProfile(Request $request)
     {
         $request->validate([
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'preferred_locations' => 'required|string|max:500',
             'license_number' => 'required|string|max:255',
             'specialization' => 'required|string|max:255',
-            'preferred_locations' => 'required|string|max:500',
-            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $guide = Auth::user()->guide;
-        $guide->fill($request->only('license_number', 'specialization', 'preferred_locations'))->save(); // Use fill and save
+        $guide->fill($request->only('license_number', 'specialization', 'preferred_locations'))->save();
 
         if ($request->hasFile('picture')) {
             $path = $request->file('picture')->store('profile_pictures', 'public');

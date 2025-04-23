@@ -28,15 +28,11 @@
 </head>
 <body class="bg-gray-100 font-sans">
     <div class="flex min-h-screen">
-        <!-- Sidebar -->
         @include('manager.components.sidebar')
 
-        <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Navbar -->
             @include('manager.components.navbar')
 
-            <!-- Page Content -->
             <main class="flex-1 overflow-y-auto p-6 bg-gray-100">
                 @yield('content')
             </main>
@@ -44,7 +40,6 @@
     </div>
 
     <script>
-        // Simple animation for sidebar items
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('nav a').forEach(link => {
                 link.addEventListener('mouseenter', () => {

@@ -32,9 +32,8 @@
             </div>
         </form>
 
-        <div id="categories-list" class="flex flex-wrap gap-2">
-            <!-- Categories will be populated here -->
-        </div>
+        <div id="categories-list" class="flex flex-wrap gap-2"></div>
+        
     </div>
 @endsection
 

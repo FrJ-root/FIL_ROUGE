@@ -9,7 +9,6 @@
         class="transition-all duration-300" 
         id="main-content"
     >
-        <!-- Hero Section -->
         <div class="relative h-[500px] overflow-hidden">
             <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');"></div>
             <div class="absolute inset-0 bg-gradient-to-b from-black/50 to-black/70"></div>
@@ -35,7 +34,6 @@
         </div>
 
         <div class="container mx-auto px-4 py-12">
-            <!-- Featured Destinations -->
             <section class="mb-16">
                 <h2 class="text-3xl font-bold text-gray-800 mb-8">Featured Destinations</h2>
                 
@@ -65,7 +63,6 @@
                 </div>
             </section>
 
-            <!-- Destinations by Region -->
             <section class="mb-16">
                 <h2 class="text-3xl font-bold text-gray-800 mb-8">Explore by Region</h2>
                 
@@ -96,7 +93,6 @@
                 </div>
             </section>
 
-            <!-- Categories Section -->
             <section class="mb-16">
                 <h2 class="text-3xl font-bold text-gray-800 mb-8">Explore by Category</h2>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -119,7 +115,6 @@
                 </div>
             </section>
 
-            <!-- Travel Tips -->
             <section>
                 <h2 class="text-3xl font-bold text-gray-800 mb-8">Travel Tips & Inspiration</h2>
                 <div class="bg-gray-50 rounded-2xl p-8">

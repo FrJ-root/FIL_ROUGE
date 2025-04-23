@@ -13,7 +13,6 @@
     @endif
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Profile Card -->
         <div class="md:col-span-1">
             <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div class="relative h-48 bg-gradient-to-r from-blue-500 to-indigo-600">
@@ -52,7 +51,6 @@
                 </div>
             </div>
             
-            <!-- Travel Stats -->
             <div class="mt-6 bg-white rounded-xl shadow-md overflow-hidden">
                 <div class="px-6 py-4 bg-gradient-to-r from-purple-500 to-indigo-600">
                     <h2 class="text-lg font-bold text-white flex items-center">
@@ -85,9 +83,7 @@
             </div>
         </div>
         
-        <!-- Main Content -->
         <div class="md:col-span-2">
-            <!-- Personal Information -->
             <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div class="px-6 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center">
                     <svg class="h-6 w-6 text-white mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -123,7 +119,6 @@
                 </div>
             </div>
             
-            <!-- Travel Preferences -->
             <div class="mt-6 bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div class="px-6 py-4 bg-gradient-to-r from-teal-500 to-blue-500 flex items-center">
                     <svg class="h-6 w-6 text-white mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -138,7 +133,6 @@
                             <dd class="mt-1 text-lg text-gray-900">{{ $traveller->prefered_destination ?? 'Not specified' }}</dd>
                         </div>
                         
-                        <!-- Travel Interests visualization -->
                         <div>
                             <dt class="text-sm font-medium text-gray-500 mb-2">Travel Interests</dt>
                             <dd>
@@ -160,7 +154,6 @@
                 </div>
             </div>
             
-            <!-- Travel Map -->
             <div class="mt-6 bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div class="px-6 py-4 bg-gradient-to-r from-red-500 to-orange-500 flex items-center">
                     <svg class="h-6 w-6 text-white mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -181,7 +174,6 @@
                 </div>
             </div>
             
-            <!-- Upcoming Trip -->
             @if($traveller && $traveller->trip_id)
                 <div class="mt-6 bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                     <div class="px-6 py-4 bg-gradient-to-r from-green-500 to-teal-500 flex items-center">
@@ -249,7 +241,6 @@
         }
     }
     
-    /* Add smooth hover transitions */
     .hover-lift {
         transition: transform 0.3s ease;
     }
@@ -262,9 +253,7 @@
 
 @push('scripts')
 <script>
-    // Add any JavaScript functionality here
     document.addEventListener('DOMContentLoaded', function() {
-        // Fade in elements one by one
         const elements = document.querySelectorAll('.animate-on-load');
         elements.forEach((element, index) => {
             setTimeout(() => {

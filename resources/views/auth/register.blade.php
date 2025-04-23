@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('register') }}?{{ http_build_query(request()->query()) }}" class="relative z-10">
+        <form method="POST" action="{{ route('register') }}" id="register-form" onsubmit="return validateRegistrationForm()" class="relative z-10">
             @csrf
 
             <div id="step1" class="step transition-all duration-500 transform">
@@ -301,6 +301,10 @@
 
         </form>
 
+        <div id="validation-popup" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg hidden">
+            <p id="validation-message" class="text-sm"></p>
+        </div>
+
     </div>
 </div>
 
@@ -519,6 +523,100 @@
         }
         
         updateProgress(1);
+    });
+
+    function validateRegistrationForm() {
+        const name = document.getElementById('name');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const passwordConfirmation = document.getElementById('password_confirmation');
+        const popup = document.getElementById('validation-popup');
+        const message = document.getElementById('validation-message');
+
+        popup.classList.add('hidden');
+
+        if (!name.value.trim()) {
+            showPopup('Name is required');
+            return false;
+        }
+
+        if (!email.value.trim()) {
+            showPopup('Email is required');
+            return false;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.value)) {
+            showPopup('Please enter a valid email address');
+            return false;
+        }
+
+        if (!password.value.trim()) {
+            showPopup('Password is required');
+            return false;
+        }
+        if (password.value.length < 6) {
+            showPopup('Password must be at least 6 characters long');
+            return false;
+        }
+
+        if (password.value !== passwordConfirmation.value) {
+            showPopup('Passwords do not match');
+            return false;
+        }
+
+        return true;
+    }
+
+    function showPopup(messageText) {
+        const popup = document.getElementById('validation-popup');
+        const message = document.getElementById('validation-message');
+        message.textContent = messageText;
+        
+        popup.classList.remove('hidden');
+        popup.classList.add('animate-bounce');
+        
+        setTimeout(() => {
+            popup.classList.remove('animate-bounce');
+            popup.classList.add('transition-opacity', 'duration-500', 'opacity-0');
+            
+            setTimeout(() => {
+                popup.classList.add('hidden');
+                popup.classList.remove('transition-opacity', 'duration-500', 'opacity-0');
+            }, 500);
+        }, 3000);
+    }
+    
+    document.querySelectorAll('button[type="button"]').forEach(button => {
+        if (button.textContent.includes('Continue') || button.textContent.includes('Get Started')) {
+            button.addEventListener('click', function() {
+                if (currentStep === 2 && !document.querySelector('input[name="role"]:checked')) {
+                    showPopup('Please select a role to continue');
+                    return false;
+                }
+            });
+        }
+    });
+    
+    document.getElementById('name')?.addEventListener('blur', function() {
+        if (!this.value.trim()) {
+            showPopup('Name is required');
+            this.classList.add('border-red-500');
+        } else {
+            this.classList.remove('border-red-500');
+        }
+    });
+    
+    document.getElementById('email')?.addEventListener('blur', function() {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!this.value.trim()) {
+            showPopup('Email is required');
+            this.classList.add('border-red-500');
+        } else if (!emailRegex.test(this.value)) {
+            showPopup('Please enter a valid email address');
+            this.classList.add('border-red-500');
+        } else {
+            this.classList.remove('border-red-500');
+        }
     });
 </script>
 

@@ -1,16 +1,15 @@
 <?php
 
 namespace App\Http\Controllers\Hotel;
-
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Hotel;
-use App\Models\Room;
+use Illuminate\Http\Request;
 use App\Models\RoomType;
 use App\Models\Booking;
-use App\Models\Trip;
 use App\Models\Review;
+use App\Models\Hotel;
+use App\Models\Room;
+use App\Models\Trip;
 
 class HotelController extends Controller
 {
@@ -46,39 +45,38 @@ class HotelController extends Controller
     public function updateProfile(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-            'star_rating' => 'required|integer|min:1|max:5',
-            'price_per_night' => 'required|numeric|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'amenities' => 'nullable|array',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
+            'description' => 'required|string',
+            'city' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
+            'price_per_night' => 'required|numeric|min:0',
+            'star_rating' => 'required|integer|min:1|max:5',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         
         $hotel = Auth::user()->hotels;
         
         if (!$hotel) {
-            return redirect()->route('hotel.profile.create')
-                ->with('error', 'Please create your hotel profile first.');
+            return redirect()->route('hotel.profile.create')->with('error', 'Please create your hotel profile first.');
         }
         
         $amenities = $request->amenities ? json_encode($request->amenities) : null;
         
         $hotel->update([
             'name' => $request->name,
-            'description' => $request->description,
-            'address' => $request->address,
             'city' => $request->city,
-            'country' => $request->country,
-            'star_rating' => $request->star_rating,
-            'price_per_night' => $request->price_per_night,
             'amenities' => $amenities,
+            'address' => $request->address,
+            'country' => $request->country,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
+            'description' => $request->description,
+            'star_rating' => $request->star_rating,
+            'price_per_night' => $request->price_per_night,
         ]);
         
         if ($request->hasFile('image')) {
@@ -103,35 +101,35 @@ class HotelController extends Controller
     public function storeProfile(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-            'star_rating' => 'required|integer|min:1|max:5',
-            'price_per_night' => 'required|numeric|min:0',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'amenities' => 'nullable|array',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
+            'description' => 'required|string',
+            'name' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'price_per_night' => 'required|numeric|min:0',
+            'star_rating' => 'required|integer|min:1|max:5',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         
         $path = $request->file('image')->store('hotels', 'public');
         $amenities = $request->amenities ? json_encode($request->amenities) : null;
         
         $hotel = Hotel::create([
+            'image' => $path,
             'user_id' => Auth::id(),
             'name' => $request->name,
-            'description' => $request->description,
-            'address' => $request->address,
             'city' => $request->city,
-            'country' => $request->country,
-            'star_rating' => $request->star_rating,
-            'price_per_night' => $request->price_per_night,
-            'image' => $path,
             'amenities' => $amenities,
+            'address' => $request->address,
+            'country' => $request->country,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
+            'star_rating' => $request->star_rating,
+            'description' => $request->description,
+            'price_per_night' => $request->price_per_night,
         ]);
         
         return redirect()->route('hotel.profile')
@@ -163,11 +161,10 @@ class HotelController extends Controller
         $roomTypes = RoomType::all();
         
         if ($roomTypes->isEmpty()) {
-            // Create default room types if none exist
             $defaultTypes = [
+                ['name' => 'Suite', 'description' => 'Spacious suite with separate living area'],
                 ['name' => 'Standard', 'description' => 'Standard room with basic amenities'],
                 ['name' => 'Deluxe', 'description' => 'Deluxe room with premium amenities'],
-                ['name' => 'Suite', 'description' => 'Spacious suite with separate living area'],
                 ['name' => 'Family', 'description' => 'Large room suitable for families']
             ];
             
@@ -184,12 +181,12 @@ class HotelController extends Controller
     public function storeRoom(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
             'room_type_id' => 'required|exists:room_types,id',
+            'price_per_night' => 'required|numeric|min:0',
             'room_number' => 'nullable|string|max:50',
             'capacity' => 'required|integer|min:1',
-            'price_per_night' => 'required|numeric|min:0',
             'is_available' => 'sometimes|boolean',
+            'name' => 'required|string|max:255',
         ]);
         
         $hotel = Auth::user()->hotels;
@@ -199,7 +196,6 @@ class HotelController extends Controller
                 ->with('error', 'Please create your hotel profile first.');
         }
         
-        // Check if room number is already used in this hotel
         if ($request->filled('room_number')) {
             $existingRoom = Room::where('hotel_id', $hotel->id)
                                ->where('room_number', $request->room_number)
@@ -214,11 +210,11 @@ class HotelController extends Controller
         
         $room = new Room([
             'name' => $request->name,
-            'room_type_id' => $request->room_type_id,
-            'room_number' => $request->room_number,
             'capacity' => $request->capacity,
+            'room_number' => $request->room_number,
+            'room_type_id' => $request->room_type_id,
             'price_per_night' => $request->price_per_night,
-            'is_available' => $request->has('is_available') ? true : true, // Default to available
+            'is_available' => $request->has('is_available') ? true : true,
         ]);
         
         $hotel->rooms()->save($room);
@@ -231,7 +227,6 @@ class HotelController extends Controller
     {
         $hotel = Auth::user()->hotels;
         
-        // Check if the room belongs to this hotel
         if ($room->hotel_id != $hotel->id) {
             return redirect()->route('hotel.rooms')
                 ->with('error', 'You are not authorized to edit this room.');
@@ -245,14 +240,13 @@ class HotelController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'room_type_id' => 'required|exists:room_types,id',
             'capacity' => 'required|integer|min:1',
             'price_per_night' => 'required|numeric|min:0',
+            'room_type_id' => 'required|exists:room_types,id',
         ]);
         
         $hotel = Auth::user()->hotels;
         
-        // Check if the room belongs to this hotel
         if ($room->hotel_id != $hotel->id) {
             return redirect()->route('hotel.rooms')
                 ->with('error', 'You are not authorized to update this room.');
@@ -260,8 +254,8 @@ class HotelController extends Controller
         
         $room->update([
             'name' => $request->name,
-            'room_type_id' => $request->room_type_id,
             'capacity' => $request->capacity,
+            'room_type_id' => $request->room_type_id,
             'price_per_night' => $request->price_per_night,
         ]);
         
@@ -273,7 +267,6 @@ class HotelController extends Controller
     {
         $hotel = Auth::user()->hotels;
         
-        // Check if the room belongs to this hotel
         if ($room->hotel_id != $hotel->id) {
             return redirect()->route('hotel.rooms')
                 ->with('error', 'You are not authorized to delete this room.');
@@ -305,7 +298,6 @@ class HotelController extends Controller
     {
         $hotel = Auth::user()->hotels;
         
-        // Check if the booking is for a room in this hotel
         $isValidBooking = $booking->room->hotel_id === $hotel->id;
         
         if (!$isValidBooking) {
@@ -320,7 +312,6 @@ class HotelController extends Controller
     {
         $hotel = Auth::user()->hotels;
         
-        // Check if the booking is for a room in this hotel
         $isValidBooking = $booking->room->hotel_id === $hotel->id;
         
         if (!$isValidBooking) {
@@ -338,7 +329,6 @@ class HotelController extends Controller
     {
         $hotel = Auth::user()->hotels;
         
-        // Check if the booking is for a room in this hotel
         $isValidBooking = $booking->room->hotel_id === $hotel->id;
         
         if (!$isValidBooking) {
@@ -397,8 +387,8 @@ class HotelController extends Controller
     {
         $request->validate([
             'availability' => 'required|string|in:available,not available',
-            'selected_dates' => 'nullable|string',
             'available_rooms' => 'nullable|integer|min:0',
+            'selected_dates' => 'nullable|string',
         ]);
         
         $hotel = Auth::user()->hotels;
@@ -418,7 +408,6 @@ class HotelController extends Controller
             return redirect()->route('hotel.availability')
                 ->with('success', 'Availability updated successfully');
         } catch (\Exception $e) {
-            // Check if the error is about missing columns
             if (strpos($e->getMessage(), "Column not found") !== false) {
                 return redirect()->route('hotel.availability')
                     ->with('error', 'Database columns are missing. Please run the migration: php artisan migrate');
@@ -446,7 +435,6 @@ class HotelController extends Controller
         $hotel = Auth::user()->hotels;
         $trip = Trip::with(['guides', 'travellers', 'activities', 'itinerary'])->findOrFail($id);
         
-        // Check if hotel is assigned to this trip
         $isAssigned = $hotel ? $hotel->trips()->where('trips.id', $id)->exists() : false;
         
         return view('hotel.pages.trip-details', compact('trip', 'isAssigned'));
@@ -456,10 +444,8 @@ class HotelController extends Controller
     {
         $hotel = Auth::user()->hotels;
         
-        // Get IDs of trips that the hotel is already assigned to
         $assignedTripIds = $hotel ? $hotel->trips()->pluck('trips.id')->toArray() : [];
         
-        // Get all trips with relationships
         $availableTrips = Trip::with(['guides', 'travellers', 'activities', 'itinerary'])
             ->orderBy('start_date')
             ->get();
@@ -479,12 +465,10 @@ class HotelController extends Controller
             return redirect()->back()->with('error', 'Hotel profile not found');
         }
         
-        // Check if already assigned to this trip
         if ($hotel->trips()->where('trips.id', $request->trip_id)->exists()) {
             return redirect()->back()->with('info', 'You are already assigned to this trip');
         }
         
-        // Assign hotel to trip
         $hotel->trips()->attach($request->trip_id);
         
         return redirect()->route('hotel.trips')->with('success', 'Successfully joined the trip');
@@ -498,7 +482,6 @@ class HotelController extends Controller
             return redirect()->back()->with('error', 'Hotel profile not found');
         }
         
-        // Remove hotel from trip
         $hotel->trips()->detach($id);
         
         return redirect()->route('hotel.trips')->with('success', 'Successfully withdrawn from the trip');
@@ -507,34 +490,27 @@ class HotelController extends Controller
     public function dashboard()
     {
         $hotel = Auth::user()->hotels;
-        
-        // Default empty values
-        $rooms = collect();
-        $availableRooms = 0;
-        $bookedRooms = 0;
+        $upcomingCheckins = collect();
         $recentBookings = collect();
         $recentReviews = collect();
-        $upcomingCheckins = collect();
+        $availableRooms = 0;
+        $rooms = collect();
+        $bookedRooms = 0;
         
         if ($hotel) {
-            // Get room statistics
             $rooms = $hotel->rooms;
             $availableRooms = $rooms->where('is_available', true)->count();
             $bookedRooms = $rooms->count() - $availableRooms;
-            
-            // Get recent bookings
             $recentBookings = Booking::whereHas('room', function($query) use ($hotel) {
                 $query->where('hotel_id', $hotel->id);
             })->with(['user', 'room'])->latest()->take(5)->get();
             
-            // Get recent reviews
             $recentReviews = Review::where('hotel_id', $hotel->id)
                 ->with('traveller.user')
                 ->latest()
                 ->take(3)
                 ->get();
             
-            // Get upcoming check-ins
             $upcomingCheckins = Booking::whereHas('room', function($query) use ($hotel) {
                 $query->where('hotel_id', $hotel->id);
             })->where('check_in', '>=', now())
@@ -548,11 +524,11 @@ class HotelController extends Controller
         return view('hotel.dashboard', compact(
             'hotel', 
             'rooms', 
-            'availableRooms', 
             'bookedRooms', 
-            'recentBookings', 
             'recentReviews', 
-            'upcomingCheckins'
+            'recentBookings', 
+            'availableRooms', 
+            'upcomingCheckins',
         ));
     }
 }

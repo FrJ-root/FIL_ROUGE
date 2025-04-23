@@ -138,20 +138,13 @@
         
         tabs.forEach(tab => {
             tab.addEventListener('click', function() {
-                // Remove active class from all tabs
                 tabs.forEach(t => {
                     t.classList.remove('border-hotel-blue', 'text-hotel-blue');
                     t.classList.add('border-transparent', 'text-gray-500');
                 });
-                
-                // Add active class to clicked tab
                 this.classList.remove('border-transparent', 'text-gray-500');
                 this.classList.add('border-hotel-blue', 'text-hotel-blue');
-                
-                // Update content based on selected tab
                 const tabName = this.getAttribute('data-tab');
-                // In a real app, you would filter the bookings based on the tab
-                // Here we're just showing a demonstration
                 console.log(`Showing ${tabName} bookings`);
             });
         });

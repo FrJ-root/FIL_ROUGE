@@ -26,7 +26,6 @@
             All Trips
         </a>
         
-        <!-- Collaborative Trips Section -->
         <div class="px-6 py-3 text-gray-300 text-xs uppercase font-bold">
             Collaborator Trips
         </div>

@@ -1,5 +1,4 @@
 <footer class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white pt-16 pb-6 relative">
-    <!-- Wave Shape Divider -->
     <div class="absolute top-0 left-0 right-0 transform -translate-y-full overflow-hidden">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" class="fill-current text-gray-900">
             <path d="M0,64L48,80C96,96,192,128,288,128C384,128,480,96,576,85.3C672,75,768,85,864,96C960,107,1056,117,1152,112C1248,107,1344,85,1392,74.7L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
@@ -8,7 +7,6 @@
 
     <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            <!-- Logo & About -->
             <div class="space-y-4">
                 <div class="flex items-center">
                     <img src="{{ asset('storage/images/logo/TripyDB.png') }}" alt="TripyDB Logo" class="h-12 w-auto mr-3">
@@ -30,7 +28,6 @@
                 </div>
             </div>
 
-            <!-- Explore -->
             <div>
                 <h3 class="text-lg font-bold mb-4 text-white relative border-b border-gray-700 pb-2">
                     <span class="relative z-10">Explore</span>
@@ -55,7 +52,6 @@
                 </ul>
             </div>
 
-            <!-- Travel Resources -->
             <div>
                 <h3 class="text-lg font-bold mb-4 text-white relative border-b border-gray-700 pb-2">
                     <span class="relative z-10">Travel Resources</span>
@@ -80,7 +76,6 @@
                 </ul>
             </div>
 
-            <!-- Newsletter -->
             <div>
                 <h3 class="text-lg font-bold mb-4 text-white relative border-b border-gray-700 pb-2">
                     <span class="relative z-10">Get Travel Inspiration</span>
@@ -105,7 +100,6 @@
             </div>
         </div>
 
-        <!-- Bottom Footer -->
         <div class="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
             <div class="mb-4 md:mb-0">
                 <p>&copy; {{ date('Y') }} TripyDB. All rights reserved.</p>
@@ -119,7 +113,6 @@
         </div>
     </div>
 
-    <!-- Badge/App Download Section -->
     <div class="mt-8 py-6 bg-gray-950/50 backdrop-blur-sm">
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">

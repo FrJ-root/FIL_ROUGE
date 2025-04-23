@@ -90,7 +90,6 @@
                     </div>
                 </form>
 
-                <!-- Debugging info -->
                 <div class="mt-4 p-4 bg-gray-100 rounded-lg">
                     <p class="text-gray-700 font-semibold">Form Information:</p>
                     <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
@@ -107,7 +106,6 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Track form submission
         const form = document.getElementById('tripEditForm');
         const submitButton = document.getElementById('submitButton');
         
@@ -115,7 +113,6 @@
         console.log('Submit button found:', !!submitButton);
         
         if (form) {
-            // Log when the form is submitted
             form.addEventListener('submit', function(event) {
                 console.log('Form is being submitted');
             });
@@ -127,7 +124,6 @@
             });
         }
         
-        // Set minimum end_date based on start_date
         const startDateInput = document.getElementById('start_date');
         const endDateInput = document.getElementById('end_date');
         

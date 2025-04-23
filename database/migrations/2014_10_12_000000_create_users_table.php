@@ -12,10 +12,10 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('email')->unique();
             $table->string('picture')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
             $table->enum('status', ['valide', 'suspend', 'block'])->default('suspend');
             $table->enum('role', ['transport', 'traveller', 'admin', 'hotel', 'guide', 'manager'])->default('traveller');
             $table->rememberToken();

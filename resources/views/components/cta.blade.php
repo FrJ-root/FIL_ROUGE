@@ -1,4 +1,3 @@
-<!-- Call to Action Section -->
 <section class="bg-gray-100 py-20 relative">
     <div class="absolute inset-0 overflow-hidden opacity-20">
         <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488085061387-422e29b40080?ixlib=rb-4.0.3')] bg-cover bg-center"></div>

@@ -1,4 +1,3 @@
-<!-- Notification dropdown -->
 <div class="ml-3 relative" x-data="{ open: false }">
     <div>
         <button @click="open = !open" class="max-w-xs bg-white rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" id="user-menu-button">

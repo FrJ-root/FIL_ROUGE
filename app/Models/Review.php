@@ -13,8 +13,8 @@ class Review extends Model
         'traveller_id',
         'guide_id',
         'hotel_id',
-        'rating',
         'comment',
+        'rating',
     ];
 
     public function travellers()

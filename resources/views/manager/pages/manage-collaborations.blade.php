@@ -30,7 +30,6 @@
 @endif
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Hotels Section -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="bg-blue-500 text-white px-6 py-4 flex justify-between items-center">
             <h2 class="font-bold flex items-center">
@@ -90,7 +89,6 @@
         </div>
     </div>
     
-    <!-- Guides Section -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="bg-green-500 text-white px-6 py-4 flex justify-between items-center">
             <h2 class="font-bold flex items-center">
@@ -150,7 +148,6 @@
         </div>
     </div>
     
-    <!-- Transports Section -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="bg-amber-500 text-white px-6 py-4 flex justify-between items-center">
             <h2 class="font-bold flex items-center">

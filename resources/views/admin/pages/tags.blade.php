@@ -31,9 +31,7 @@
             </div>
         </form>
 
-        <div id="tags-list" class="flex flex-wrap gap-2">
-            <!-- Tags will be populated here -->
-        </div>
+        <div id="tags-list" class="flex flex-wrap gap-2"></div>
     </div>
 @endsection
 

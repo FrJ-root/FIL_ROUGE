@@ -147,7 +147,6 @@
         max-height: 100vh;
     }
     
-    /* Map page styles */
     .map-container {
         position: relative;
         width: 100%;

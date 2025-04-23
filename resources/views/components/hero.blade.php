@@ -1,4 +1,3 @@
-<!-- Hero Section -->
 <section class="relative bg-white pt-32 pb-20">
     <div class="absolute inset-0 overflow-hidden opacity-20">
         <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center"></div>
@@ -14,7 +13,6 @@
                 Get Started <i class="fas fa-arrow-right ml-2"></i>
             </a>
         </div>
-        <!-- Search Bar -->
         <div class="mt-12 max-w-4xl mx-auto bg-white p-4 rounded-xl shadow-2xl" data-aos="fade-up" data-aos-delay="300">
             <div class="flex flex-col md:flex-row">
                 <div class="flex-1 mb-2 md:mb-0 md:mr-2">

@@ -7,7 +7,6 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
         <div class="py-4">
-            <!-- Bookings tabs -->
             <div class="mb-6 bg-white p-4 rounded-lg shadow-sm">
                 <div class="sm:hidden">
                     <label for="booking-tabs" class="sr-only">Select a tab</label>

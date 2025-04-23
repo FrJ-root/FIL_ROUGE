@@ -12,8 +12,8 @@ class Traveller extends Model
     protected $fillable = [
         'user_id',
         'trip_id',
-        'itinerary_id',
         'nationality',
+        'itinerary_id',
         'passport_number',
         'prefered_destination',
     ];
@@ -28,10 +28,8 @@ class Traveller extends Model
         return $this->belongsTo(Trip::class);
     }
     
-    // Add this method to support the one-to-many relationship
     public function trips()
     {
-        // For backwards compatibility, if used elsewhere
         if ($this->trip_id) {
             return Trip::where('id', $this->trip_id);
         }

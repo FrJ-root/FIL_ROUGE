@@ -13,7 +13,6 @@
     </div>
     
     <div class="p-6">
-        <!-- Status Messages -->
         @if(session('success'))
             <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
                 <div class="flex items-center">
@@ -41,7 +40,6 @@
             </div>
         @endif
 
-        <!-- Pending Payment Section -->
         @if(isset($pendingPaymentTrips) && $pendingPaymentTrips->isNotEmpty())
             <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-6">
                 <h3 class="text-xl font-bold text-yellow-800 mb-4 flex items-center">
@@ -89,7 +87,6 @@
             </div>
         @endif
 
-        <!-- Trips Filter Tabs -->
         <div class="border-b border-gray-200 mb-6">
             <nav class="-mb-px flex space-x-8">
                 <a href="{{ route('traveller.trips') }}" class="{{ $activeStatus == 'all' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
@@ -107,11 +104,9 @@
             </nav>
         </div>
 
-        <!-- Trips List -->
         @if($allTrips->isEmpty())
             <div class="text-center py-12">
                 @if($activeStatus == 'pending')
-                    <!-- Empty state for pending payments (simpler UI) -->
                     <div class="inline-block p-4 rounded-full bg-yellow-100 text-yellow-600 mb-4">
                         <i class="fas fa-wallet text-4xl"></i>
                     </div>
@@ -149,7 +144,6 @@
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 @foreach($allTrips as $trip)
-                    <!-- Trip card content remains the same -->
                     <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                         <div class="h-40 bg-cover bg-center" style="background-image: url('{{ $trip->cover_picture ? asset('storage/images/trip/' . $trip->cover_picture) : 'https://images.unsplash.com/photo-1488085061387-422e29b40080?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80' }}')">
                             <div class="h-full w-full bg-gradient-to-b from-transparent to-black/60 flex items-end p-4">

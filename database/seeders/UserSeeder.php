@@ -2,15 +2,15 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Seeder;
 use App\Models\Traveller;
 use App\Models\Transport;
+use App\Models\Itinerary;
 use App\Models\Guide;
 use App\Models\Hotel;
 use App\Models\User;
 use App\Models\Trip;
-use App\Models\Itinerary;
 
 class UserSeeder extends Seeder
 {

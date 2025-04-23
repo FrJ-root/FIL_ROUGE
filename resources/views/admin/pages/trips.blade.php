@@ -27,7 +27,6 @@
         </script>
     @endif
 
-    <!-- Trip Filters -->
     <div class="bg-gray-800 p-6 rounded-lg mb-6 shadow-lg transform hover:shadow-xl transition-all duration-300 border border-gray-700">
         <div class="flex flex-col md:flex-row md:items-center justify-between">
             <h3 class="text-white font-semibold mb-4 md:mb-0 flex items-center">
@@ -50,7 +49,6 @@
         </div>
     </div>
 
-    <!-- Trips Table -->
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
         <h3 class="text-white font-semibold mb-4 flex items-center">
             <i class="fas fa-list text-purple-400 mr-2"></i>All Trips
@@ -71,7 +69,6 @@
                     @forelse ($trips ?? [] as $trip)
                     <tr class="hover:bg-gray-800/50 transition-colors">
                         <td class="px-4 py-3 text-sm text-white">{{ $trip->id }}</td>
-                        <!-- Destination column (keeping existing code) -->
                         <td class="px-4 py-3">
                             <div class="flex items-center">
                                 <div class="h-10 w-10 flex-shrink-0 rounded-full overflow-hidden bg-gray-700">
@@ -101,7 +98,6 @@
                             </div>
                         </td>
                         
-                        <!-- Status Column - Shows status based on admin actions -->
                         <td class="px-4 py-3 text-sm text-white">
                             @if($trip->status === 'active')
                                 <span class="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs flex items-center w-fit">
@@ -120,10 +116,8 @@
                             @endif
                         </td>
                         
-                        <!-- Actions Column with Icon Buttons -->
                         <td class="px-4 py-3 text-sm">
                             <div class="flex space-x-3">
-                                <!-- Valid Trip Button (Icon) -->
                                 <form action="{{ route('admin.trips.status', $trip->id) }}" method="POST" class="inline">
                                     @csrf
                                     <button type="submit" name="status" value="active" class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors" title="Mark Trip as Valid">
@@ -131,7 +125,6 @@
                                     </button>
                                 </form>
                                 
-                                <!-- Suspend Trip Button (Icon) -->
                                 <form action="{{ route('admin.trips.status', $trip->id) }}" method="POST" class="inline">
                                     @csrf
                                     <button type="submit" name="status" value="suspended" class="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-full transition-colors" title="Suspend Trip">
@@ -139,7 +132,6 @@
                                     </button>
                                 </form>
                                 
-                                <!-- Declare to Manager Button (Icon) -->
                                 <form action="{{ route('admin.trips.assign', $trip->id) }}" method="POST" class="inline">
                                     @csrf
                                     <button type="submit" class="bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full transition-colors" title="Declare to Manager">
@@ -169,7 +161,6 @@
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center hidden">
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full transform transition-all scale-90 opacity-0" id="modalContent">
         <h3 class="text-xl font-bold text-white mb-4 flex items-center">
@@ -218,7 +209,6 @@
     }
     
     document.addEventListener('DOMContentLoaded', function() {
-        // Search functionality
         const searchInput = document.getElementById('search');
         const statusFilter = document.getElementById('status-filter');
         const rows = document.querySelectorAll('tbody tr');
@@ -265,7 +255,6 @@
         transition-duration: 300ms;
     }
     
-    /* Custom scrollbar for tables */
     .overflow-x-auto::-webkit-scrollbar {
         height: 8px;
     }

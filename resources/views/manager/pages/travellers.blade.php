@@ -6,7 +6,6 @@
         <i class="fas fa-users text-blue-500 mr-2"></i> Travellers Management
     </h1>
 
-    <!-- Payment Status Stats -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="bg-white rounded-lg shadow p-4 flex items-center">
             <div class="p-3 rounded-full bg-blue-100 text-blue-800 mr-4">
@@ -39,7 +38,6 @@
         </div>
     </div>
 
-    <!-- Filter Controls -->
     <div class="bg-white rounded-lg shadow-md p-4 mb-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div class="flex items-center">
@@ -170,7 +168,6 @@
                 </table>
             </div>
 
-            <!-- Pagination -->
             <div class="mt-6">
                 {{ $travellers->links() }}
             </div>

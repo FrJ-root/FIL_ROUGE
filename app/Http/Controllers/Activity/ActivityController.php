@@ -16,19 +16,19 @@ class ActivityController extends Controller
     public function store(Request $request, $tripId)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
             'location' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'activity_date' => 'required|date',
-            'activity_time' => 'required',
             'description' => 'nullable|string',
+            'activity_time' => 'required',
         ]);
         $trip = Trip::findOrFail($tripId);
         $this->authorize('update', $trip);
         $scheduledAt = $request->activity_date . ' ' . $request->activity_time;
         $activity = new Activity([
             'name' => $request->name,
-            'location' => $request->location,
             'scheduled_at' => $scheduledAt,
+            'location' => $request->location,
             'description' => $request->description,
         ]);
         

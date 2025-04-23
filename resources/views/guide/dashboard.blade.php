@@ -59,7 +59,6 @@
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Upcoming Trips Card -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="bg-adventure-blue text-white px-6 py-4 flex items-center">
             <i class="fas fa-route mr-2"></i>
@@ -76,7 +75,6 @@
         </div>
     </div>
 
-    <!-- Recent Messages Card -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="bg-adventure-green text-white px-6 py-4 flex items-center">
             <i class="fas fa-comments mr-2"></i>
@@ -113,7 +111,6 @@
 </div>
 
 <script>
-    // Add animation to dashboard cards
     document.addEventListener('DOMContentLoaded', function() {
         const cards = document.querySelectorAll('.grid a, .grid > div');
         cards.forEach((card, index) => {

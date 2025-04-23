@@ -70,7 +70,6 @@
     </a>
 </div>
 
-<!-- Room Availability Stats -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="bg-hotel-blue text-white px-6 py-4">
@@ -91,7 +90,6 @@
                     </div>
                 </div>
                 
-                <!-- Availability Chart -->
                 <div class="mt-4 h-48">
                     <canvas id="availabilityChart"></canvas>
                 </div>
@@ -108,7 +106,6 @@
         </div>
     </div>
 
-    <!-- Recent Bookings -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden lg:col-span-2">
         <div class="bg-hotel-green text-white px-6 py-4 flex justify-between items-center">
             <h3 class="font-bold flex items-center">
@@ -185,9 +182,7 @@
     </div>
 </div>
 
-<!-- Additional Dashboard Sections -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Recent Reviews -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="bg-amber-500 text-white px-6 py-4 flex justify-between items-center">
             <h3 class="font-bold flex items-center">
@@ -229,7 +224,6 @@
         </div>
     </div>
 
-    <!-- Upcoming Check-ins -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="bg-purple-500 text-white px-6 py-4">
             <h3 class="font-bold flex items-center">
@@ -280,8 +274,8 @@
                 datasets: [{
                     data: [{{ $availableRooms }}, {{ $bookedRooms }}],
                     backgroundColor: [
-                        '#3B82F6',  // Blue for available
-                        '#EF4444',  // Red for booked
+                        '#3B82F6',
+                        '#EF4444',
                     ],
                     borderWidth: 0,
                 }]
@@ -298,7 +292,6 @@
             }
         });
         
-        // Add animation to dashboard cards
         const cards = document.querySelectorAll('.grid > div, .grid > a');
         cards.forEach((card, index) => {
             card.style.opacity = '0';

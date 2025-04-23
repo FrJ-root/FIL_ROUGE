@@ -25,7 +25,6 @@
         </div>
     @else
         <div class="grid grid-cols-1 lg:grid-cols-3">
-            <!-- Message List -->
             <div class="border-r border-gray-200">
                 <div class="p-4 border-b border-gray-200 bg-gray-50">
                     <div class="relative">
@@ -59,7 +58,6 @@
                 </div>
             </div>
 
-            <!-- Message Content -->
             <div class="lg:col-span-2">
                 <div class="p-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
                     <h3 class="font-semibold text-gray-800">Conversation with Traveller</h3>
@@ -110,7 +108,6 @@
     @endif
 </div>
 
-<!-- New Message Modal (hidden by default) -->
 <div id="newMessageModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-xl shadow-xl w-full max-w-md">
         <div class="p-4 border-b border-gray-200 flex justify-between items-center">
@@ -150,7 +147,6 @@
         document.getElementById('newMessageModal').classList.add('hidden');
     }
 
-    // Close modal when clicking outside
     window.onclick = function(event) {
         const modal = document.getElementById('newMessageModal');
         if (event.target === modal) {

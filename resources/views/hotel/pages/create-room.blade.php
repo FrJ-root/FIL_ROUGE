@@ -29,7 +29,6 @@
     <form method="POST" action="{{ route('hotel.rooms.store') }}" class="p-6">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Left Column -->
             <div>
                 <div class="mb-6">
                     <label for="name" class="block text-lg font-semibold text-gray-700 mb-2">
@@ -72,7 +71,6 @@
                 </div>
             </div>
 
-            <!-- Right Column -->
             <div>
                 <div class="mb-6">
                     <label for="capacity" class="block text-lg font-semibold text-gray-700 mb-2">
@@ -138,7 +136,6 @@
 </div>
 
 <script>
-    // Add validation for price to ensure it has proper format
     document.getElementById('price_per_night').addEventListener('blur', function() {
         const value = parseFloat(this.value);
         if (!isNaN(value)) {
