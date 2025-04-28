@@ -55,5 +55,5 @@ Ces documents sont mis à jour régulièrement pour refléter :
 ## 👥 Contact
 
 Pour toute question ou suggestion concernant cette documentation :
-- 📧 Email: [votre-email]
-- 💬 Discord: [lien-discord]
+- 📧 Email: [abdo.ouabderzaq@gmail.com]
+- 💬 Linkedin: [https://www.linkedin.com/in/abderrahmane-ouabderzaq/]
