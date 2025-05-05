@@ -144,8 +144,8 @@
                                         <div class="text-sm text-gray-900">{{ $booking->room->name ?? 'Unknown Room' }}</div>
                                     </td>
                                     <td class="px-4 py-3 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ date('M d', strtotime($booking->check_in)) }}</div>
-                                        <div class="text-xs text-gray-500">to {{ date('M d, Y', strtotime($booking->check_out)) }}</div>
+                                        <div class="text-sm text-gray-900">{{ $booking->check_in ? date('M d', strtotime($booking->check_in)) : 'N/A' }}</div>
+                                        <div class="text-xs text-gray-500">{{ $booking->check_out ? 'to ' . date('M d, Y', strtotime($booking->check_out)) : '' }}</div>
                                     </td>
                                     <td class="px-4 py-3 whitespace-nowrap">
                                         @if($booking->status == 'confirmed')
@@ -162,7 +162,7 @@
                                             </span>
                                         @else
                                             <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                                {{ $booking->status }}
+                                                {{ $booking->status ?? 'Unknown' }}
                                             </span>
                                         @endif
                                     </td>
@@ -245,8 +245,8 @@
                                 </div>
                             </div>
                             <div class="text-right">
-                                <div class="font-medium text-hotel-blue">{{ date('M d, Y', strtotime($checkin->check_in)) }}</div>
-                                <div class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($checkin->check_in)->diffForHumans() }}</div>
+                                <div class="font-medium text-hotel-blue">{{ $checkin->check_in ? date('M d, Y', strtotime($checkin->check_in)) : 'N/A' }}</div>
+                                <div class="text-xs text-gray-500">{{ $checkin->check_in ? \Carbon\Carbon::parse($checkin->check_in)->diffForHumans() : '' }}</div>
                             </div>
                         </div>
                     @endforeach

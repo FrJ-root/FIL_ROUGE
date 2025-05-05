@@ -10,46 +10,48 @@
             theme: {
                 extend: {
                     colors: {
-                        'adventure-blue': '#1E88E5',
-                        'adventure-green': '#00C853',
-                        'adventure-orange': '#FF6D00',
-                        'adventure-sand': '#F5F5DC',
+                        'guide-blue': '#2563EB',
+                        'guide-green': '#10B981',
+                        'guide-orange': '#F59E0B',
+                        'guide-red': '#EF4444',
+                        'guide-purple': '#8B5CF6',
                     },
                     fontFamily: {
-                        'sans': ['"Open Sans"', 'sans-serif'],
+                        'sans': ['"Poppins"', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .peer:checked ~ .peer-checked\:bg-guide-blue {
+            background-color: #2563EB;
+        }
+        
+        .peer:checked ~ .peer-checked\:border-guide-blue {
+            border-color: #2563EB;
+        }
+        
+        .hover\:bg-guide-blue:hover {
+            background-color: #2563EB;
+        }
+        
+        .bg-guide-blue {
+            background-color: #2563EB;
+        }
+        
+        .text-guide-blue {
+            color: #2563EB;
+        }
+    </style>
 </head>
-<body class="bg-adventure-sand font-sans">
+<body class="bg-gray-50 font-sans">
     <div class="flex min-h-screen">
         @include('guide.components.sidebar')
-
         <div class="flex-1 flex flex-col overflow-hidden">
-            <header class="bg-white shadow-md">
-                <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <h1 class="text-2xl font-bold text-gray-800 flex items-center">
-                        <i class="fas fa-compass text-adventure-blue mr-2"></i>
-                        <span>Guide Dashboard</span>
-                    </h1>
-                    <div class="flex items-center space-x-4">
-                        <div class="relative">
-                            <button class="text-gray-600 hover:text-adventure-blue">
-                                <i class="fas fa-bell text-xl"></i>
-                                <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
-                            </button>
-                        </div>
-                        <div class="h-8 w-8 rounded-full bg-adventure-blue flex items-center justify-center text-white font-bold">
-                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                        </div>
-                    </div>
-                </div>
-            </header>
-
+            @include('guide.components.header')
             <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
                 @yield('content')
             </main>
@@ -66,5 +68,6 @@
             });
         });
     </script>
+    @yield('scripts')
 </body>
 </html>

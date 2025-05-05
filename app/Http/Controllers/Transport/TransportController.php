@@ -145,4 +145,17 @@ class TransportController extends Controller
 
         return redirect()->route('transport.availability')->with('success', 'Availability updated successfully');
     }
+
+    public function tripsIndex()
+    {
+        // Fetch available trips that might need transportation services
+        $trips = Trip::with(['travellers', 'guides', 'hotels', 'transports'])
+            ->whereDoesntHave('transports', function($query) {
+                $query->where('user_id', Auth::id());
+            })
+            ->orderBy('start_date')
+            ->get();
+        
+        return view('transport.trips.index', compact('trips'));
+    }
 }

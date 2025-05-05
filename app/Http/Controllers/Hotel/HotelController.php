@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Hotel;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use App\Models\RoomType;
 use App\Models\Booking;
 use App\Models\Review;
@@ -45,16 +46,6 @@ class HotelController extends Controller
     public function updateProfile(Request $request)
     {
         $request->validate([
-            'amenities' => 'nullable|array',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-            'description' => 'required|string',
-            'city' => 'required|string|max:255',
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-            'price_per_night' => 'required|numeric|min:0',
-            'star_rating' => 'required|integer|min:1|max:5',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         
@@ -67,15 +58,6 @@ class HotelController extends Controller
         $amenities = $request->amenities ? json_encode($request->amenities) : null;
         
         $hotel->update([
-            'name' => $request->name,
-            'city' => $request->city,
-            'amenities' => $amenities,
-            'address' => $request->address,
-            'country' => $request->country,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-            'description' => $request->description,
-            'star_rating' => $request->star_rating,
             'price_per_night' => $request->price_per_night,
         ]);
         
@@ -101,16 +83,6 @@ class HotelController extends Controller
     public function storeProfile(Request $request)
     {
         $request->validate([
-            'amenities' => 'nullable|array',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-            'description' => 'required|string',
-            'name' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'price_per_night' => 'required|numeric|min:0',
-            'star_rating' => 'required|integer|min:1|max:5',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         
@@ -118,17 +90,6 @@ class HotelController extends Controller
         $amenities = $request->amenities ? json_encode($request->amenities) : null;
         
         $hotel = Hotel::create([
-            'image' => $path,
-            'user_id' => Auth::id(),
-            'name' => $request->name,
-            'city' => $request->city,
-            'amenities' => $amenities,
-            'address' => $request->address,
-            'country' => $request->country,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-            'star_rating' => $request->star_rating,
-            'description' => $request->description,
             'price_per_night' => $request->price_per_night,
         ]);
         
@@ -181,11 +142,6 @@ class HotelController extends Controller
     public function storeRoom(Request $request)
     {
         $request->validate([
-            'room_type_id' => 'required|exists:room_types,id',
-            'price_per_night' => 'required|numeric|min:0',
-            'room_number' => 'nullable|string|max:50',
-            'capacity' => 'required|integer|min:1',
-            'is_available' => 'sometimes|boolean',
             'name' => 'required|string|max:255',
         ]);
         
@@ -501,23 +457,30 @@ class HotelController extends Controller
             $rooms = $hotel->rooms;
             $availableRooms = $rooms->where('is_available', true)->count();
             $bookedRooms = $rooms->count() - $availableRooms;
-            $recentBookings = Booking::whereHas('room', function($query) use ($hotel) {
-                $query->where('hotel_id', $hotel->id);
-            })->with(['user', 'room'])->latest()->take(5)->get();
+            
+            try {
+                if (Schema::hasColumn('bookings', 'check_in') && Schema::hasColumn('bookings', 'status')) {
+                    $recentBookings = Booking::whereHas('room', function($query) use ($hotel) {
+                        $query->where('hotel_id', $hotel->id);
+                    })->with(['user', 'room'])->latest()->take(5)->get();
+                    
+                    $upcomingCheckins = Booking::whereHas('room', function($query) use ($hotel) {
+                        $query->where('hotel_id', $hotel->id);
+                    })->where('check_in', '>=', now())
+                        ->where('status', 'confirmed')
+                        ->with(['user', 'room'])
+                        ->orderBy('check_in')
+                        ->take(5)
+                        ->get();
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error fetching bookings: ' . $e->getMessage());
+            }
             
             $recentReviews = Review::where('hotel_id', $hotel->id)
                 ->with('traveller.user')
                 ->latest()
                 ->take(3)
-                ->get();
-            
-            $upcomingCheckins = Booking::whereHas('room', function($query) use ($hotel) {
-                $query->where('hotel_id', $hotel->id);
-            })->where('check_in', '>=', now())
-                ->where('status', 'confirmed')
-                ->with(['user', 'room'])
-                ->orderBy('check_in')
-                ->take(5)
                 ->get();
         }
         

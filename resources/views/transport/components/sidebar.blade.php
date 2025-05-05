@@ -19,7 +19,7 @@
             <i class="fas fa-route mr-3"></i>
             My Trips
         </a>
-        <a href="{{ route('transport.available-trips') }}" class="flex items-center py-3 px-6 hover:bg-blue-700 transition-colors duration-300 {{ Route::is('transport.available-trips') ? 'bg-blue-700' : '' }}">
+        <a href="{{ route('trips.index') }}" class="flex items-center py-3 px-6 hover:bg-blue-700 transition-colors duration-300 {{ Route::is('transport.trips.index') ? 'bg-blue-700' : '' }}">
             <i class="fas fa-search mr-3"></i>
             Find Trips
         </a>

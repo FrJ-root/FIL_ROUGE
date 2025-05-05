@@ -6,10 +6,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Review;
-
+use App\Models\Guide;
+use App\Models\Trip;
 
 class GuideController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function showProfile()
     {
         $guide = Auth::user()->guide;
@@ -45,7 +51,11 @@ class GuideController extends Controller
     public function showAvailability()
     {
         $guide = Auth::user()->guide;
-        $guide->preferred_locations = $guide->preferred_locations ? explode(',', $guide->preferred_locations) : [];
+
+        if (!$guide) {
+            $guide = new Guide();
+        }
+
         return view('guide.pages.availability', compact('guide'));
     }
 
@@ -57,12 +67,22 @@ class GuideController extends Controller
         ]);
 
         $guide = Auth::user()->guide;
-        $guide->fill([
-            'availability' => $request->availability,
-            'selected_dates' => $request->availability === 'available' ? $request->selected_dates : null,
-        ])->save();
 
-        return redirect()->route('guide.availability')->with('success', 'Availability updated successfully.');
+        if (!$guide) {
+            $guide = Guide::create([
+                'user_id' => Auth::id(),
+                'availability' => $request->availability,
+                'selected_dates' => $request->selected_dates,
+            ]);
+        } else {
+            $guide->update([
+                'availability' => $request->availability,
+                'selected_dates' => $request->selected_dates,
+            ]);
+        }
+
+        return redirect()->route('guide.availability')
+            ->with('success', 'Your availability has been updated successfully.');
     }
 
     public function showTravellers()
@@ -129,5 +149,62 @@ class GuideController extends Controller
         ]);
 
         return back()->with('success', 'Review submitted successfully.');
+    }
+
+    public function availableTrips()
+    {
+        $guide = Auth::user()->guide;
+        
+        $assignedTripIds = $guide ? $guide->trips()->pluck('trips.id')->toArray() : [];
+        
+        $availableTrips = Trip::with(['guides', 'travellers', 'activities', 'itinerary'])
+            ->orderBy('start_date')
+            ->get();
+        
+        return view('guide.pages.available-trips', compact('availableTrips', 'assignedTripIds'));
+    }
+
+    public function showTripDetails($id)
+    {
+        $guide = Auth::user()->guide;
+        $trip = Trip::with(['guides', 'travellers', 'activities', 'itinerary'])->findOrFail($id);
+        
+        $isAssigned = $guide ? $guide->trips()->where('trips.id', $id)->exists() : false;
+        
+        return view('guide.pages.trip-details', compact('trip', 'isAssigned'));
+    }
+
+    public function joinTrip(Request $request)
+    {
+        $request->validate([
+            'trip_id' => 'required|exists:trips,id',
+        ]);
+        
+        $guide = Auth::user()->guide;
+        
+        if (!$guide) {
+            return redirect()->back()->with('error', 'Guide profile not found');
+        }
+        
+        if ($guide->trips()->where('trips.id', $request->trip_id)->exists()) {
+            return redirect()->back()->with('info', 'You are already assigned to this trip');
+        }
+        
+        $guide->trips()->attach($request->trip_id);
+        
+        return redirect()->route('guide.trips')->with('success', 'Successfully joined the trip');
+    }
+
+    public function withdrawFromTrip($id)
+    {
+        $guide = Auth::user()->guide;
+        
+        if (!$guide) {
+            return redirect()->back()->with('error', 'Guide profile not found');
+        }
+        
+        $guide->trips()->detach($id);
+        
+        return redirect()->route('guide.trips')->with('success', 'Successfully withdrawn from the trip');
     }
 }

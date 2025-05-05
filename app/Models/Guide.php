@@ -12,10 +12,7 @@ class Guide extends Model
     protected $fillable = [
         'user_id', 
         'availability', 
-        'license_number', 
         'selected_dates',
-        'specialization',
-        'preferred_locations', 
     ];
 
     protected $casts = [

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Map\MapController;
+use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
@@ -11,6 +12,7 @@ use \App\Http\Controllers\Hotel\HotelController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\Search\SearchController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\Manager\ManagerController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -56,7 +58,7 @@ Route::prefix('user')->name('user.')->middleware(['auth'])->group(function () {
 });
 
 // => admin -------------------------------------
-Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'isAdmin'])->group(function () {
 
     Route::get('/home', function () {
         return view('admin.home');
@@ -74,13 +76,29 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::post('/profile/update', [UserController::class, 'updateAdminProfile'])
     ->name('profile.update');
     
-    Route::get('/categories', function () {
-        return view('admin.pages.categories');
-    })->name('categories');
+    Route::get('/categories', [CategoryController::class, 'index'])
+    ->name('categories');
+
+    Route::post('/categories', [CategoryController::class, 'store'])
+    ->name('categories.store');
+
+    Route::put('/categories/{id}', [CategoryController::class, 'update'])
+    ->name('categories.update');
+
+    Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])
+    ->name('categories.destroy');
     
-    Route::get('/tags', function () {
-        return view('admin.pages.tags');
-    })->name('tags');
+    Route::get('/tags', [TagController::class, 'index'])
+    ->name('tags');
+
+    Route::post('/tags', [TagController::class, 'store'])
+    ->name('tags.store');
+
+    Route::put('/tags/{id}', [TagController::class, 'update'])
+    ->name('tags.update');
+
+    Route::delete('/tags/{id}', [TagController::class, 'destroy'])
+    ->name('tags.destroy');
     
     Route::get('/trips', [DashboardController::class, 'trips'])
     ->name('trips');
@@ -231,12 +249,23 @@ Route::prefix('guide')->name('guide.')->middleware(['auth'])->group(function () 
         return view('guide.pages.trips');
     })->name('trips');
 
-    Route::get('/availability', function () {
-        return view('guide.pages.availability');
-    })->name('availability');
+    Route::get('/available-trips', [GuideController::class, 'availableTrips'])
+        ->name('available-trips');
 
-    Route::post('/update-availability', [GuideController::class, 'updateAvailability'])
-    ->name('updateAvailability');
+    Route::get('/trips/{id}', [GuideController::class, 'showTripDetails'])
+        ->name('trip.details');
+
+    Route::post('/withdraw-trip/{id}', [GuideController::class, 'withdrawFromTrip'])
+        ->name('withdraw-trip');
+
+    Route::post('/join-trip', [GuideController::class, 'joinTrip'])
+        ->name('join-trip');
+
+    Route::get('/availability', [GuideController::class, 'showAvailability'])
+    ->name('availability');
+
+    Route::post('/availability', [GuideController::class, 'updateAvailability'])
+    ->name('availability.update');
 
     Route::get('/profile', [GuideController::class, 'showProfile'])
     ->name('profile');
@@ -368,6 +397,9 @@ Route::prefix('transport')->name('transport.')->middleware(['auth'])->group(func
 
     Route::get('/trips', [TransportController::class, 'showTrips'])
     ->name('trips');
+    
+    Route::get('/trips/index', [TransportController::class, 'tripsIndex'])
+    ->name('trips.index');
 
     Route::get('/trips/{id}', [TransportController::class, 'showTripDetails'])
     ->name('trip.details');

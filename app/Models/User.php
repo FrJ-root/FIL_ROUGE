@@ -59,6 +59,11 @@ class User extends Authenticatable
         return $this->hasOne(Guide::class, 'user_id');
     }
 
+    public function guide()
+    {
+        return $this->hasOne(Guide::class);
+    }
+
     public function checkCustomRole(string $roleName): bool
     {
         return RoleService::hasRole($this, $roleName);
