@@ -1,32 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: May 06, 2025 at 02:54 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `fil_rouge`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `activities`
---
-
 CREATE TABLE `activities` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -36,11 +7,7 @@ CREATE TABLE `activities` (
   `trip_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `activities`
---
+)
 
 INSERT INTO `activities` (`id`, `name`, `location`, `scheduled_at`, `description`, `trip_id`, `created_at`, `updated_at`) VALUES
 (1, 'Eiffel Tower Visit', 'Eiffel Tower, Paris', '2025-06-07 10:00:00', 'Visit the iconic Eiffel Tower and enjoy panoramic views of Paris.', 1, '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
@@ -62,12 +29,6 @@ INSERT INTO `activities` (`id`, `name`, `location`, `scheduled_at`, `description
 (17, 'Rice Terrace Trek', 'Tegallalang, Bali', '2024-10-03 10:00:00', 'Trek through the beautiful rice terraces of Tegallalang.', 6, '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
 (18, 'Tanah Lot Temple Sunset', 'Tanah Lot, Bali', '2024-10-04 10:00:00', 'Watch the sunset at the beautiful sea temple of Tanah Lot.', 6, '2025-05-06 09:28:56', '2025-05-06 09:28:56');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `bookings`
---
-
 CREATE TABLE `bookings` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `room_id` bigint(20) UNSIGNED NOT NULL,
@@ -82,13 +43,7 @@ CREATE TABLE `bookings` (
   `guests` int(11) NOT NULL DEFAULT 1,
   `status` varchar(255) NOT NULL DEFAULT 'pending',
   `special_requests` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `categories`
---
+)
 
 CREATE TABLE `categories` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -101,11 +56,7 @@ CREATE TABLE `categories` (
   `meta_description` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `categories`
---
+)
 
 INSERT INTO `categories` (`id`, `name`, `slug`, `description`, `image`, `is_featured`, `meta_title`, `meta_description`, `created_at`, `updated_at`) VALUES
 (1, 'Adventure', 'adventure', 'Exciting adventures for thrill-seekers', 'adventure.jpg', 1, 'Adventure Trips', 'Find the best adventure trips.', '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
@@ -114,12 +65,6 @@ INSERT INTO `categories` (`id`, `name`, `slug`, `description`, `image`, `is_feat
 (4, 'Mountain', 'mountain', 'Explore majestic mountains and peaks', 'mountain.jpg', 0, 'Mountain Trips', 'Find the best mountain trips.', '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
 (5, 'City Break', 'city-break', 'Short trips to explore vibrant cities', 'city.jpg', 0, 'City Break Trips', 'Find the best city break trips.', '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
 (6, 'Wildlife', 'wildlife', 'Experience nature and wildlife up close', 'wildlife.jpg', 0, 'Wildlife Trips', 'Find the best wildlife trips.', '2025-05-06 09:28:56', '2025-05-06 09:28:56');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `destinations`
---
 
 CREATE TABLE `destinations` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -133,11 +78,7 @@ CREATE TABLE `destinations` (
   `meta_description` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `destinations`
---
+)
 
 INSERT INTO `destinations` (`id`, `name`, `slug`, `description`, `image`, `location`, `is_featured`, `meta_title`, `meta_description`, `created_at`, `updated_at`) VALUES
 (1, 'Paris', 'paris', 'The City of Light famous for its art, culture, and cuisine.', 'paris.jpg', 'France', 1, 'Visit Paris', 'Plan your trip to Paris, France', '2025-05-06 09:28:57', '2025-05-06 09:28:57'),
@@ -149,12 +90,6 @@ INSERT INTO `destinations` (`id`, `name`, `slug`, `description`, `image`, `locat
 (7, 'Rio de Janeiro', 'rio-de-janeiro', 'Vibrant city known for its beaches, mountains, and carnival.', 'rio.jpg', 'Brazil', 0, 'Visit Rio de Janeiro', 'Plan your trip to Rio de Janeiro, Brazil', '2025-05-06 09:28:57', '2025-05-06 09:28:57'),
 (8, 'Sydney', 'sydney', 'Iconic harbor city with beautiful beaches and landmarks.', 'sydney.jpg', 'Australia', 0, 'Visit Sydney', 'Plan your trip to Sydney, Australia', '2025-05-06 09:28:57', '2025-05-06 09:28:57');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `failed_jobs`
---
-
 CREATE TABLE `failed_jobs` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `uuid` varchar(255) NOT NULL,
@@ -163,13 +98,7 @@ CREATE TABLE `failed_jobs` (
   `payload` longtext NOT NULL,
   `exception` longtext NOT NULL,
   `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `guides`
---
+)
 
 CREATE TABLE `guides` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -181,23 +110,13 @@ CREATE TABLE `guides` (
   `availability` enum('available','not available') NOT NULL DEFAULT 'not available',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `guides`
---
+)
 
 INSERT INTO `guides` (`id`, `license_number`, `specialization`, `preferred_locations`, `selected_dates`, `user_id`, `availability`, `created_at`, `updated_at`) VALUES
 (1, 'G12345', 'Desert Tours', 'Marrakech, Fes, Sahara', NULL, 4, 'not available', '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
 (2, 'G-12345', 'Cultural Tours', NULL, NULL, 4, 'not available', '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
 (3, 'G-23456', 'Adventure Tours', NULL, NULL, 4, 'not available', '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
 (4, 'G-34567', 'Historical Tours', NULL, NULL, 4, 'not available', '2025-05-06 09:28:56', '2025-05-06 09:28:56');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `hotels`
---
 
 CREATE TABLE `hotels` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -219,23 +138,13 @@ CREATE TABLE `hotels` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `hotels`
---
+)
 
 INSERT INTO `hotels` (`id`, `user_id`, `price_per_night`, `longitude`, `latitude`, `available_rooms`, `star_rating`, `availability`, `selected_dates`, `description`, `amenities`, `image`, `address`, `country`, `city`, `name`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 5, 200.00, -9.5981000, 30.4278000, 0, 5, 'not available', NULL, 'Luxury hotel with stunning views', '\"[\\\"wifi\\\",\\\"pool\\\",\\\"spa\\\",\\\"restaurant\\\"]\"', 'hotels/royal-mirage.jpg', '123 Beach Avenue', 'Morocco', 'Agadir', 'Royal Mirage Resort', '2025-05-06 09:28:56', '2025-05-06 09:28:56', NULL),
 (2, 5, 350.00, 2.3522000, 48.8566000, 0, 5, 'not available', NULL, 'A luxurious 5-star hotel with stunning views.', '\"[\\\"Swimming Pool\\\",\\\"Spa\\\",\\\"Gym\\\",\\\"Restaurant\\\",\\\"Room Service\\\"]\"', 'grand-luxury.jpg', '123 Main Street', 'France', 'Paris', 'Grand Luxury Hotel', '2025-05-06 09:28:56', '2025-05-06 09:28:56', NULL),
 (3, 5, 220.00, 115.1889000, -8.4095000, 0, 4, 'not available', NULL, 'Beachfront hotel with private access to the beach.', '\"[\\\"Beach Access\\\",\\\"Swimming Pool\\\",\\\"Restaurant\\\",\\\"Bar\\\",\\\"Wifi\\\"]\"', 'coastal-retreat.jpg', '456 Ocean Drive', 'Indonesia', 'Bali', 'Coastal Retreat', '2025-05-06 09:28:56', '2025-05-06 09:28:56', NULL),
 (4, 5, 280.00, 139.6503000, 35.6762000, 0, 4, 'not available', NULL, 'Modern hotel in the heart of the city.', '\"[\\\"Gym\\\",\\\"Restaurant\\\",\\\"Business Center\\\",\\\"Wifi\\\",\\\"Concierge\\\"]\"', 'urban-oasis.jpg', '789 City Center', 'Japan', 'Tokyo', 'Urban Oasis Hotel', '2025-05-06 09:28:56', '2025-05-06 09:28:56', NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `itineraries`
---
 
 CREATE TABLE `itineraries` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -244,11 +153,7 @@ CREATE TABLE `itineraries` (
   `trip_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `itineraries`
---
+)
 
 INSERT INTO `itineraries` (`id`, `title`, `description`, `trip_id`, `created_at`, `updated_at`) VALUES
 (1, 'Morocco Adventure', 'Explore the beautiful landscapes of Morocco', 1, '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
@@ -258,12 +163,6 @@ INSERT INTO `itineraries` (`id`, `title`, `description`, `trip_id`, `created_at`
 (5, 'Tokyo Urban Explorer', 'Experience the perfect blend of traditional and modern Japan in Tokyo.', 5, '2025-05-06 09:28:57', '2025-05-06 09:28:57'),
 (6, 'New York City Discovery', 'Experience the best of NYC with visits to iconic landmarks, museums, and neighborhoods.', 6, '2025-05-06 09:28:57', '2025-05-06 09:28:57');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `messages`
---
-
 CREATE TABLE `messages` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `sender_id` bigint(20) UNSIGNED NOT NULL,
@@ -271,23 +170,13 @@ CREATE TABLE `messages` (
   `message` text NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `migrations`
---
+)
 
 CREATE TABLE `migrations` (
   `id` int(10) UNSIGNED NOT NULL,
   `migration` varchar(255) NOT NULL,
   `batch` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `migrations`
---
+)
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (1, '2014_10_12_000000_create_users_table', 1),
@@ -313,47 +202,23 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (21, '2025_04_17_135630_create_messages_table', 1),
 (22, '2025_04_18_120000_create_reviews_table', 1);
 
--- --------------------------------------------------------
-
---
--- Table structure for table `model_has_permissions`
---
-
 CREATE TABLE `model_has_permissions` (
   `permission_id` bigint(20) UNSIGNED NOT NULL,
   `model_type` varchar(255) NOT NULL,
   `model_id` bigint(20) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `model_has_roles`
---
+)
 
 CREATE TABLE `model_has_roles` (
   `role_id` bigint(20) UNSIGNED NOT NULL,
   `model_type` varchar(255) NOT NULL,
   `model_id` bigint(20) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `password_resets`
---
+)
 
 CREATE TABLE `password_resets` (
   `email` varchar(255) NOT NULL,
   `token` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `permissions`
---
+)
 
 CREATE TABLE `permissions` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -361,13 +226,7 @@ CREATE TABLE `permissions` (
   `guard_name` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `personal_access_tokens`
---
+)
 
 CREATE TABLE `personal_access_tokens` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -380,13 +239,7 @@ CREATE TABLE `personal_access_tokens` (
   `expires_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `reviews`
---
+)
 
 CREATE TABLE `reviews` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -397,13 +250,7 @@ CREATE TABLE `reviews` (
   `comment` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `roles`
---
+)
 
 CREATE TABLE `roles` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -411,24 +258,12 @@ CREATE TABLE `roles` (
   `guard_name` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `role_has_permissions`
---
+)
 
 CREATE TABLE `role_has_permissions` (
   `permission_id` bigint(20) UNSIGNED NOT NULL,
   `role_id` bigint(20) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `rooms`
---
+)
 
 CREATE TABLE `rooms` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -441,13 +276,7 @@ CREATE TABLE `rooms` (
   `is_available` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `room_types`
---
+)
 
 CREATE TABLE `room_types` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -455,11 +284,7 @@ CREATE TABLE `room_types` (
   `description` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `room_types`
---
+)
 
 INSERT INTO `room_types` (`id`, `name`, `description`, `created_at`, `updated_at`) VALUES
 (1, 'Standard', 'A comfortable room with all basic amenities', '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
@@ -468,12 +293,6 @@ INSERT INTO `room_types` (`id`, `name`, `description`, `created_at`, `updated_at
 (4, 'Family', 'A large room suitable for families with children', '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
 (5, 'Single', 'A cozy room designed for one person', '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
 (6, 'Twin', 'A room with two single beds', '2025-05-06 09:28:56', '2025-05-06 09:28:56');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tags`
---
 
 CREATE TABLE `tags` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -484,11 +303,7 @@ CREATE TABLE `tags` (
   `meta_description` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `tags`
---
+)
 
 INSERT INTO `tags` (`id`, `name`, `slug`, `description`, `meta_title`, `meta_description`, `created_at`, `updated_at`) VALUES
 (1, 'Family Friendly', 'family-friendly', 'Trips related to family friendly', 'Family Friendly Trips', 'Find the best trips for family friendly', '2025-05-06 09:28:55', '2025-05-06 09:28:55'),
@@ -512,12 +327,6 @@ INSERT INTO `tags` (`id`, `name`, `slug`, `description`, `meta_title`, `meta_des
 (19, 'Hiking', 'hiking', 'Trips related to hiking', 'Hiking Trips', 'Find the best trips for hiking', '2025-05-06 09:28:55', '2025-05-06 09:28:55'),
 (20, 'Skiing', 'skiing', 'Trips related to skiing', 'Skiing Trips', 'Find the best trips for skiing', '2025-05-06 09:28:55', '2025-05-06 09:28:55');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `transports`
---
-
 CREATE TABLE `transports` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
@@ -529,20 +338,10 @@ CREATE TABLE `transports` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `transports`
---
+)
 
 INSERT INTO `transports` (`id`, `user_id`, `company_name`, `transport_type`, `license_number`, `address`, `phone`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 6, 'Morocco Express', 'Tourist vehicle', 'T54321', '456 Main Street, Casablanca', '+212 555-1234', '2025-05-06 09:28:56', '2025-05-06 09:28:56', NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `travellers`
---
 
 CREATE TABLE `travellers` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -555,21 +354,11 @@ CREATE TABLE `travellers` (
   `payment_status` enum('pending','paid','cancelled','refunded') DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `travellers`
---
+)
 
 INSERT INTO `travellers` (`id`, `user_id`, `trip_id`, `itinerary_id`, `passport_number`, `prefered_destination`, `nationality`, `payment_status`, `created_at`, `updated_at`) VALUES
 (1, 3, 1, 1, NULL, 'Morocco', 'United States', NULL, '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
 (2, 3, 1, 1, 'P005980', 'Paris', 'American', NULL, '2025-05-06 09:28:57', '2025-05-06 09:28:57');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `trips`
---
 
 CREATE TABLE `trips` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -581,11 +370,7 @@ CREATE TABLE `trips` (
   `status` enum('active','suspended') NOT NULL DEFAULT 'active',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `trips`
---
+)
 
 INSERT INTO `trips` (`id`, `destination`, `start_date`, `end_date`, `cover_picture`, `manager_id`, `status`, `created_at`, `updated_at`) VALUES
 (1, 'Morocco Explorer', '2025-06-06', '2025-06-16', NULL, NULL, 'active', '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
@@ -595,23 +380,13 @@ INSERT INTO `trips` (`id`, `destination`, `start_date`, `end_date`, `cover_pictu
 (5, 'Tokyo, Japan', '2024-09-12', '2024-09-22', 'tokyo-trip.jpg', NULL, 'active', '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
 (6, 'New York, USA', '2024-10-01', '2024-10-08', 'newyork-trip.jpg', NULL, 'active', '2025-05-06 09:28:56', '2025-05-06 09:28:56');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `trip_category`
---
-
 CREATE TABLE `trip_category` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `trip_id` bigint(20) UNSIGNED NOT NULL,
   `category_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `trip_category`
---
+)
 
 INSERT INTO `trip_category` (`id`, `trip_id`, `category_id`, `created_at`, `updated_at`) VALUES
 (1, 1, 2, NULL, NULL),
@@ -624,23 +399,13 @@ INSERT INTO `trip_category` (`id`, `trip_id`, `category_id`, `created_at`, `upda
 (8, 5, 4, NULL, NULL),
 (9, 6, 1, NULL, NULL);
 
--- --------------------------------------------------------
-
---
--- Table structure for table `trip_guide`
---
-
 CREATE TABLE `trip_guide` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `trip_id` bigint(20) UNSIGNED NOT NULL,
   `guide_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `trip_guide`
---
+)
 
 INSERT INTO `trip_guide` (`id`, `trip_id`, `guide_id`, `created_at`, `updated_at`) VALUES
 (1, 1, 3, NULL, NULL),
@@ -650,23 +415,13 @@ INSERT INTO `trip_guide` (`id`, `trip_id`, `guide_id`, `created_at`, `updated_at
 (5, 5, 1, NULL, NULL),
 (6, 6, 2, NULL, NULL);
 
--- --------------------------------------------------------
-
---
--- Table structure for table `trip_hotel`
---
-
 CREATE TABLE `trip_hotel` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `trip_id` bigint(20) UNSIGNED NOT NULL,
   `hotel_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `trip_hotel`
---
+)
 
 INSERT INTO `trip_hotel` (`id`, `trip_id`, `hotel_id`, `created_at`, `updated_at`) VALUES
 (1, 1, 4, NULL, NULL),
@@ -676,23 +431,13 @@ INSERT INTO `trip_hotel` (`id`, `trip_id`, `hotel_id`, `created_at`, `updated_at
 (5, 5, 1, NULL, NULL),
 (6, 6, 1, NULL, NULL);
 
--- --------------------------------------------------------
-
---
--- Table structure for table `trip_tag`
---
-
 CREATE TABLE `trip_tag` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `trip_id` bigint(20) UNSIGNED NOT NULL,
   `tag_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `trip_tag`
---
+)
 
 INSERT INTO `trip_tag` (`id`, `trip_id`, `tag_id`, `created_at`, `updated_at`) VALUES
 (1, 1, 6, NULL, NULL),
@@ -721,23 +466,13 @@ INSERT INTO `trip_tag` (`id`, `trip_id`, `tag_id`, `created_at`, `updated_at`) V
 (24, 6, 16, NULL, NULL),
 (25, 6, 20, NULL, NULL);
 
--- --------------------------------------------------------
-
---
--- Table structure for table `trip_transport`
---
-
 CREATE TABLE `trip_transport` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `trip_id` bigint(20) UNSIGNED NOT NULL,
   `transport_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `trip_transport`
---
+)
 
 INSERT INTO `trip_transport` (`id`, `trip_id`, `transport_id`, `created_at`, `updated_at`) VALUES
 (1, 1, 1, NULL, NULL),
@@ -746,12 +481,6 @@ INSERT INTO `trip_transport` (`id`, `trip_id`, `transport_id`, `created_at`, `up
 (4, 4, 1, NULL, NULL),
 (5, 5, 1, NULL, NULL),
 (6, 6, 1, NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
 
 CREATE TABLE `users` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -765,11 +494,7 @@ CREATE TABLE `users` (
   `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `users`
---
+)
 
 INSERT INTO `users` (`id`, `name`, `password`, `email`, `picture`, `email_verified_at`, `status`, `role`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, 'Admin User', '$2y$10$6LI31tTDpr8EfnLBMGLSK.WH5.7UFgNkq9qhYoietMbnMwXh1tOGS', 'admin@admin.com', NULL, NULL, 'valide', 'admin', NULL, '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
@@ -779,523 +504,282 @@ INSERT INTO `users` (`id`, `name`, `password`, `email`, `picture`, `email_verifi
 (5, 'Hotel User', '$2y$10$mX4Ss3dSXPcLjhlN6qTJOea7ql0do5BuGEpAgx0Hcyqi3G5o7Iaui', 'hotel@hotel.com', NULL, NULL, 'valide', 'hotel', NULL, '2025-05-06 09:28:56', '2025-05-06 09:28:56'),
 (6, 'Transport User', '$2y$10$TldcvreCYod3tgqBAit3a.nb6mR0/dCWrefSDpb81PcW4MZhZEa02', 'transport@transport.com', NULL, NULL, 'valide', 'transport', NULL, '2025-05-06 09:28:56', '2025-05-06 09:28:56');
 
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `activities`
---
 ALTER TABLE `activities`
   ADD PRIMARY KEY (`id`),
   ADD KEY `activities_trip_id_foreign` (`trip_id`);
 
---
--- Indexes for table `bookings`
---
 ALTER TABLE `bookings`
   ADD PRIMARY KEY (`id`),
   ADD KEY `bookings_room_id_foreign` (`room_id`),
   ADD KEY `bookings_user_id_foreign` (`user_id`);
 
---
--- Indexes for table `categories`
---
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `categories_slug_unique` (`slug`);
 
---
--- Indexes for table `destinations`
---
 ALTER TABLE `destinations`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `destinations_slug_unique` (`slug`);
 
---
--- Indexes for table `failed_jobs`
---
 ALTER TABLE `failed_jobs`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
 
---
--- Indexes for table `guides`
---
 ALTER TABLE `guides`
   ADD PRIMARY KEY (`id`),
   ADD KEY `guides_user_id_foreign` (`user_id`);
 
---
--- Indexes for table `hotels`
---
 ALTER TABLE `hotels`
   ADD PRIMARY KEY (`id`),
   ADD KEY `hotels_user_id_foreign` (`user_id`);
 
---
--- Indexes for table `itineraries`
---
 ALTER TABLE `itineraries`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `itineraries_trip_id_unique` (`trip_id`);
 
---
--- Indexes for table `messages`
---
 ALTER TABLE `messages`
   ADD PRIMARY KEY (`id`),
   ADD KEY `messages_sender_id_foreign` (`sender_id`),
   ADD KEY `messages_receiver_id_foreign` (`receiver_id`);
 
---
--- Indexes for table `migrations`
---
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
---
--- Indexes for table `model_has_permissions`
---
 ALTER TABLE `model_has_permissions`
   ADD PRIMARY KEY (`permission_id`,`model_id`,`model_type`),
   ADD KEY `model_has_permissions_model_id_model_type_index` (`model_id`,`model_type`);
 
---
--- Indexes for table `model_has_roles`
---
 ALTER TABLE `model_has_roles`
   ADD PRIMARY KEY (`role_id`,`model_id`,`model_type`),
   ADD KEY `model_has_roles_model_id_model_type_index` (`model_id`,`model_type`);
 
---
--- Indexes for table `password_resets`
---
 ALTER TABLE `password_resets`
   ADD PRIMARY KEY (`email`);
 
---
--- Indexes for table `permissions`
---
 ALTER TABLE `permissions`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `permissions_name_guard_name_unique` (`name`,`guard_name`);
 
---
--- Indexes for table `personal_access_tokens`
---
 ALTER TABLE `personal_access_tokens`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
   ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
 
---
--- Indexes for table `reviews`
---
 ALTER TABLE `reviews`
   ADD PRIMARY KEY (`id`),
   ADD KEY `reviews_traveller_id_foreign` (`traveller_id`),
   ADD KEY `reviews_hotel_id_foreign` (`hotel_id`),
   ADD KEY `reviews_guide_id_foreign` (`guide_id`);
 
---
--- Indexes for table `roles`
---
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `roles_name_guard_name_unique` (`name`,`guard_name`);
 
---
--- Indexes for table `role_has_permissions`
---
 ALTER TABLE `role_has_permissions`
   ADD PRIMARY KEY (`permission_id`,`role_id`),
   ADD KEY `role_has_permissions_role_id_foreign` (`role_id`);
 
---
--- Indexes for table `rooms`
---
 ALTER TABLE `rooms`
   ADD PRIMARY KEY (`id`),
   ADD KEY `rooms_hotel_id_foreign` (`hotel_id`),
   ADD KEY `rooms_room_type_id_foreign` (`room_type_id`);
 
---
--- Indexes for table `room_types`
---
 ALTER TABLE `room_types`
   ADD PRIMARY KEY (`id`);
 
---
--- Indexes for table `tags`
---
 ALTER TABLE `tags`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `tags_slug_unique` (`slug`);
 
---
--- Indexes for table `transports`
---
 ALTER TABLE `transports`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `transports_license_number_unique` (`license_number`),
   ADD KEY `transports_user_id_index` (`user_id`);
 
---
--- Indexes for table `travellers`
---
 ALTER TABLE `travellers`
   ADD PRIMARY KEY (`id`),
   ADD KEY `travellers_user_id_foreign` (`user_id`),
   ADD KEY `travellers_trip_id_foreign` (`trip_id`),
   ADD KEY `travellers_itinerary_id_foreign` (`itinerary_id`);
 
---
--- Indexes for table `trips`
---
 ALTER TABLE `trips`
   ADD PRIMARY KEY (`id`),
   ADD KEY `trips_manager_id_foreign` (`manager_id`);
 
---
--- Indexes for table `trip_category`
---
 ALTER TABLE `trip_category`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `trip_category_trip_id_category_id_unique` (`trip_id`,`category_id`),
   ADD KEY `trip_category_category_id_foreign` (`category_id`);
 
---
--- Indexes for table `trip_guide`
---
 ALTER TABLE `trip_guide`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `trip_guide_trip_id_guide_id_unique` (`trip_id`,`guide_id`),
   ADD KEY `trip_guide_guide_id_foreign` (`guide_id`);
 
---
--- Indexes for table `trip_hotel`
---
 ALTER TABLE `trip_hotel`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `trip_hotel_trip_id_hotel_id_unique` (`trip_id`,`hotel_id`),
   ADD KEY `trip_hotel_hotel_id_foreign` (`hotel_id`);
 
---
--- Indexes for table `trip_tag`
---
 ALTER TABLE `trip_tag`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `trip_tag_trip_id_tag_id_unique` (`trip_id`,`tag_id`),
   ADD KEY `trip_tag_tag_id_foreign` (`tag_id`);
 
---
--- Indexes for table `trip_transport`
---
 ALTER TABLE `trip_transport`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `trip_transport_trip_id_transport_id_unique` (`trip_id`,`transport_id`),
   ADD KEY `trip_transport_transport_id_foreign` (`transport_id`);
 
---
--- Indexes for table `users`
---
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `users_email_unique` (`email`);
 
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `activities`
---
 ALTER TABLE `activities`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
---
--- AUTO_INCREMENT for table `bookings`
---
 ALTER TABLE `bookings`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT for table `categories`
---
 ALTER TABLE `categories`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
---
--- AUTO_INCREMENT for table `destinations`
---
 ALTER TABLE `destinations`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
---
--- AUTO_INCREMENT for table `failed_jobs`
---
 ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT for table `guides`
---
 ALTER TABLE `guides`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
---
--- AUTO_INCREMENT for table `hotels`
---
 ALTER TABLE `hotels`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
---
--- AUTO_INCREMENT for table `itineraries`
---
 ALTER TABLE `itineraries`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
---
--- AUTO_INCREMENT for table `messages`
---
 ALTER TABLE `messages`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT for table `migrations`
---
 ALTER TABLE `migrations`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
---
--- AUTO_INCREMENT for table `permissions`
---
 ALTER TABLE `permissions`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT for table `personal_access_tokens`
---
 ALTER TABLE `personal_access_tokens`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT for table `reviews`
---
 ALTER TABLE `reviews`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT for table `roles`
---
 ALTER TABLE `roles`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT for table `rooms`
---
 ALTER TABLE `rooms`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT for table `room_types`
---
 ALTER TABLE `room_types`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
---
--- AUTO_INCREMENT for table `tags`
---
 ALTER TABLE `tags`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
---
--- AUTO_INCREMENT for table `transports`
---
 ALTER TABLE `transports`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
---
--- AUTO_INCREMENT for table `travellers`
---
 ALTER TABLE `travellers`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
---
--- AUTO_INCREMENT for table `trips`
---
 ALTER TABLE `trips`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
---
--- AUTO_INCREMENT for table `trip_category`
---
 ALTER TABLE `trip_category`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
---
--- AUTO_INCREMENT for table `trip_guide`
---
 ALTER TABLE `trip_guide`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
---
--- AUTO_INCREMENT for table `trip_hotel`
---
 ALTER TABLE `trip_hotel`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
---
--- AUTO_INCREMENT for table `trip_tag`
---
 ALTER TABLE `trip_tag`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
---
--- AUTO_INCREMENT for table `trip_transport`
---
 ALTER TABLE `trip_transport`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
---
--- AUTO_INCREMENT for table `users`
---
 ALTER TABLE `users`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `activities`
---
 ALTER TABLE `activities`
   ADD CONSTRAINT `activities_trip_id_foreign` FOREIGN KEY (`trip_id`) REFERENCES `trips` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `bookings`
---
 ALTER TABLE `bookings`
   ADD CONSTRAINT `bookings_room_id_foreign` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `bookings_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `guides`
---
 ALTER TABLE `guides`
   ADD CONSTRAINT `guides_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `hotels`
---
 ALTER TABLE `hotels`
   ADD CONSTRAINT `hotels_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `itineraries`
---
 ALTER TABLE `itineraries`
   ADD CONSTRAINT `itineraries_trip_id_foreign` FOREIGN KEY (`trip_id`) REFERENCES `trips` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `messages`
---
 ALTER TABLE `messages`
   ADD CONSTRAINT `messages_receiver_id_foreign` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `messages_sender_id_foreign` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `model_has_permissions`
---
 ALTER TABLE `model_has_permissions`
   ADD CONSTRAINT `model_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `model_has_roles`
---
 ALTER TABLE `model_has_roles`
   ADD CONSTRAINT `model_has_roles_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `reviews`
---
 ALTER TABLE `reviews`
   ADD CONSTRAINT `reviews_guide_id_foreign` FOREIGN KEY (`guide_id`) REFERENCES `guides` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `reviews_hotel_id_foreign` FOREIGN KEY (`hotel_id`) REFERENCES `hotels` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `reviews_traveller_id_foreign` FOREIGN KEY (`traveller_id`) REFERENCES `travellers` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `role_has_permissions`
---
 ALTER TABLE `role_has_permissions`
   ADD CONSTRAINT `role_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `role_has_permissions_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `rooms`
---
 ALTER TABLE `rooms`
   ADD CONSTRAINT `rooms_hotel_id_foreign` FOREIGN KEY (`hotel_id`) REFERENCES `hotels` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `rooms_room_type_id_foreign` FOREIGN KEY (`room_type_id`) REFERENCES `room_types` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `transports`
---
 ALTER TABLE `transports`
   ADD CONSTRAINT `transports_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `travellers`
---
 ALTER TABLE `travellers`
   ADD CONSTRAINT `travellers_itinerary_id_foreign` FOREIGN KEY (`itinerary_id`) REFERENCES `itineraries` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `travellers_trip_id_foreign` FOREIGN KEY (`trip_id`) REFERENCES `trips` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `travellers_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `trips`
---
 ALTER TABLE `trips`
   ADD CONSTRAINT `trips_manager_id_foreign` FOREIGN KEY (`manager_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
---
--- Constraints for table `trip_category`
---
 ALTER TABLE `trip_category`
   ADD CONSTRAINT `trip_category_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `trip_category_trip_id_foreign` FOREIGN KEY (`trip_id`) REFERENCES `trips` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `trip_guide`
---
 ALTER TABLE `trip_guide`
   ADD CONSTRAINT `trip_guide_guide_id_foreign` FOREIGN KEY (`guide_id`) REFERENCES `guides` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `trip_guide_trip_id_foreign` FOREIGN KEY (`trip_id`) REFERENCES `trips` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `trip_hotel`
---
 ALTER TABLE `trip_hotel`
   ADD CONSTRAINT `trip_hotel_hotel_id_foreign` FOREIGN KEY (`hotel_id`) REFERENCES `hotels` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `trip_hotel_trip_id_foreign` FOREIGN KEY (`trip_id`) REFERENCES `trips` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `trip_tag`
---
 ALTER TABLE `trip_tag`
   ADD CONSTRAINT `trip_tag_tag_id_foreign` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `trip_tag_trip_id_foreign` FOREIGN KEY (`trip_id`) REFERENCES `trips` (`id`) ON DELETE CASCADE;
 
---
--- Constraints for table `trip_transport`
---
 ALTER TABLE `trip_transport`
   ADD CONSTRAINT `trip_transport_transport_id_foreign` FOREIGN KEY (`transport_id`) REFERENCES `transports` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `trip_transport_trip_id_foreign` FOREIGN KEY (`trip_id`) REFERENCES `trips` (`id`) ON DELETE CASCADE;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
