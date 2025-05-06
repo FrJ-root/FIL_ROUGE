@@ -118,26 +118,25 @@
                         
                         <td class="px-4 py-3 text-sm">
                             <div class="flex space-x-3">
-                                <form action="{{ route('admin.trips.status', $trip->id) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.trips.status', ['id' => $trip->id]) }}" method="POST" class="inline">
                                     @csrf
-                                    <button type="submit" name="status" value="active" class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors" title="Mark Trip as Valid">
+                                    <input type="hidden" name="status" value="active">
+                                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors" title="Mark Trip as Valid">
                                         <i class="fas fa-check"></i>
                                     </button>
                                 </form>
                                 
-                                <form action="{{ route('admin.trips.status', $trip->id) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.trips.status', ['id' => $trip->id]) }}" method="POST" class="inline">
                                     @csrf
-                                    <button type="submit" name="status" value="suspended" class="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-full transition-colors" title="Suspend Trip">
+                                    <input type="hidden" name="status" value="suspended">
+                                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-full transition-colors" title="Suspend Trip">
                                         <i class="fas fa-pause"></i>
                                     </button>
                                 </form>
                                 
-                                <form action="{{ route('admin.trips.assign', $trip->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit" class="bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full transition-colors" title="Declare to Manager">
-                                        <i class="fas fa-user-shield"></i>
-                                    </button>
-                                </form>
+                                <button onclick="showAssignModal({{ $trip->id }})" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-colors" title="Declare Trip Issue to Manager">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -182,6 +181,35 @@
     </div>
 </div>
 
+<div id="assignModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center hidden">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full transform transition-all scale-90 opacity-0" id="assignModalContent">
+        <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+            <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>Declare Trip Issue to Manager
+        </h3>
+        <p class="text-gray-300 mb-4">Use this function to report issues with this trip and assign a manager to address them.</p>
+        <form id="assignForm" method="POST" action="">
+            @csrf
+            <div class="mb-4">
+                <label for="manager_id" class="block text-gray-300 mb-2">Select Manager to Handle Issue</label>
+                <select id="manager_id" name="manager_id" class="w-full bg-gray-700 text-white rounded-md px-4 py-2 border-0 focus:ring-2 focus:ring-purple-500">
+                    <option value="">Select a Manager</option>
+                    @foreach($managers as $manager)
+                    <option value="{{ $manager->id }}">{{ $manager->name }} ({{ $manager->email }})</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex justify-end space-x-4">
+                <button type="button" onclick="closeAssignModal()" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-2"></i> Declare Issue
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -201,6 +229,31 @@
     function closeDeleteModal() {
         const modal = document.getElementById('deleteModal');
         const modalContent = document.getElementById('modalContent');
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-90', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+    
+    function showAssignModal(tripId) {
+        const modal = document.getElementById('assignModal');
+        const modalContent = document.getElementById('assignModalContent');
+        const form = document.getElementById('assignForm');
+        form.action = "/admin/trips/" + tripId + "/assign";
+        
+        console.log("Setting form action to:", form.action);
+        
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modalContent.classList.remove('scale-90', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+        }, 50);
+    }
+    
+    function closeAssignModal() {
+        const modal = document.getElementById('assignModal');
+        const modalContent = document.getElementById('assignModalContent');
         modalContent.classList.remove('scale-100', 'opacity-100');
         modalContent.classList.add('scale-90', 'opacity-0');
         setTimeout(() => {
@@ -236,6 +289,24 @@
         if (searchInput && statusFilter) {
             searchInput.addEventListener('input', filterTable);
             statusFilter.addEventListener('change', filterTable);
+        }
+        
+        const assignForm = document.getElementById('assignForm');
+        if (assignForm) {
+            assignForm.addEventListener('submit', function(e) {
+                const managerId = document.getElementById('manager_id').value;
+                if (!managerId) {
+                    e.preventDefault();
+                    alert('Please select a manager before submitting.');
+                    return false;
+                }
+                console.log('Form submission details:');
+                console.log('- Action:', assignForm.action);
+                console.log('- Manager ID:', managerId);
+                console.log('- Method:', assignForm.method);
+                console.log('- Form data:', new FormData(assignForm));
+                
+            });
         }
     });
 </script>

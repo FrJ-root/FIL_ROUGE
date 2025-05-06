@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Repositories\Interfaces\CategoryRepositoryInterface;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Models\Category;
 
 class CategoryController extends Controller
 {
+    protected $categoryRepository;
+
+    public function __construct(CategoryRepositoryInterface $categoryRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+    }
+
     public function index()
     {
-        $categories = Category::all();
+        $categories = $this->categoryRepository->getAll();
         return view('admin.pages.categories', compact('categories'));
     }
 
@@ -22,10 +29,10 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255|unique:categories,name'
         ]);
 
-        $category = new Category();
-        $category->name = $request->name;
-        $category->slug = Str::slug($request->name);
-        $category->save();
+        $category = $this->categoryRepository->create([
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+        ]);
 
         return response()->json([
             'message' => 'Category created successfully',
@@ -35,7 +42,7 @@ class CategoryController extends Controller
 
     public function update(Request $request, $id)
     {
-        $category = Category::findOrFail($id);
+        $category = $this->categoryRepository->findById($id);
 
         $request->validate([
             'name' => [
@@ -46,9 +53,10 @@ class CategoryController extends Controller
             ]
         ]);
 
-        $category->name = $request->name;
-        $category->slug = Str::slug($request->name);
-        $category->save();
+        $category = $this->categoryRepository->update($id, [
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+        ]);
 
         return response()->json([
             'message' => 'Category updated successfully',
@@ -58,8 +66,7 @@ class CategoryController extends Controller
 
     public function destroy($id)
     {
-        $category = Category::findOrFail($id);
-        $category->delete();
+        $this->categoryRepository->delete($id);
 
         return response()->json([
             'message' => 'Category deleted successfully'

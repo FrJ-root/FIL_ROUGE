@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Repositories\Interfaces\TagRepositoryInterface;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Models\Tag;
 
 class TagController extends Controller
 {
+    protected $tagRepository;
+
+    public function __construct(TagRepositoryInterface $tagRepository)
+    {
+        $this->tagRepository = $tagRepository;
+    }
+
     public function index()
     {
-        $tags = Tag::all();
+        $tags = $this->tagRepository->getAll();
         return view('admin.pages.tags', compact('tags'));
     }
 
@@ -22,10 +29,10 @@ class TagController extends Controller
             'name' => 'required|string|max:255|unique:tags,name'
         ]);
 
-        $tag = new Tag();
-        $tag->name = $request->name;
-        $tag->slug = Str::slug($request->name);
-        $tag->save();
+        $tag = $this->tagRepository->create([
+            'name' => $request->name,
+            'slug' => Str::slug($request->name)
+        ]);
 
         return response()->json([
             'message' => 'Tag created successfully',
@@ -35,7 +42,7 @@ class TagController extends Controller
 
     public function update(Request $request, $id)
     {
-        $tag = Tag::findOrFail($id);
+        $tag = $this->tagRepository->findById($id);
 
         $request->validate([
             'name' => [
@@ -46,9 +53,10 @@ class TagController extends Controller
             ]
         ]);
 
-        $tag->name = $request->name;
-        $tag->slug = Str::slug($request->name);
-        $tag->save();
+        $tag = $this->tagRepository->update($id, [
+            'name' => $request->name,
+            'slug' => Str::slug($request->name)
+        ]);
 
         return response()->json([
             'message' => 'Tag updated successfully',
@@ -58,8 +66,7 @@ class TagController extends Controller
 
     public function destroy($id)
     {
-        $tag = Tag::findOrFail($id);
-        $tag->delete();
+        $this->tagRepository->delete($id);
 
         return response()->json([
             'message' => 'Tag deleted successfully'

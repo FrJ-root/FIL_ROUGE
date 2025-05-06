@@ -1,16 +1,23 @@
 <?php
 
 namespace App\Http\Controllers\Activity;
+use App\Repositories\Interfaces\ActivityRepositoryInterface;
+use App\Repositories\Interfaces\TripRepositoryInterface;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Activity;
-use App\Models\Trip;
 
 class ActivityController extends Controller
 {
-    public function __construct()
-    {
+    protected $activityRepository;
+    protected $tripRepository;
+    
+    public function __construct(
+        ActivityRepositoryInterface $activityRepository,
+        TripRepositoryInterface $tripRepository
+    ) {
         $this->middleware('auth');
+        $this->activityRepository = $activityRepository;
+        $this->tripRepository = $tripRepository;
     }
     
     public function store(Request $request, $tripId)
@@ -22,27 +29,35 @@ class ActivityController extends Controller
             'description' => 'nullable|string',
             'activity_time' => 'required',
         ]);
-        $trip = Trip::findOrFail($tripId);
+        
+        $trip = $this->tripRepository->findById($tripId);
         $this->authorize('update', $trip);
+        
         $scheduledAt = $request->activity_date . ' ' . $request->activity_time;
-        $activity = new Activity([
+        
+        $data = [
+            'trip_id' => $tripId,
             'name' => $request->name,
             'scheduled_at' => $scheduledAt,
             'location' => $request->location,
             'description' => $request->description,
-        ]);
+        ];
         
-        $trip->activities()->save($activity);
+        $this->activityRepository->create($data);
         
         return redirect()->route('trips.show', $trip->id)->with('success', 'Activity added successfully!');
     }
     
-    public function destroy(Activity $activity)
+    public function destroy($id)
     {
-        $this->authorize('update', $activity->trip);
+        $activity = $this->activityRepository->findById($id);
+        $trip = $this->tripRepository->findById($activity->trip_id);
+        
+        $this->authorize('update', $trip);
         
         $tripId = $activity->trip_id;
-        $activity->delete();
+        $this->activityRepository->delete($id);
+        
         return redirect()->route('trips.show', $tripId)->with('success', 'Activity deleted successfully!');
     }
 }

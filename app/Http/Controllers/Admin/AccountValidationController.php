@@ -1,23 +1,40 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
+use App\Repositories\Interfaces\CategoryRepositoryInterface;
+use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Repositories\Interfaces\TripRepositoryInterface;
+use App\Repositories\Interfaces\TagRepositoryInterface;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Category;
-use App\Models\User;
-use App\Models\Trip;
-use App\Models\Tag;
 
 class AccountValidationController extends Controller
 {
+    protected $categoryRepository;
+    protected $userRepository;
+    protected $tripRepository;
+    protected $tagRepository;
+
+    public function __construct(
+        CategoryRepositoryInterface $categoryRepository,
+        UserRepositoryInterface $userRepository,
+        TripRepositoryInterface $tripRepository,
+        TagRepositoryInterface $tagRepository
+    ) {
+        $this->categoryRepository = $categoryRepository;
+        $this->userRepository = $userRepository;
+        $this->tripRepository = $tripRepository;
+        $this->tagRepository = $tagRepository;
+    }
+    
     public function index()
     {
-        $travellers = User::where('role', 'traveller')->get();
-        $transports = User::where('role', 'transport')->get();
-        $managers = User::where('role', 'manager')->get();
-        $hotels = User::where('role', 'hotel')->get();
-        $guides = User::where('role', 'guide')->get();
-        $admins = User::where('role', 'admin')->get();
+        $travellers = $this->userRepository->getUsersByRole('traveller');
+        $transports = $this->userRepository->getUsersByRole('transport');
+        $managers = $this->userRepository->getUsersByRole('manager');
+        $hotels = $this->userRepository->getUsersByRole('hotel');
+        $guides = $this->userRepository->getUsersByRole('guide');
+        $admins = $this->userRepository->getUsersByRole('admin');
         
         $suspendedTravellers = $travellers->where('status', 'suspend')->count();
         $activeTravellers = $travellers->where('status', 'valide')->count();
@@ -39,9 +56,9 @@ class AccountValidationController extends Controller
         $activeGuides = $guides->where('status', 'valide')->count();
         $deletedGuides = $guides->where('status', 'block')->count();
         
-        $totalCategories = Category::count();
-        $totalTrips = Trip::count();
-        $activeTags = Tag::count();
+        $totalCategories = count($this->categoryRepository->getAll());
+        $totalTrips = count($this->tripRepository->getAll());
+        $activeTags = count($this->tagRepository->getAll());
 
         return view('admin.pages.account-validation', compact(
             'suspendedTravellers',
@@ -71,14 +88,13 @@ class AccountValidationController extends Controller
         ));
     }
     
-    public function updateStatus(Request $request, User $user)
+    public function updateStatus(Request $request, $id)
     {
         $validatedData = $request->validate([
             'status' => 'required|in:valide,suspend,block',
         ]);
         
-        $user->status = $validatedData['status'];
-        $user->save();
+        $this->userRepository->updateStatus($id, $validatedData['status']);
 
         $statusColors = [
             'suspend' => 'yellow',

@@ -1,7 +1,7 @@
 <?php
 namespace App\Repositories\Interfaces;
 
-interface DestinationRepositoryInterface
+interface TagRepositoryInterface
 {
     public function getAll();
     public function delete($id);
@@ -9,6 +9,4 @@ interface DestinationRepositoryInterface
     public function findBySlug($slug);
     public function create(array $data);
     public function update($id, array $data);
-    public function getFeaturedDestinations();
-    public function getDestinationsByLocation($location);
 }

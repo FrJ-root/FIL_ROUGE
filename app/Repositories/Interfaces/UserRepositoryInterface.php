@@ -1,14 +1,14 @@
 <?php
 namespace App\Repositories\Interfaces;
 
-interface DestinationRepositoryInterface
+interface UserRepositoryInterface
 {
     public function getAll();
     public function delete($id);
     public function findById($id);
-    public function findBySlug($slug);
+    public function findByEmail($email);
     public function create(array $data);
+    public function getUsersByRole($role);
     public function update($id, array $data);
-    public function getFeaturedDestinations();
-    public function getDestinationsByLocation($location);
+    public function updateStatus($id, $status);
 }

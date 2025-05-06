@@ -2,14 +2,26 @@
 
 namespace App\Http\Controllers\User;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
+use App\Repositories\Interfaces\GuideRepositoryInterface;
+use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
-
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    protected $userRepository;
+    protected $guideRepository;
+
+    public function __construct(
+        UserRepositoryInterface $userRepository,
+        GuideRepositoryInterface $guideRepository
+    ) {
+        $this->userRepository = $userRepository;
+        $this->guideRepository = $guideRepository;
+    }
+    
     public function showProfile()
     {
         $user = Auth::user();
@@ -30,7 +42,7 @@ class UserController extends Controller
         ]);
 
         $user = Auth::user();
-        $user->update($request->only('name', 'email'));
+        $this->userRepository->update($user->id, $request->only('name', 'email'));
 
         return redirect()->route('user.profile')->with('success', 'Profile updated successfully.');
     }
@@ -48,7 +60,7 @@ class UserController extends Controller
         ]);
 
         $user = Auth::user();
-        $user->guide->update(['availability' => $request->availability]);
+        $this->guideRepository->updateAvailability($user->guide->id, $request->availability);
 
         return redirect()->route('user.availability')->with('success', 'Availability updated successfully.');
     }
@@ -85,21 +97,22 @@ class UserController extends Controller
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         
-        $user = Auth::user();
-        
-        $user->name = $request->name;
-        $user->email = $request->email;
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+        ];
         
         if ($request->hasFile('picture')) {
+            $user = Auth::user();
             if ($user->picture) {
                 Storage::disk('public')->delete($user->picture);
             }
             
             $path = $request->file('picture')->store('profile_pictures', 'public');
-            $user->picture = $path;
+            $data['picture'] = $path;
         }
         
-        $user->save();
+        $this->userRepository->update(Auth::id(), $data);
         
         return redirect()->route('admin.profile')->with('success', 'Profile updated successfully!');
     }

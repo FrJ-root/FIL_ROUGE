@@ -1,29 +1,43 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-use App\Repositories\Eloquent\UserRepository;
+use App\Repositories\Interfaces\TravellerRepositoryInterface;
+use App\Repositories\Interfaces\TransportRepositoryInterface;
+use App\Repositories\Interfaces\GuideRepositoryInterface;
+use App\Repositories\Interfaces\HotelRepositoryInterface;
+use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Repositories\Interfaces\TripRepositoryInterface;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Events\Registered;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Traveller;
-use App\Models\Transport;
-use App\Models\Guide;
-use App\Models\Hotel;
-use App\Models\Trip;
-use App\Models\User;
 
 class RegisterController extends Controller
 {
     protected $redirectTo = '/login';
     protected $userRepository;
+    protected $travellerRepository;
+    protected $guideRepository;
+    protected $hotelRepository;
+    protected $transportRepository;
+    protected $tripRepository;
 
-    public function __construct(UserRepository $userRepository)
-    {
+    public function __construct(
+        UserRepositoryInterface $userRepository,
+        TravellerRepositoryInterface $travellerRepository,
+        GuideRepositoryInterface $guideRepository,
+        HotelRepositoryInterface $hotelRepository,
+        TransportRepositoryInterface $transportRepository,
+        TripRepositoryInterface $tripRepository
+    ) {
         $this->middleware('guest');
         $this->userRepository = $userRepository;
+        $this->travellerRepository = $travellerRepository;
+        $this->guideRepository = $guideRepository;
+        $this->hotelRepository = $hotelRepository;
+        $this->transportRepository = $transportRepository;
+        $this->tripRepository = $tripRepository;
     }
 
     public function showRegistrationForm()
@@ -43,7 +57,7 @@ class RegisterController extends Controller
 
     protected function create(array $data)
     {
-        $user = User::create([
+        $user = $this->userRepository->create([
             'role' => $data['role'] ?? 'traveller',
             'password' => $data['password'],
             'email' => $data['email'],
@@ -55,28 +69,27 @@ class RegisterController extends Controller
             $trip_id = request()->query('trip_id');
             
             if ($trip_id) {
-                $trip = Trip::find($trip_id);
+                $trip = $this->tripRepository->findById($trip_id);
                 
                 if ($trip && $trip->itinerary) {
-                    Traveller::create([
+                    $this->travellerRepository->create([
                         'user_id' => $user->id,
                         'trip_id' => $trip->id,
                         'itinerary_id' => $trip->itinerary->id,
                         'payment_status' => 'pending',
                     ]);
                 }
-            } else {}
-
+            }
         } elseif ($user->role === 'guide') {
-            Guide::create([
+            $this->guideRepository->create([
                 'user_id' => $user->id,
             ]);
         } elseif ($user->role === 'hotel') {
-            Hotel::create([
+            $this->hotelRepository->create([
                 'user_id' => $user->id,
             ]);
         } elseif ($user->role === 'transport') {
-            Transport::create([
+            $this->transportRepository->create([
                 'user_id' => $user->id,
             ]);
         }

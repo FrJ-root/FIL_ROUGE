@@ -1,18 +1,31 @@
 <?php
 
 namespace App\Http\Controllers\Destination;
+use App\Repositories\Interfaces\DestinationRepositoryInterface;
+use App\Repositories\Interfaces\CategoryRepositoryInterface;
+use App\Repositories\Interfaces\TripRepositoryInterface;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Destination;
-use App\Models\Category;
-use App\Models\Trip;
-
 
 class DestinationController extends Controller
 {
+    protected $destinationRepository;
+    protected $categoryRepository;
+    protected $tripRepository;
+
+    public function __construct(
+        DestinationRepositoryInterface $destinationRepository,
+        CategoryRepositoryInterface $categoryRepository,
+        TripRepositoryInterface $tripRepository
+    ) {
+        $this->destinationRepository = $destinationRepository;
+        $this->categoryRepository = $categoryRepository;
+        $this->tripRepository = $tripRepository;
+    }
+
     public function index(){
-        $featuredDestinations = Destination::where('is_featured', true)->get();
-        $allDestinations = Destination::all()->groupBy(function($destination) {
+        $featuredDestinations = $this->destinationRepository->getFeaturedDestinations();
+        $allDestinations = $this->destinationRepository->getAll()->groupBy(function($destination) {
             $location = $destination->location;
             
             if (in_array($location, ['Morocco', 'Egypt', 'Kenya', 'South Africa'])) {
@@ -32,17 +45,18 @@ class DestinationController extends Controller
             }
         });
         
-        $categories = Category::where('is_featured', true)->get();
+        $categories = $this->categoryRepository->getFeaturedCategories();
         
-        $relatedTrips = Trip::take(4)->get();
+        $relatedTrips = $this->tripRepository->getAll()->take(4);
         
         return view('destinations.index', compact('featuredDestinations', 'allDestinations', 'categories', 'relatedTrips'));
     }
     
     public function show($slug){
-        $destination = Destination::where('slug', $slug)->firstOrFail();
-        
-        $relatedTrips = Trip::where('destination', 'like', '%' . $destination->name . '%')->get();
+        $destination = $this->destinationRepository->findBySlug($slug);
+        $relatedTrips = $this->tripRepository->getAll()->filter(function($trip) use ($destination) {
+            return strpos($trip->destination, $destination->name) !== false;
+        });
         
         return view('destinations.show', compact('destination', 'relatedTrips'));
     }

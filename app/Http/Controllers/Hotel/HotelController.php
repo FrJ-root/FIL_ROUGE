@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Http\Controllers\Hotel;
+use Illuminate\Support\Facades\Schema;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
 use App\Models\RoomType;
 use App\Models\Booking;
 use App\Models\Review;
