@@ -14,9 +14,9 @@ return new class extends Migration
             $table->decimal('price_per_night', 8, 2)->default(0);
             $table->decimal('longitude', 10, 7)->nullable();
             $table->decimal('latitude', 10, 7)->nullable();
-            $table->integer('available_rooms')->nullable();
+            $table->integer('available_rooms')->default(0);
             $table->integer('star_rating')->default(0);
-            $table->string('availability')->nullable();
+            $table->enum('availability', ['available', 'not available'])->default('not available');
             $table->text('selected_dates')->nullable();
             $table->text('description')->nullable();
             $table->json('amenities')->nullable();
