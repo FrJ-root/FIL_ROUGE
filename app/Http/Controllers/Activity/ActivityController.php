@@ -11,10 +11,7 @@ class ActivityController extends Controller
     protected $activityRepository;
     protected $tripRepository;
     
-    public function __construct(
-        ActivityRepositoryInterface $activityRepository,
-        TripRepositoryInterface $tripRepository
-    ) {
+    public function __construct(ActivityRepositoryInterface $activityRepository,TripRepositoryInterface $tripRepository){
         $this->middleware('auth');
         $this->activityRepository = $activityRepository;
         $this->tripRepository = $tripRepository;
